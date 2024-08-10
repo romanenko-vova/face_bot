@@ -26,6 +26,12 @@ load_dotenv()
 def main():
     print("MAIN")
 
+    """
+    TODO 
+    1. нужна фотка татьяны или массажа оставить
+    2. предлагаю убрать ввод номера текстом
+    """
+
     application = Application.builder().token(os.getenv("TOKEN")).build()
 
     conv_handler = ConversationHandler(

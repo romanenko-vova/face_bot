@@ -30,6 +30,10 @@ from face_bot.static.texts import CONTACT_MESSAGE
 
 from face_bot.utils.escape_text import escape_text
 
+from face_bot.jobs.jobs import show_cases_job
+from face_bot.jobs.id_jobs import CASE_JOB_ID
+from face_bot.jobs.times import CASES_TIME
+
 
 async def user_progrev_callback(
     update: Update, context: ContextTypes.DEFAULT_TYPE
@@ -43,7 +47,13 @@ async def user_progrev_callback(
     if int(query.data) == LEARN_HOW:
         """TODO send video"""
 
-        """TODO create job"""
+        """create job with cases"""
+        context.job_queue.run_once(
+            show_cases_job,
+            CASES_TIME,
+            chat_id=user_id,
+            name=f"{user_id}-{CASE_JOB_ID}",
+        )
 
         keyboard = [[KeyboardButton("Отправить контакт", request_contact=True)]]
 
@@ -54,7 +64,7 @@ async def user_progrev_callback(
             reply_markup=ReplyKeyboardMarkup(
                 keyboard,
                 one_time_keyboard=True,
-                resize_keyboard=True,
+                input_field_placeholder="79998765432 или ⬇️",
             ),
         )
 

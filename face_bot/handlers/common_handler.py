@@ -26,7 +26,7 @@ from face_bot.static.keys import (
     FIRST_MSG,
     MESSAGE_MAIL,
 )
-from face_bot.static.texts import FIRST_PROGREV_MESSAGE
+from face_bot.static.texts import FIRST_PROGREV_MESSAGE, GUIDE_MESSAGE
 
 from face_bot.utils.escape_text import escape_text
 
@@ -70,12 +70,14 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
             ],
         ]
 
-        await context.bot.send_message(
-            chat_id=chat_id,
-            text=escape_text(FIRST_PROGREV_MESSAGE),
-            reply_markup=InlineKeyboardMarkup(keyboard),
-            parse_mode=ParseMode.MARKDOWN_V2,
-        )
+        with open("face_bot/img/face.jpg", "rb") as f:
+            await context.bot.send_photo(
+                chat_id=chat_id,
+                photo=f,
+                caption=escape_text(FIRST_PROGREV_MESSAGE),
+                reply_markup=InlineKeyboardMarkup(keyboard),
+                parse_mode=ParseMode.MARKDOWN_V2,
+            )
 
         """ save if user doesn't have username """
         context.user_data[GROUP_MESSAGE] = {
@@ -101,7 +103,7 @@ async def send_warning_phone(update: Update, context: ContextTypes.DEFAULT_TYPE)
     await context.bot.send_message(
         chat_id=chat_id,
         text=escape_text(
-            "*Неверный формат номера. Пришлите номер в формате __79998765432__* или нажмите на кнопку снизу и поделитесь контактом."
+            "*Неверный формат номера. Пришлите номер в формате __79998765432__* или нажмите на кнопку снизу ⬇️"
         ),
         parse_mode=ParseMode.MARKDOWN_V2,
     )
@@ -117,17 +119,23 @@ async def get_phone(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     elif update.effective_message.text:
         phone_number = f"{update.effective_message.text}"
 
-    await context.bot.send_message(
-        chat_id=user_id,
-        text="спс",
-        parse_mode=ParseMode.MARKDOWN_V2,
-        reply_markup=ReplyKeyboardRemove(),
-    )
-
     await save_phone(user_id=user_id, phone_number=phone_number)
 
-    """TODO send url with guide"""
+    """send url with guide"""
+    keyboard = [
+        [
+            InlineKeyboardButton(
+                "Чек-лист",
+                url="https://www.notion.so/51287ed9579b405da2640f30dd4669cb?pvs=21",
+            ),
+        ],
+    ]
+
+    await context.bot.send_message(
+        chat_id=user_id,
+        text=escape_text(GUIDE_MESSAGE),
+        reply_markup=InlineKeyboardMarkup(keyboard),
+        parse_mode=ParseMode.MARKDOWN_V2,
+    )
 
     """TODO create job in 1 hour"""
-
-    # return PROGREV_MESSAGES
