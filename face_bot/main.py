@@ -16,9 +16,10 @@ from face_bot.database.db import init_db
 
 from face_bot.handlers.common_handler import start, get_phone, send_warning_phone
 
-from face_bot.static.states import PROGREV_MESSAGES, PHONE
+from face_bot.static.states import PROGREV_MESSAGES, PHONE, ADMIN_COMMANDS, MAILING
 
 from face_bot.handlers.callbacks_handler import user_progrev_callback
+from face_bot.handlers.admin_handler import admin_callbacks, get_mail
 
 load_dotenv()
 
@@ -48,6 +49,10 @@ def main():
                     send_warning_phone,
                 ),
             ],
+            ADMIN_COMMANDS: [
+                CallbackQueryHandler(admin_callbacks),
+            ],
+            MAILING: [MessageHandler(filters.TEXT & ~filters.COMMAND, get_mail)],
         },
         fallbacks=[],
     )

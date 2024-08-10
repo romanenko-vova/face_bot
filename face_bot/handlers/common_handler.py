@@ -4,9 +4,6 @@ from telegram import (
     Update,
     InlineKeyboardButton,
     InlineKeyboardMarkup,
-    KeyboardButton,
-    ReplyKeyboardMarkup,
-    ReplyKeyboardRemove,
 )
 
 from face_bot.static.ids import ADMINS
@@ -16,15 +13,10 @@ from face_bot.static.callbacks import (
     LEADER_BOARD,
     MAIL,
     LEARN_HOW,
-    GET_MAIL,
-    YES_MAIL,
-    NO_MAIL,
 )
 from face_bot.static.keys import (
     GROUP_MESSAGE,
-    USERNAME,
     FIRST_MSG,
-    MESSAGE_MAIL,
 )
 from face_bot.static.texts import FIRST_PROGREV_MESSAGE, GUIDE_MESSAGE
 
