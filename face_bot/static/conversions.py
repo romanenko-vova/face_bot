@@ -1,0 +1,1 @@
+(REGISTERED_CONV, CONTACT_CONV) = range(1, 3)
