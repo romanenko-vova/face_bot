@@ -32,6 +32,10 @@ from face_bot.utils.escape_text import escape_text
 
 from face_bot.database.db import register, save_phone
 
+from face_bot.jobs.jobs import young_guide_job
+from face_bot.jobs.id_jobs import YOUNG_JOB_ID
+from face_bot.jobs.times import YOUNG_GUIDE_TIME
+
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     user_id = update.effective_user.id
@@ -130,6 +134,14 @@ async def get_phone(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
             ),
         ],
     ]
+
+    """create job with express in 1 hour"""
+    context.job_queue.run_once(
+        young_guide_job,
+        YOUNG_GUIDE_TIME,
+        chat_id=user_id,
+        name=f"{user_id}-{YOUNG_JOB_ID}",
+    )
 
     await context.bot.send_message(
         chat_id=user_id,
