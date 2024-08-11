@@ -1,3 +1,14 @@
-(LEARN_HOW, CONVERSIONS, LEADER_BOARD, MAIL, YES_MAIL, NO_MAIL, YES_TRY, NO_TRY) = (
-    range(8)
-)
+(
+    LEARN_HOW,
+    CONVERSIONS,
+    LEADER_BOARD,
+    MAIL,
+    YES_MAIL,
+    NO_MAIL,
+    YES_TRY,
+    NO_TRY,
+    MASSAGE_1,
+    MASSAGE_2,
+    MASSAGE_3,
+    MASSAGE_4,
+) = range(12)

@@ -29,6 +29,8 @@ from face_bot.utils.escape_text import escape_text
 
 from face_bot.database.db import register, save_phone
 
+from face_bot.handlers.subscriptions_handler import show_subscriptions
+
 from face_bot.jobs.jobs import young_guide_job, already_try_job
 from face_bot.jobs.id_jobs import YOUNG_JOB_ID, ALREADY_TRY_JOB_ID
 from face_bot.jobs.times import YOUNG_GUIDE_TIME, ALREADY_TRY_JOB_TIME
@@ -62,7 +64,7 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
         return ADMIN_COMMANDS
 
-    elif len(context.args) == 0 or context.args[0] == 1:
+    elif len(context.args) == 0 or context.args[0] == "1":
         """Default user"""
 
         keyboard = [
@@ -94,8 +96,7 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
         return PROGREV_MESSAGES
 
     else:
-        """TODO difficult logic"""
-        pass
+        return await show_subscriptions(update, context)
 
 
 async def send_warning_phone(update: Update, context: ContextTypes.DEFAULT_TYPE):

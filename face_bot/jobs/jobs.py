@@ -67,7 +67,7 @@ async def already_try_job(context: ContextTypes.DEFAULT_TYPE) -> int:
 
     await context.bot.send_message(
         chat_id=job.chat_id,
-        text=escape_text("Успел(-а) попробовать что-нибудь из гайда?"),
+        text=escape_text("Успела попробовать что-нибудь из гайда?"),
         reply_markup=InlineKeyboardMarkup(keyboard),
         parse_mode=ParseMode.MARKDOWN_V2,
     )
