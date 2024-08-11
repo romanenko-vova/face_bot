@@ -15,6 +15,7 @@ from telegram.ext import (
 from face_bot.database.db import init_db
 
 from face_bot.handlers.common_handler import start, get_phone, send_warning_phone
+from face_bot.handlers.subscriptions_handler import subscriptions_callback
 
 from face_bot.static.states import (
     PROGREV_MESSAGES,
@@ -61,7 +62,7 @@ def main():
             ],
             MAILING: [MessageHandler(filters.TEXT & ~filters.COMMAND, get_mail)],
             SUBSCRIPTIONS: [
-                # TODO add descriptions
+                CallbackQueryHandler(subscriptions_callback),
             ],
         },
         fallbacks=[],

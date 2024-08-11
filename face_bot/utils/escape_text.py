@@ -12,6 +12,8 @@ def escape_text(text):
         "}",
         ".",
         "!",
+        "(",
+        ")",
     ]
     for char in escape_chars:
         text = text.replace(char, f"\\{char}")
