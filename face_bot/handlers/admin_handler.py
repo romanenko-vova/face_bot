@@ -89,6 +89,7 @@ async def admin_callbacks(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
         states_list = [
             "Зарегистрировались",
             "Отправили контакт",
+            "Попробовали Экспересс гайд",
             # TODO add
         ]
 

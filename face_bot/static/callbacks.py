@@ -1,8 +1,3 @@
-(
-    LEARN_HOW,
-    CONVERSIONS,
-    LEADER_BOARD,
-    MAIL,
-    YES_MAIL,
-    NO_MAIL,
-) = range(6)
+(LEARN_HOW, CONVERSIONS, LEADER_BOARD, MAIL, YES_MAIL, NO_MAIL, YES_TRY, NO_TRY) = (
+    range(8)
+)

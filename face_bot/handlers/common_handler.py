@@ -18,15 +18,20 @@ from face_bot.static.keys import (
     GROUP_MESSAGE,
     FIRST_MSG,
 )
-from face_bot.static.texts import FIRST_PROGREV_MESSAGE, GUIDE_MESSAGE
+from face_bot.static.texts import (
+    FIRST_PROGREV_MESSAGE,
+    SEND_CONTACT_GROUP_MSG,
+    CHECK_LIST_MESSAGE,
+)
+from face_bot.static.ids import GROUP_ID
 
 from face_bot.utils.escape_text import escape_text
 
 from face_bot.database.db import register, save_phone
 
-from face_bot.jobs.jobs import young_guide_job
-from face_bot.jobs.id_jobs import YOUNG_JOB_ID
-from face_bot.jobs.times import YOUNG_GUIDE_TIME
+from face_bot.jobs.jobs import young_guide_job, already_try_job
+from face_bot.jobs.id_jobs import YOUNG_JOB_ID, ALREADY_TRY_JOB_ID
+from face_bot.jobs.times import YOUNG_GUIDE_TIME, ALREADY_TRY_JOB_TIME
 
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -109,6 +114,7 @@ async def send_warning_phone(update: Update, context: ContextTypes.DEFAULT_TYPE)
 
 async def get_phone(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     user_id = update.effective_user.id
+    chat_id = update.effective_chat.id
 
     if update.effective_message.contact:
         phone_number = f"{update.effective_message.contact.phone_number}"
@@ -116,6 +122,25 @@ async def get_phone(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         phone_number = f"{update.effective_message.text}"
 
     await save_phone(user_id=user_id, phone_number=phone_number)
+
+    """send user to group"""
+    await context.bot.send_message(
+        chat_id=GROUP_ID,
+        text=SEND_CONTACT_GROUP_MSG,
+    )
+
+    if "@" in update.effective_user.name:
+        await context.bot.send_message(
+            chat_id=GROUP_ID,
+            text=update.effective_user.name,
+        )
+
+    else:
+        await context.bot.forwardMessage(
+            chat_id=GROUP_ID,
+            from_chat_id=chat_id,
+            message_id=context.user_data[GROUP_MESSAGE][FIRST_MSG],
+        )
 
     """send url with guide"""
     keyboard = [
@@ -135,11 +160,19 @@ async def get_phone(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         name=f"{user_id}-{YOUNG_JOB_ID}",
     )
 
+    """create job already try"""
+    context.job_queue.run_once(
+        already_try_job,
+        ALREADY_TRY_JOB_TIME,
+        chat_id=user_id,
+        name=f"{user_id}-{ALREADY_TRY_JOB_ID}",
+    )
+
     await context.bot.send_message(
         chat_id=user_id,
-        text=escape_text(GUIDE_MESSAGE),
+        text=escape_text(CHECK_LIST_MESSAGE),
         reply_markup=InlineKeyboardMarkup(keyboard),
         parse_mode=ParseMode.MARKDOWN_V2,
     )
 
-    """TODO create job in 1 hour"""
+    return PROGREV_MESSAGES
