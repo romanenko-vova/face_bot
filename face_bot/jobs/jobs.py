@@ -11,8 +11,8 @@ from telegram.constants import ParseMode
 
 from face_bot.utils.escape_text import escape_text
 
-from face_bot.static.texts import CASE_MESSAGE, EXPRESS_YOUNG_MESSAGE
-from face_bot.static.callbacks import YES_TRY, NO_TRY
+from face_bot.static.texts import CASE_MESSAGE, EXPRESS_YOUNG_MESSAGE, DONT_BUY_MSG
+from face_bot.static.callbacks import YES_TRY, NO_TRY, ENROLL
 
 
 async def show_cases_job(context: ContextTypes.DEFAULT_TYPE) -> int:
@@ -68,6 +68,26 @@ async def already_try_job(context: ContextTypes.DEFAULT_TYPE) -> int:
     await context.bot.send_message(
         chat_id=job.chat_id,
         text=escape_text("Успела попробовать что-нибудь из гайда?"),
+        reply_markup=InlineKeyboardMarkup(keyboard),
+        parse_mode=ParseMode.MARKDOWN_V2,
+    )
+
+
+async def dont_buy_job(context: ContextTypes.DEFAULT_TYPE) -> int:
+    job = context.job
+
+    keyboard = [
+        [
+            InlineKeyboardButton(
+                "Записаться",
+                callback_data=ENROLL,
+            ),
+        ],
+    ]
+
+    await context.bot.send_message(
+        chat_id=job.chat_id,
+        text=escape_text(DONT_BUY_MSG),
         reply_markup=InlineKeyboardMarkup(keyboard),
         parse_mode=ParseMode.MARKDOWN_V2,
     )

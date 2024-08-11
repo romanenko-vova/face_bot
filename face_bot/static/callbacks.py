@@ -11,4 +11,5 @@
     MASSAGE_2,
     MASSAGE_3,
     MASSAGE_4,
-) = range(12)
+    ENROLL,
+) = range(13)

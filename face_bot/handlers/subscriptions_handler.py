@@ -2,32 +2,36 @@ from telegram.ext import ContextTypes
 from telegram.constants import ParseMode
 from telegram import (
     Update,
-    KeyboardButton,
-    ReplyKeyboardMarkup,
     InlineKeyboardButton,
     InlineKeyboardMarkup,
 )
 
-from face_bot.static.states import PHONE, SUBSCRIPTIONS
-from face_bot.static.callbacks import MASSAGE_1, MASSAGE_2, MASSAGE_3, MASSAGE_4
-from face_bot.static.conversions import TRY_GUIDE_CONV
+from face_bot.static.keys import (
+    GROUP_MESSAGE,
+    FIRST_MSG,
+)
+
+from face_bot.static.states import NAME, SUBSCRIPTIONS
+from face_bot.static.callbacks import MASSAGE_1, MASSAGE_2, MASSAGE_3, MASSAGE_4, ENROLL
+from face_bot.static.ids import GROUP_ID
 
 from face_bot.static.texts import (
-    CONTACT_MESSAGE,
     SUBSCRIPTION_DESCRIPTION_MSG,
     DESCRIPTION_1_MSG,
     DESCRIPTION_2_MSG,
     DESCRIPTION_3_MSG,
     DESCRIPTION_4_MSG,
+    FEEDBACK_NAME_MSG,
+    SEND_NAME_MSG,
 )
 
 from face_bot.utils.escape_text import escape_text
 
-from face_bot.database.db import update_status
+from face_bot.database.db import save_name
 
-from face_bot.jobs.jobs import show_cases_job, already_try_job
-from face_bot.jobs.id_jobs import CASE_JOB_ID, ALREADY_TRY_JOB_ID
-from face_bot.jobs.times import CASES_TIME, ALREADY_TRY_JOB_TIME
+from face_bot.jobs.jobs import dont_buy_job
+from face_bot.jobs.id_jobs import DONT_BUY_JOB_ID
+from face_bot.jobs.times import DONT_BUY_JOB_TIME
 
 
 async def show_subscriptions(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -58,7 +62,15 @@ async def show_subscriptions(update: Update, context: ContextTypes.DEFAULT_TYPE)
         parse_mode=ParseMode.MARKDOWN_V2,
     )
 
-    """TODO create job in 1 hour"""
+    """
+    create job in 1 hour & TODO kill if buy
+    """
+    context.job_queue.run_once(
+        dont_buy_job,
+        DONT_BUY_JOB_TIME,
+        chat_id=user_id,
+        name=f"{user_id}-{DONT_BUY_JOB_ID}",
+    )
 
     return SUBSCRIPTIONS
 
@@ -70,7 +82,6 @@ async def subscriptions_callback(
     await query.answer()
 
     chat_id = update.effective_chat.id
-    user_id = update._effective_user.id
 
     await context.bot.delete_message(
         chat_id=chat_id,
@@ -79,7 +90,15 @@ async def subscriptions_callback(
 
     """TODO add payment"""
 
-    if int(query.data) == MASSAGE_1:
+    if int(query.data) == ENROLL:
+        await context.bot.send_message(
+            chat_id=chat_id,
+            text="Как Вас зовут?",
+        )
+
+        return NAME
+
+    elif int(query.data) == MASSAGE_1:
         keyboard = [
             [
                 InlineKeyboardButton(
@@ -146,3 +165,59 @@ async def subscriptions_callback(
             reply_markup=InlineKeyboardMarkup(keyboard),
             parse_mode=ParseMode.MARKDOWN_V2,
         )
+
+
+async def send_warning_name(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    chat_id = update.effective_chat.id
+
+    await context.bot.send_message(
+        chat_id=chat_id,
+        text=escape_text(
+            "*Неверный формат имени.* Имя *не может* содержать __цифры и иные специальные символы__"
+        ),
+        parse_mode=ParseMode.MARKDOWN_V2,
+    )
+
+    return NAME
+
+
+async def get_name(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    user_id = update.effective_user.id
+    chat_id = update.effective_chat.id
+
+    name = update.effective_message.text
+
+    """send user name to the group"""
+    await context.bot.send_message(
+        chat_id=GROUP_ID,
+        text=escape_text(SEND_NAME_MSG),
+        parse_mode=ParseMode.MARKDOWN_V2,
+    )
+
+    if "@" in update.effective_user.name:
+        await context.bot.send_message(
+            chat_id=GROUP_ID,
+            text=f"{update.effective_user.name} - {name}",
+        )
+
+    else:
+        await context.bot.forwardMessage(
+            chat_id=GROUP_ID,
+            from_chat_id=chat_id,
+            message_id=context.user_data[GROUP_MESSAGE][FIRST_MSG],
+        )
+
+        await context.bot.send_message(
+            chat_id=GROUP_ID,
+            text=name,
+        )
+
+    await save_name(user_id=user_id, name=name)
+
+    await context.bot.send_message(
+        chat_id=chat_id,
+        text=escape_text(FEEDBACK_NAME_MSG),
+        parse_mode=ParseMode.MARKDOWN_V2,
+    )
+
+    """TODO set up periodic jobs"""

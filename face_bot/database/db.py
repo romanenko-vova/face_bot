@@ -1,6 +1,12 @@
 import aiosqlite
 
-from face_bot.static.conversions import REGISTERED_CONV, CONTACT_CONV, TRY_GUIDE_CONV
+from face_bot.static.conversions import (
+    REGISTERED_CONV,
+    CONTACT_CONV,
+    TRY_GUIDE_CONV,
+    ENROLL_CONV,
+    BUY_SUBSCRIPTION_CONV,
+)
 
 DB_PATH = "users.db"
 
@@ -70,13 +76,32 @@ async def save_phone(user_id, phone_number):
         await db.commit()
 
 
+async def save_name(user_id, name):
+    async with aiosqlite.connect(DB_PATH) as db:
+        await db.execute(
+            """
+                    UPDATE users
+                    SET status = ?, name = ?
+                    WHERE id_tg = ?
+                """,
+            (ENROLL_CONV, name, user_id),
+        )
+
+        await db.commit()
+
+
 async def get_conversions():
     db = await aiosqlite.connect(DB_PATH)
 
     number_users = []
-    # TODO Add statuses
 
-    statuses = [REGISTERED_CONV, CONTACT_CONV, TRY_GUIDE_CONV]
+    statuses = [
+        REGISTERED_CONV,
+        CONTACT_CONV,
+        TRY_GUIDE_CONV,
+        ENROLL_CONV,
+        BUY_SUBSCRIPTION_CONV,
+    ]
 
     for status in statuses:
         total_users_with_status = await db.execute(

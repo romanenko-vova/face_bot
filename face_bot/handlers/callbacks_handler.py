@@ -8,7 +8,7 @@ from telegram import (
     InlineKeyboardMarkup,
 )
 
-from face_bot.static.states import PHONE, SUBSCRIPTIONS
+from face_bot.static.states import PHONE
 from face_bot.static.callbacks import LEARN_HOW, YES_TRY, NO_TRY
 from face_bot.static.conversions import TRY_GUIDE_CONV
 

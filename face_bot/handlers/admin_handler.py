@@ -90,7 +90,8 @@ async def admin_callbacks(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
             "Зарегистрировались",
             "Отправили контакт",
             "Попробовали Экспересс гайд",
-            # TODO add
+            "Записались на консультацию",
+            "Купили курс",
         ]
 
         number_users = await get_conversions()
