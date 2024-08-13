@@ -19,6 +19,7 @@ from face_bot.handlers.subscriptions_handler import (
     subscriptions_callback,
     get_name,
     send_warning_name,
+    successful_payment,
 )
 
 from face_bot.static.states import (
@@ -50,7 +51,7 @@ def main():
 
     """
 
-    application = Application.builder().token(os.getenv("TOKEN")).build()
+    application = Application.builder().token(os.getenv("BOT_TOKEN")).build()
 
     conv_handler = ConversationHandler(
         entry_points=[CommandHandler("start", start)],
@@ -72,6 +73,7 @@ def main():
             MAILING: [MessageHandler(filters.TEXT & ~filters.COMMAND, get_mail)],
             SUBSCRIPTIONS: [
                 CallbackQueryHandler(subscriptions_callback),
+                MessageHandler(filters.SUCCESSFUL_PAYMENT, successful_payment),
             ],
             NAME: [
                 MessageHandler(filters.Regex("^[A-Za-zА-Яа-яёЁ\-'\s]+$"), get_name),

@@ -40,6 +40,8 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     user_id = update.effective_user.id
     chat_id = update.effective_chat.id
 
+    print(chat_id)
+
     if user_id in ADMINS:
         """open admin panel"""
 
