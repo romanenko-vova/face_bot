@@ -1,20 +1,7 @@
-#!/usr/bin/env python
-# This program is dedicated to the public domain under the CC0 license.
-# pylint: disable=import-error,unused-argument
-"""
-Simple example of a bot that uses a custom webhook setup and handles custom updates.
-For the custom webhook setup, the libraries `flask`, `asgiref` and `uvicorn` are used. Please
-install them as `pip install flask[async]~=2.3.2 uvicorn~=0.23.2 asgiref~=3.7.2`.
-Note that any other `asyncio` based web server framework can be used for a custom webhook setup
-just as well.
-
-Usage:
-Set bot Token, URL, admin CHAT_ID and PORT after the imports.
-You may also need to change the `listen` value in the uvicorn configuration to match your setup.
-Press Ctrl-C on the command line or send a signal to the process to stop the bot.
-"""
+import os
 
 import asyncio
+from dotenv import load_dotenv
 import html
 from dataclasses import dataclass
 from http import HTTPStatus
@@ -35,10 +22,13 @@ from telegram.ext import (
 )
 
 # Define configuration constants
-URL = "https://5c38-45-95-235-20.ngrok-free.app"
+URL = "https://f501-83-217-200-54.ngrok-free.app"
 ADMIN_CHAT_ID = 123456
 PORT = 8080
-TOKEN = "123:ABC"  # nosec B105
+TOKEN = "123:ABC"
+
+
+load_dotenv()
 
 
 @dataclass
@@ -50,11 +40,6 @@ class WebhookUpdate:
 
 
 class CustomContext(CallbackContext[ExtBot, dict, dict, dict]):
-    """
-    Custom CallbackContext class that makes `user_data` available for updates of type
-    `WebhookUpdate`.
-    """
-
     @classmethod
     def from_update(
         cls,
@@ -67,10 +52,10 @@ class CustomContext(CallbackContext[ExtBot, dict, dict, dict]):
 
 
 async def start(update: Update, context: CustomContext) -> None:
-    """Display a message with instructions on how to use this bot."""
     payload_url = html.escape(
         f"{URL}/submitpayload?user_id=<your user id>&payload=<payload>"
     )
+
     text = (
         f"To check if the bot is still running, call <code>{URL}/healthcheck</code>.\n\n"
         f"To post a custom update, call <code>{payload_url}</code>."
@@ -101,17 +86,15 @@ async def main() -> None:
     print("MAIN")
 
     context_types = ContextTypes(context=CustomContext)
-    # Here we set updater to None because we want our custom webhook server to handle the updates
-    # and hence we don't need an Updater instance
+
     application = (
         Application.builder()
-        .token("6124425134:AAFXYb2l1jl5GJ4DPyu2fH9O-vYhLZRH-R4")
+        .token(os.getenv("TOKEN"))
         .updater(None)
         .context_types(context_types)
         .build()
     )
 
-    # register handlers
     application.add_handler(CommandHandler("start", start))
     application.add_handler(TypeHandler(type=WebhookUpdate, callback=webhook_update))
 
@@ -120,23 +103,17 @@ async def main() -> None:
         url=f"{URL}/telegram", allowed_updates=Update.ALL_TYPES
     )
 
-    # Set up webserver
     flask_app = Flask(__name__)
 
-    @flask_app.post("/telegram")  # type: ignore[misc]
+    @flask_app.post("/telegram")
     async def telegram() -> Response:
-        """Handle incoming Telegram updates by putting them into the `update_queue`"""
         await application.update_queue.put(
             Update.de_json(data=request.json, bot=application.bot)
         )
         return Response(status=HTTPStatus.OK)
 
-    @flask_app.route("/submitpayload", methods=["GET", "POST"])  # type: ignore[misc]
+    @flask_app.route("/submitpayload", methods=["GET", "POST"])
     async def custom_updates() -> Response:
-        """
-        Handle incoming webhook updates by also putting them into the `update_queue` if
-        the required parameters were passed correctly.
-        """
         try:
             user_id = int(request.args["user_id"])
             payload = request.args["payload"]
@@ -153,9 +130,8 @@ async def main() -> None:
         )
         return Response(status=HTTPStatus.OK)
 
-    @flask_app.get("/healthcheck")  # type: ignore[misc]
+    @flask_app.get("/healthcheck")
     async def health() -> Response:
-        """For the health endpoint, reply with a simple plain text message."""
         response = make_response("The bot is still running fine :)", HTTPStatus.OK)
         response.mimetype = "text/plain"
         return response
@@ -169,7 +145,6 @@ async def main() -> None:
         )
     )
 
-    # Run application and webserver together
     async with application:
         await application.start()
         await webserver.serve()

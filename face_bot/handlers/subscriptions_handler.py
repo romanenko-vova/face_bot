@@ -1,8 +1,6 @@
-import os
-
 from telegram.ext import ContextTypes
 from telegram.constants import ParseMode
-from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup, LabeledPrice
+from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
 
 from face_bot.static.keys import (
     GROUP_MESSAGE,
@@ -12,7 +10,6 @@ from face_bot.static.keys import (
 from face_bot.static.states import NAME, SUBSCRIPTIONS
 from face_bot.static.callbacks import MASSAGE_1, MASSAGE_2, MASSAGE_3, MASSAGE_4, ENROLL
 from face_bot.static.ids import GROUP_ID
-from face_bot.static.keys import SUBSCRIPTION_TYPE
 
 from face_bot.static.texts import (
     SUBSCRIPTION_DESCRIPTION_MSG,
@@ -149,31 +146,21 @@ async def subscriptions_callback(
         )
 
     elif int(query.data) == MASSAGE_4:
-        """push subscription into context"""
-        context.user_data[SUBSCRIPTION_TYPE] = "4"
+        keyboard = [
+            [
+                InlineKeyboardButton(
+                    "Оплатить",
+                    url="https://www.notion.so/51287ed9579b405da2640f30dd4669cb?pvs=21",
+                ),
+            ],
+        ]
 
-        await context.bot.send_invoice(
+        await context.bot.send_message(
             chat_id=chat_id,
-            title="Массаж лица",
-            description=DESCRIPTION_4_MSG,
-            payload="Custom-Payload",
-            provider_token=os.getenv("PROVIDER_TOKEN"),
-            currency="RUB",
-            prices=[LabeledPrice("Массаж лица", 1790 * 100)],
+            text=escape_text(DESCRIPTION_4_MSG),
+            reply_markup=InlineKeyboardMarkup(keyboard),
+            parse_mode=ParseMode.MARKDOWN_V2,
         )
-
-        return SUBSCRIPTIONS
-
-
-async def successful_payment(
-    update: Update, context: ContextTypes.DEFAULT_TYPE
-) -> None:
-    await update.message.reply_text("Спасибо за оплату!")
-    await update.message.reply_text(
-        f"Вы приобрели - {context.user_data[SUBSCRIPTION_TYPE]}"
-    )
-
-    """TODO Save into DB"""
 
 
 async def send_warning_name(update: Update, context: ContextTypes.DEFAULT_TYPE):
