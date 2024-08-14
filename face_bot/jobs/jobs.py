@@ -12,7 +12,7 @@ from telegram.constants import ParseMode
 from face_bot.utils.escape_text import escape_text
 
 from face_bot.static.texts import CASE_MESSAGE, EXPRESS_YOUNG_MESSAGE, DONT_BUY_MSG
-from face_bot.static.callbacks import YES_TRY, NO_TRY, ENROLL
+from face_bot.static.callbacks import YES_TRY, NO_TRY, ENROLL, CONFIRMATION
 
 
 async def show_cases_job(context: ContextTypes.DEFAULT_TYPE) -> int:
@@ -90,4 +90,18 @@ async def dont_buy_job(context: ContextTypes.DEFAULT_TYPE) -> int:
         text=escape_text(DONT_BUY_MSG),
         reply_markup=InlineKeyboardMarkup(keyboard),
         parse_mode=ParseMode.MARKDOWN_V2,
+    )
+
+
+async def pay_confirmation_job(context: ContextTypes.DEFAULT_TYPE) -> None:
+    job = context.job
+
+    keyboard = [
+        [InlineKeyboardButton("Проверить", callback_data=CONFIRMATION)],
+    ]
+
+    await context.bot.send_message(
+        chat_id=job.chat_id,
+        text="Проверить оплату?",
+        reply_markup=InlineKeyboardMarkup(keyboard),
     )

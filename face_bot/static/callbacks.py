@@ -12,4 +12,6 @@
     MASSAGE_3,
     MASSAGE_4,
     ENROLL,
-) = range(13)
+    CONFIRMATION,
+    PAY,
+) = range(15)

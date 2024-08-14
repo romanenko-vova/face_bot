@@ -4,6 +4,7 @@ from telegram import (
     Update,
     InlineKeyboardButton,
     InlineKeyboardMarkup,
+    ReplyKeyboardRemove,
 )
 
 from face_bot.static.ids import ADMINS
@@ -167,6 +168,12 @@ async def get_phone(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         ALREADY_TRY_JOB_TIME,
         chat_id=user_id,
         name=f"{user_id}-{ALREADY_TRY_JOB_ID}",
+    )
+
+    await context.bot.send_message(
+        chat_id=user_id,
+        text="Спасибо!",
+        reply_markup=ReplyKeyboardRemove(),
     )
 
     await context.bot.send_message(

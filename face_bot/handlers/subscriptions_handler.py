@@ -1,3 +1,7 @@
+import os
+
+import uuid
+
 from telegram.ext import ContextTypes
 from telegram.constants import ParseMode
 from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
@@ -8,8 +12,17 @@ from face_bot.static.keys import (
 )
 
 from face_bot.static.states import NAME, SUBSCRIPTIONS
-from face_bot.static.callbacks import MASSAGE_1, MASSAGE_2, MASSAGE_3, MASSAGE_4, ENROLL
+from face_bot.static.callbacks import (
+    MASSAGE_1,
+    MASSAGE_2,
+    MASSAGE_3,
+    MASSAGE_4,
+    ENROLL,
+    PAY,
+    CONFIRMATION,
+)
 from face_bot.static.ids import GROUP_ID
+from face_bot.static.keys import PAYMENT_ID
 
 from face_bot.static.texts import (
     SUBSCRIPTION_DESCRIPTION_MSG,
@@ -25,9 +38,11 @@ from face_bot.utils.escape_text import escape_text
 
 from face_bot.database.db import save_name
 
-from face_bot.jobs.jobs import dont_buy_job
-from face_bot.jobs.id_jobs import DONT_BUY_JOB_ID
-from face_bot.jobs.times import DONT_BUY_JOB_TIME
+from face_bot.jobs.jobs import dont_buy_job, pay_confirmation_job
+from face_bot.jobs.id_jobs import DONT_BUY_JOB_ID, CONFIRMATION_JOB_ID
+from face_bot.jobs.times import DONT_BUY_JOB_TIME, CONFIRMATION_JOB_TIME
+
+from yookassa import Configuration, Payment
 
 
 async def show_subscriptions(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -84,8 +99,6 @@ async def subscriptions_callback(
         message_id=update.effective_message.message_id,
     )
 
-    """TODO add payment"""
-
     if int(query.data) == ENROLL:
         await context.bot.send_message(
             chat_id=chat_id,
@@ -95,14 +108,18 @@ async def subscriptions_callback(
         return NAME
 
     elif int(query.data) == MASSAGE_1:
+        url, payment_id = await send_pay_request(amount=490, description="Массаж глаз")
+
         keyboard = [
             [
                 InlineKeyboardButton(
                     "Оплатить",
-                    url="https://www.notion.so/51287ed9579b405da2640f30dd4669cb?pvs=21",
+                    url=url,
                 ),
             ],
         ]
+
+        context.user_data[PAYMENT_ID] = payment_id
 
         await context.bot.send_message(
             chat_id=chat_id,
@@ -110,6 +127,15 @@ async def subscriptions_callback(
             reply_markup=InlineKeyboardMarkup(keyboard),
             parse_mode=ParseMode.MARKDOWN_V2,
         )
+
+        context.job_queue.run_once(
+            pay_confirmation_job,
+            CONFIRMATION_JOB_TIME,
+            chat_id=chat_id,
+            name=f"{chat_id}-{CONFIRMATION_JOB_ID}",
+        )
+
+        return PAY
 
     elif int(query.data) == MASSAGE_2:
         keyboard = [
@@ -161,6 +187,16 @@ async def subscriptions_callback(
             reply_markup=InlineKeyboardMarkup(keyboard),
             parse_mode=ParseMode.MARKDOWN_V2,
         )
+
+    elif int(query.data) == CONFIRMATION:
+        payment_id = context.user_data[PAYMENT_ID]
+        payment = Payment.find_one(payment_id)
+
+        print(int(str(payment.amount.value).split(".")[0]))
+        if payment.paid:
+            print("PAID")
+
+        """update in db"""
 
 
 async def send_warning_name(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -217,3 +253,35 @@ async def get_name(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     )
 
     """TODO set up periodic jobs"""
+
+
+async def send_pay_request(
+    amount: int,
+    description: str,
+):
+    try:
+        Configuration.account_id = os.getenv("ACCOUNT_ID")
+        Configuration.secret_key = os.getenv("SECRET_KEY")
+
+        payment = Payment.create(
+            {
+                "amount": {
+                    "value": f"{amount}.00",
+                    "currency": "RUB",
+                },
+                "confirmation": {
+                    "type": "redirect",
+                    "return_url": "https://t.me/beautyfacegym_bot",
+                },
+                "capture": True,
+                "description": description,
+            },
+            uuid.uuid4(),
+        )
+
+        confirmation_url = payment.confirmation.confirmation_url
+
+        return confirmation_url, payment.id
+
+    except Exception as e:
+        print(e)
