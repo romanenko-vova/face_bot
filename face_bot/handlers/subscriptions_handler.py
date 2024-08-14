@@ -74,7 +74,7 @@ async def show_subscriptions(update: Update, context: ContextTypes.DEFAULT_TYPE)
     )
 
     """
-    create job in 1 hour & TODO kill if buy
+    create job in 1 hour & kill if buy
     """
     context.job_queue.run_once(
         dont_buy_job,
@@ -135,7 +135,7 @@ async def subscriptions_callback(
             name=f"{chat_id}-{CONFIRMATION_JOB_ID}",
         )
 
-        return PAY
+        return SUBSCRIPTIONS
 
     elif int(query.data) == MASSAGE_2:
         keyboard = [
@@ -189,6 +189,8 @@ async def subscriptions_callback(
         )
 
     elif int(query.data) == CONFIRMATION:
+        """TODO delete job"""
+
         payment_id = context.user_data[PAYMENT_ID]
         payment = Payment.find_one(payment_id)
 
@@ -196,7 +198,7 @@ async def subscriptions_callback(
         if payment.paid:
             print("PAID")
 
-        """update in db"""
+        """TODO update in db"""
 
 
 async def send_warning_name(update: Update, context: ContextTypes.DEFAULT_TYPE):
