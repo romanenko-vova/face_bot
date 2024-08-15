@@ -1,0 +1,17 @@
+(
+    LEARN_HOW,
+    CONVERSIONS,
+    LEADER_BOARD,
+    MAIL,
+    YES_MAIL,
+    NO_MAIL,
+    YES_TRY,
+    NO_TRY,
+    MASSAGE_1,
+    MASSAGE_2,
+    MASSAGE_3,
+    MASSAGE_4,
+    ENROLL,
+    CONFIRMATION,
+    PAY,
+) = range(15)

@@ -7,9 +7,14 @@ readme = "README.md"
 
 [tool.poetry.dependencies]
 python = "^3.12"
-python-telegram-bot = "^21.4"
+python-telegram-bot = {extras = ["job-queue"], version = "^21.4"}
 python-dotenv = "^1.0.1"
 aiosqlite = "^0.20.0"
+flask = {version = ">=2.3.2,<2.4.0", extras = ["async"]}
+uvicorn = ">=0.23.2,<0.24.0"
+asgiref = ">=3.7.2,<3.8.0"
+ngrok = "^1.4.0"
+yookassa = "^3.3.0"
 
 
 [build-system]

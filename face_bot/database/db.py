@@ -1,5 +1,12 @@
 import aiosqlite
 
+from face_bot.static.conversions import (
+    REGISTERED_CONV,
+    CONTACT_CONV,
+    TRY_GUIDE_CONV,
+    ENROLL_CONV,
+    BUY_SUBSCRIPTION_CONV,
+)
 
 DB_PATH = "users.db"
 
@@ -13,7 +20,117 @@ async def init_db():
                 status INTEGER default 0,        
                 name TEXT,
                 phone TEXT,
-                subscriptions TEXT
+                subscriptions TEXT default ""
             )
         """)
         await db.commit()
+
+
+async def register(user_id, name):
+    async with aiosqlite.connect(DB_PATH) as db:
+        async with db.execute(
+            "SELECT name FROM users WHERE id_tg = ?", (user_id,)
+        ) as cursor:
+            row = await cursor.fetchone()
+            if not row:
+                await db.execute(
+                    """
+                    INSERT INTO users (id_tg, status, name) 
+                    VALUES (?, ?, ?)
+                """,
+                    (
+                        user_id,
+                        REGISTERED_CONV,
+                        name,
+                    ),
+                )
+
+            await db.commit()
+
+
+async def update_status(user_id, status):
+    async with aiosqlite.connect(DB_PATH) as db:
+        await db.execute(
+            """
+                    UPDATE users
+                    SET status = ?
+                    WHERE id_tg = ?
+                """,
+            (status, user_id),
+        )
+
+        await db.commit()
+
+
+async def save_phone(user_id, phone_number):
+    async with aiosqlite.connect(DB_PATH) as db:
+        await db.execute(
+            """
+                    UPDATE users
+                    SET status = ?, phone = ?
+                    WHERE id_tg = ?
+                """,
+            (CONTACT_CONV, phone_number, user_id),
+        )
+
+        await db.commit()
+
+
+async def save_subscription(subs, user_id):
+    async with aiosqlite.connect(DB_PATH) as db:
+        async with db.execute(
+            "SELECT name FROM users WHERE id_tg = ?", (user_id,)
+        ) as cursor:
+            row = await cursor.fetchone()
+
+            new_row_subs = row[0] + "/" + subs if len(row[0]) > 0 else subs
+            await db.execute(
+                """
+                        UPDATE users
+                        SET status = ?, subscriptions = ?
+                        WHERE id_tg = ?
+                    """,
+                (BUY_SUBSCRIPTION_CONV, new_row_subs, user_id),
+            )
+
+            await db.commit()
+
+
+async def save_name(user_id, name):
+    async with aiosqlite.connect(DB_PATH) as db:
+        await db.execute(
+            """
+                    UPDATE users
+                    SET status = ?, name = ?
+                    WHERE id_tg = ?
+                """,
+            (ENROLL_CONV, name, user_id),
+        )
+
+        await db.commit()
+
+
+async def get_conversions():
+    db = await aiosqlite.connect(DB_PATH)
+
+    number_users = []
+
+    statuses = [
+        REGISTERED_CONV,
+        CONTACT_CONV,
+        TRY_GUIDE_CONV,
+        ENROLL_CONV,
+        BUY_SUBSCRIPTION_CONV,
+    ]
+
+    for status in statuses:
+        total_users_with_status = await db.execute(
+            """SELECT COUNT(*) FROM users WHERE status >= ?""", (status,)
+        )
+
+        total_users_with_status = await total_users_with_status.fetchone()
+        total_users_with_status = total_users_with_status[0]
+
+        number_users.append(total_users_with_status)
+
+    return number_users
