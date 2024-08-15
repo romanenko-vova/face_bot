@@ -42,12 +42,12 @@ async def admin_callbacks(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
         """send all users"""
         async with aiosqlite.connect(DB_PATH) as db:
             async with db.execute(
-                "SELECT id, id_tg, status, name, phone FROM users"
+                "SELECT id, id_tg, status, name, phone, subscriptions FROM users"
             ) as cursor:
                 rows = await cursor.fetchall()
                 messages = "\n".join(
                     [
-                        f"{row[0]}: {row[1]} - {row[2]} - {row[3]} - {row[4]}"
+                        f"{row[0]}: {row[1]} - {row[2]} - {row[3]} - {row[4]} - [{row[5]}]"
                         for row in rows
                     ]
                 )
@@ -55,7 +55,7 @@ async def admin_callbacks(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
         if len(messages) != 0:
             await context.bot.send_message(
                 chat_id=chat_id,
-                text="id: tg_id - status - name - phone",
+                text="id: tg_id - status - name - phone - [subscriptions]",
             )
 
             await context.bot.send_message(

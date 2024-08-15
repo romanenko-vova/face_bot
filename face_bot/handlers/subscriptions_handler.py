@@ -18,7 +18,6 @@ from face_bot.static.callbacks import (
     MASSAGE_3,
     MASSAGE_4,
     ENROLL,
-    PAY,
     CONFIRMATION,
 )
 from face_bot.static.ids import GROUP_ID
@@ -247,7 +246,7 @@ async def subscriptions_callback(
             remove_job_if_exists(name=f"{user_id}-{DONT_BUY_JOB_ID}", context=context)
 
             """save in db conv_status and subscription"""
-            save_subscription(subs=subs_type, user_id=user_id)
+            await save_subscription(subs=subs_type, user_id=user_id)
 
             """send video"""
             keyboard = [
