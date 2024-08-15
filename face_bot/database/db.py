@@ -20,7 +20,7 @@ async def init_db():
                 status INTEGER default 0,        
                 name TEXT,
                 phone TEXT,
-                subscriptions TEXT
+                subscriptions TEXT default ""
             )
         """)
         await db.commit()
@@ -74,6 +74,26 @@ async def save_phone(user_id, phone_number):
         )
 
         await db.commit()
+
+
+async def save_subscription(subs, user_id):
+    async with aiosqlite.connect(DB_PATH) as db:
+        async with db.execute(
+            "SELECT name FROM users WHERE id_tg = ?", (user_id,)
+        ) as cursor:
+            row = await cursor.fetchone()
+
+            new_row_subs = row[0] + "/" + subs if len(row[0]) > 0 else subs
+            await db.execute(
+                """
+                        UPDATE users
+                        SET status = ?, subscriptions = ?
+                        WHERE id_tg = ?
+                    """,
+                (BUY_SUBSCRIPTION_CONV, new_row_subs, user_id),
+            )
+
+            await db.commit()
 
 
 async def save_name(user_id, name):
