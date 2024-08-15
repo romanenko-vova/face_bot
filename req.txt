@@ -6,7 +6,7 @@ blinker==1.8.2
 certifi==2024.7.4 
 charset-normalizer==3.3.2 
 click==8.1.7 
-colorama==0.4.6  and platform_system == "Windows"
+colorama==0.4.6
 deprecated==1.2.14 
 distro==1.9.0 
 flask[async]==2.3.3 
