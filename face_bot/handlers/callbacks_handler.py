@@ -9,18 +9,19 @@ from telegram import (
 )
 
 from face_bot.static.states import PHONE
+from face_bot.static.keys import CURRENT_CASE
 from face_bot.static.callbacks import LEARN_HOW, YES_TRY, NO_TRY
 from face_bot.static.conversions import TRY_GUIDE_CONV
 
-from face_bot.static.texts import CONTACT_MESSAGE, CASE_2_MSG
+from face_bot.static.texts import CONTACT_MESSAGE, CASE_2_MSG, VIDEO_CAPTION
 
 from face_bot.utils.escape_text import escape_text
 
-from face_bot.database.db import update_status
+from face_bot.database.db import update_status, get_current_case
 
 from face_bot.handlers.subscriptions_handler import show_subscriptions
 
-from face_bot.jobs.jobs import show_cases_job, already_try_job
+from face_bot.jobs.jobs import send_case_job, already_try_job
 from face_bot.jobs.id_jobs import CASE_JOB_ID, ALREADY_TRY_JOB_ID
 from face_bot.jobs.times import CASES_TIME, ALREADY_TRY_JOB_TIME
 
@@ -35,14 +36,21 @@ async def user_progrev_callback(
     user_id = update._effective_user.id
 
     if int(query.data) == LEARN_HOW:
-        """TODO send video"""
+        with open("face_bot/video/video_1st.mp4", "rb") as f:
+            await context.bot.send_video(
+                chat_id=chat_id,
+                video=f,
+                caption=escape_text(VIDEO_CAPTION),
+                parse_mode=ParseMode.MARKDOWN_V2,
+            )
 
         """create job with cases"""
         context.job_queue.run_once(
-            show_cases_job,
+            send_case_job,
             CASES_TIME,
             chat_id=user_id,
             name=f"{user_id}-{CASE_JOB_ID}",
+            data={CURRENT_CASE: await get_current_case(user_id=user_id)},
         )
 
         keyboard = [[KeyboardButton("Отправить контакт", request_contact=True)]]

@@ -32,8 +32,8 @@ from face_bot.database.db import register, save_phone
 
 from face_bot.handlers.subscriptions_handler import show_subscriptions
 
-from face_bot.jobs.jobs import young_guide_job, already_try_job
-from face_bot.jobs.id_jobs import YOUNG_JOB_ID, ALREADY_TRY_JOB_ID
+from face_bot.jobs.jobs import young_guide_job, already_try_job, remove_job_if_exists
+from face_bot.jobs.id_jobs import YOUNG_JOB_ID, ALREADY_TRY_JOB_ID, CASE_JOB_ID
 from face_bot.jobs.times import YOUNG_GUIDE_TIME, ALREADY_TRY_JOB_TIME
 
 
@@ -70,7 +70,7 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
         keyboard = [
             [
-                InlineKeyboardButton("Узнать как", callback_data=LEARN_HOW),
+                InlineKeyboardButton("Узнать", callback_data=LEARN_HOW),
             ],
         ]
 
@@ -144,11 +144,14 @@ async def get_phone(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
             message_id=context.user_data[GROUP_MESSAGE][FIRST_MSG],
         )
 
+    """delete job if send number"""
+    remove_job_if_exists(name=f"{user_id}-{CASE_JOB_ID}", context=context)
+
     """send url with guide"""
     keyboard = [
         [
             InlineKeyboardButton(
-                "Чек-лист",
+                text="Посмотреть",
                 url="https://www.notion.so/51287ed9579b405da2640f30dd4669cb?pvs=21",
             ),
         ],

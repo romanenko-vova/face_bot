@@ -11,20 +11,37 @@ from telegram.constants import ParseMode
 
 from face_bot.utils.escape_text import escape_text
 
-from face_bot.static.texts import CASE_MESSAGE, EXPRESS_YOUNG_MESSAGE, DONT_BUY_MSG
+from face_bot.static.texts import CASES_MESSAGES, EXPRESS_YOUNG_MESSAGE, DONT_BUY_MSG
 from face_bot.static.callbacks import YES_TRY, NO_TRY, ENROLL, CONFIRMATION
 
+from face_bot.static.keys import CURRENT_CASE
 
-async def show_cases_job(context: ContextTypes.DEFAULT_TYPE) -> int:
+from face_bot.database.db import update_case
+
+# async def show_cases_job(context: ContextTypes.DEFAULT_TYPE) -> int:
+#     job = context.job
+
+#     with open("face_bot/img/case_img.jpg", "rb") as f:
+#         await context.bot.send_photo(
+#             chat_id=job.chat_id,
+#             photo=f,
+#             caption=escape_text(CASE_MESSAGE),
+#             parse_mode=ParseMode.MARKDOWN_V2,
+#         )
+
+
+async def send_case_job(context: ContextTypes.DEFAULT_TYPE) -> int:
     job = context.job
 
-    with open("face_bot/img/case_img.jpg", "rb") as f:
+    with open(f"face_bot/img/case_img{job.data[CURRENT_CASE]}.jpg", "rb") as f:
         await context.bot.send_photo(
             chat_id=job.chat_id,
             photo=f,
-            caption=escape_text(CASE_MESSAGE),
+            caption=escape_text(CASES_MESSAGES[job.data[CURRENT_CASE]]),
             parse_mode=ParseMode.MARKDOWN_V2,
         )
+
+    update_case(job.chat_id)
 
 
 async def young_guide_job(context: ContextTypes.DEFAULT_TYPE) -> int:

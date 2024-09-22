@@ -8,3 +8,5 @@ MESSAGE_MAIL = "msg_mail"
 SUBSCRIPTION_TYPE = "subscription_bought"
 
 PAYMENT_ID = "payment_id"
+
+CURRENT_CASE = "current_case"
