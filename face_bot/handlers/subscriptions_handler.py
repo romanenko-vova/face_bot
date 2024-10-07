@@ -49,24 +49,45 @@ async def show_subscriptions(update: Update, context: ContextTypes.DEFAULT_TYPE)
     user_id = update.effective_user.id
     chat_id = update.effective_chat.id
 
-    keyboard = [
-        [
-            InlineKeyboardButton("Массаж глаз — 490р", callback_data=MASSAGE_1),
-        ],
-        [
-            InlineKeyboardButton("Массаж щек — 590р", callback_data=MASSAGE_2),
-        ],
-        [
-            InlineKeyboardButton("Массаж лба — 790р", callback_data=MASSAGE_3),
-        ],
-        [
-            InlineKeyboardButton("Массаж всего лица — 1490р", callback_data=MASSAGE_4),
-        ],
-    ]
+    subs_type = 0
+
+    if SUBSCRIPTION_TYPE in context.user_data:
+        subs_type = int(context.user_data[SUBSCRIPTION_TYPE])
+
+    keyboard = []
+    msg = SUBSCRIPTION_DESCRIPTION_MSG
+
+    if subs_type != 1:
+        keyboard.append(
+            [
+                InlineKeyboardButton(
+                    "Хочу поднять верхнее веко — 490р", callback_data=MASSAGE_1
+                ),
+            ]
+        )
+        msg += "\n1. Комплекс «Поднимите мне веки» на 15 минут в режиме __«включай и делай»__"
+    if subs_type != 2:
+        keyboard.append(
+            [
+                InlineKeyboardButton(
+                    "Хочу лоб без морщин — 1290р", callback_data=MASSAGE_2
+                ),
+            ]
+        )
+        msg += "\n2. Комплекс «Гладкий лоб» на 25 минут в режиме __«включай и делай»__"
+    if subs_type != 3:
+        keyboard.append(
+            [
+                InlineKeyboardButton(
+                    "Хочу лицо без отеков — 1890р", callback_data=MASSAGE_3
+                ),
+            ]
+        )
+        msg += "\n3. Комплекс *«Анти-отек»* на 35 минут из двух частей: __упражнения для тела__ и __приёмы для лица__"
 
     await context.bot.send_message(
         chat_id=chat_id,
-        text=escape_text(SUBSCRIPTION_DESCRIPTION_MSG),
+        text=escape_text(msg),
         reply_markup=InlineKeyboardMarkup(keyboard),
         parse_mode=ParseMode.MARKDOWN_V2,
     )
@@ -107,7 +128,9 @@ async def subscriptions_callback(
         return NAME
 
     elif int(query.data) == MASSAGE_1:
-        url, payment_id = await send_pay_request(amount=490, description="Массаж глаз")
+        url, payment_id = await send_pay_request(
+            amount=490, description="Поднимите мне веки"
+        )
 
         keyboard = [
             [
@@ -138,7 +161,7 @@ async def subscriptions_callback(
         return SUBSCRIPTIONS
 
     elif int(query.data) == MASSAGE_2:
-        url, payment_id = await send_pay_request(amount=590, description="Массаж щек")
+        url, payment_id = await send_pay_request(amount=1290, description="Гладкий лоб")
 
         keyboard = [
             [
@@ -169,7 +192,9 @@ async def subscriptions_callback(
         return SUBSCRIPTIONS
 
     elif int(query.data) == MASSAGE_3:
-        url, payment_id = await send_pay_request(amount=790, description="Массаж лба")
+        url, payment_id = await send_pay_request(
+            amount=1890, description="Лицо без отеков"
+        )
 
         keyboard = [
             [
@@ -248,21 +273,6 @@ async def subscriptions_callback(
             """save in db conv_status and subscription"""
             await save_subscription(subs=subs_type, user_id=user_id)
 
-            """send video"""
-            keyboard = [
-                [
-                    InlineKeyboardButton(
-                        "Смотреть",
-                        url="https://www.notion.so/51287ed9579b405da2640f30dd4669cb?pvs=21",
-                    ),
-                ],
-            ]
-            await context.bot.send_message(
-                chat_id=chat_id,
-                text="Вы можете посмотреть видео-массаж по ссылке",
-                reply_markup=InlineKeyboardMarkup(keyboard),
-            )
-
             """send to group"""
             await context.bot.send_message(
                 chat_id=GROUP_ID,
@@ -275,6 +285,38 @@ async def subscriptions_callback(
                     text=f"{update.effective_user.name} - {subs_type}",
                 )
 
+            """send video"""
+            if int(subs_type) == 1:
+                with open("face_bot/video/movie_1st.mp4", "rb") as f:
+                    await context.bot.send_video(
+                        chat_id=chat_id,
+                        video=f,
+                        caption="Поднимите мне веки",
+                        parse_mode=ParseMode.MARKDOWN_V2,
+                    )
+
+                return await show_subscriptions(update, context)
+
+            elif int(subs_type) == 2:
+                with open("face_bot/video/movie_1st.mp4", "rb") as f:
+                    await context.bot.send_video(
+                        chat_id=chat_id,
+                        video=f,
+                        caption="Гладкий лоб",
+                        parse_mode=ParseMode.MARKDOWN_V2,
+                    )
+
+                return await show_subscriptions(update, context)
+
+            elif int(subs_type) == 3:
+                with open("face_bot/video/movie_1st.mp4", "rb") as f:
+                    await context.bot.send_video(
+                        chat_id=chat_id,
+                        video=f,
+                        caption="Анти-отек",
+                        parse_mode=ParseMode.MARKDOWN_V2,
+                    )
+
             else:
                 await context.bot.forwardMessage(
                     chat_id=GROUP_ID,
@@ -286,8 +328,6 @@ async def subscriptions_callback(
                     chat_id=GROUP_ID,
                     text=f"тип подписки - {subs_type}",
                 )
-
-            """TODO send job with not full"""
 
         else:
             keyboard = [
@@ -354,7 +394,7 @@ async def get_name(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         parse_mode=ParseMode.MARKDOWN_V2,
     )
 
-    """TODO set up periodic jobs"""
+    return await show_subscriptions(update, context)
 
 
 async def send_pay_request(

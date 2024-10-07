@@ -33,7 +33,7 @@ from face_bot.database.db import update_case
 async def send_case_job(context: ContextTypes.DEFAULT_TYPE) -> int:
     job = context.job
 
-    with open(f"face_bot/img/case_img{job.data[CURRENT_CASE]}.jpg", "rb") as f:
+    with open(f"face_bot/img/case_{job.data[CURRENT_CASE]}.jpg", "rb") as f:
         await context.bot.send_photo(
             chat_id=job.chat_id,
             photo=f,

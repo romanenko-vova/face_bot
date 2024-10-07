@@ -36,7 +36,7 @@ async def user_progrev_callback(
     user_id = update._effective_user.id
 
     if int(query.data) == LEARN_HOW:
-        with open("face_bot/video/video_1st.mp4", "rb") as f:
+        with open("face_bot/video/movie_1st.mp4", "rb") as f:
             await context.bot.send_video(
                 chat_id=chat_id,
                 video=f,
@@ -44,7 +44,7 @@ async def user_progrev_callback(
                 parse_mode=ParseMode.MARKDOWN_V2,
             )
 
-        """create job with cases"""
+        """TODO send all cases"""
         context.job_queue.run_once(
             send_case_job,
             CASES_TIME,
