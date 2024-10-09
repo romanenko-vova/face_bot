@@ -45,13 +45,15 @@ async def user_progrev_callback(
             )
 
         """TODO send all cases"""
-        context.job_queue.run_once(
-            send_case_job,
-            CASES_TIME,
-            chat_id=user_id,
-            name=f"{user_id}-{CASE_JOB_ID}",
-            data={CURRENT_CASE: await get_current_case(user_id=user_id)},
-        )
+        for i in range(4):
+            context.job_queue.run_once(
+                send_case_job,
+                CASES_TIME,
+                chat_id=user_id,
+                name=f"{user_id}-{CASE_JOB_ID}-{i}",
+                data={CURRENT_CASE: i},
+                # data={CURRENT_CASE: await get_current_case(user_id=user_id)},
+            )
 
         keyboard = [[KeyboardButton("Отправить контакт", request_contact=True)]]
 
