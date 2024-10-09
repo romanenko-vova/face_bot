@@ -145,7 +145,8 @@ async def get_phone(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         )
 
     """delete job if send number"""
-    remove_job_if_exists(name=f"{user_id}-{CASE_JOB_ID}", context=context)
+    for i in range(4):
+        remove_job_if_exists(name=f"{user_id}-{CASE_JOB_ID}-{i}", context=context)
 
     """send url with guide"""
     keyboard = [
