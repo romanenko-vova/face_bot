@@ -1,55 +1,70 @@
 import os
 
 import uuid
+import requests
 
 from telegram.ext import ContextTypes
 from telegram.constants import ParseMode
 from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
 
-from face_bot.static.keys import (
-    GROUP_MESSAGE,
-    FIRST_MSG,
-)
+from face_bot.static.keys import GROUP_MESSAGE, FIRST_MSG
 
 from face_bot.static.states import NAME, SUBSCRIPTIONS
 from face_bot.static.callbacks import (
     MASSAGE_1,
     MASSAGE_2,
     MASSAGE_3,
-    MASSAGE_4,
     ENROLL,
     CONFIRMATION,
+    WATCH_ANOTHER,
 )
 from face_bot.static.ids import GROUP_ID
-from face_bot.static.keys import PAYMENT_ID, SUBSCRIPTION_TYPE
+from face_bot.static.keys import PAYMENT_ID, SUBSCRIPTION_TYPE, URL_TO_DELETE
 
 from face_bot.static.texts import (
     SUBSCRIPTION_DESCRIPTION_MSG,
     DESCRIPTION_1_MSG,
     DESCRIPTION_2_MSG,
     DESCRIPTION_3_MSG,
-    DESCRIPTION_4_MSG,
     FEEDBACK_NAME_MSG,
     SEND_NAME_MSG,
     SEND_SUBS_GROUP_MSG,
+    WATCH_ANOTHER_MSG,
 )
 
 from face_bot.utils.escape_text import escape_text
 
 from face_bot.database.db import save_name, save_subscription
 
-from face_bot.jobs.jobs import dont_buy_job, pay_confirmation_job, remove_job_if_exists
+from face_bot.jobs.jobs import pay_confirmation_job, remove_job_if_exists
 from face_bot.jobs.id_jobs import DONT_BUY_JOB_ID, CONFIRMATION_JOB_ID
-from face_bot.jobs.times import DONT_BUY_JOB_TIME, CONFIRMATION_JOB_TIME
+from face_bot.jobs.times import CONFIRMATION_JOB_TIME
 
 from yookassa import Configuration, Payment
 
 
 async def show_subscriptions(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    user_id = update.effective_user.id
     chat_id = update.effective_chat.id
 
     subs_type = 0
+
+    if PAYMENT_ID in context.user_data:
+        try:
+            id = context.user_data[PAYMENT_ID]
+            if id != "-1":
+                secret_key = os.getenv("SECRET_KEY")
+                account_id = os.getenv("ACCOUNT_ID")
+
+                response = requests.post(
+                    f"https://api.yookassa.ru/v3/payments/{id}/cancel",
+                    auth=(account_id, secret_key),
+                )
+
+                context.user_data[PAYMENT_ID] = "-1"
+
+                print(response)
+        except Exception as e:
+            print(f"e - {e}")
 
     if SUBSCRIPTION_TYPE in context.user_data:
         subs_type = int(context.user_data[SUBSCRIPTION_TYPE])
@@ -61,45 +76,33 @@ async def show_subscriptions(update: Update, context: ContextTypes.DEFAULT_TYPE)
         keyboard.append(
             [
                 InlineKeyboardButton(
-                    "Хочу поднять верхнее веко — 490р", callback_data=MASSAGE_1
+                    "«Экспресс-лифтинг всего лица» — 490р", callback_data=MASSAGE_1
                 ),
             ]
         )
-        msg += "\n1. Комплекс «Поднимите мне веки» на 15 минут в режиме __«включай и делай»__"
+        msg += "\n1. Экспресс-лифтинг всего лица за 11 минут"
     if subs_type != 2:
         keyboard.append(
             [
-                InlineKeyboardButton(
-                    "Хочу лоб без морщин — 1290р", callback_data=MASSAGE_2
-                ),
+                InlineKeyboardButton("«Гладкий лоб» — 1290р", callback_data=MASSAGE_2),
             ]
         )
-        msg += "\n2. Комплекс «Гладкий лоб» на 25 минут в режиме __«включай и делай»__"
+        msg += "\n2. «Гладкий лоб» за 18 минут"
     if subs_type != 3:
         keyboard.append(
             [
                 InlineKeyboardButton(
-                    "Хочу лицо без отеков — 1890р", callback_data=MASSAGE_3
+                    "Комплекс «АНТИ-ОТЕК» — 1890р", callback_data=MASSAGE_3
                 ),
             ]
         )
-        msg += "\n3. Комплекс *«Анти-отек»* на 35 минут из двух частей: __упражнения для тела__ и __приёмы для лица__"
+        msg += "\n3. Комплекс «АНТИ-ОТЕК» - 27 минут упражнений для тела и волшебных приемов для лица"
 
     await context.bot.send_message(
         chat_id=chat_id,
         text=escape_text(msg),
         reply_markup=InlineKeyboardMarkup(keyboard),
         parse_mode=ParseMode.MARKDOWN_V2,
-    )
-
-    """
-    create job in 1 hour & kill if buy
-    """
-    context.job_queue.run_once(
-        dont_buy_job,
-        DONT_BUY_JOB_TIME,
-        chat_id=user_id,
-        name=f"{user_id}-{DONT_BUY_JOB_ID}",
     )
 
     return SUBSCRIPTIONS
@@ -118,8 +121,14 @@ async def subscriptions_callback(
         chat_id=chat_id,
         message_id=update.effective_message.message_id,
     )
+    if int(query.data) == WATCH_ANOTHER:
+        # await query.message.delete()
+        context.user_data[SUBSCRIPTION_TYPE] = "-1"
+        remove_job_if_exists(name=f"{chat_id}-{CONFIRMATION_JOB_ID}", context=context)
 
-    if int(query.data) == ENROLL:
+        return await show_subscriptions(update, context)
+
+    elif int(query.data) == ENROLL:
         await context.bot.send_message(
             chat_id=chat_id,
             text="Как Вас зовут?",
@@ -138,8 +147,12 @@ async def subscriptions_callback(
                     "Оплатить",
                     url=url,
                 ),
+                InlineKeyboardButton(WATCH_ANOTHER_MSG, callback_data=WATCH_ANOTHER),
             ],
         ]
+
+        """ save message with url to pay for deleting """
+        context.user_data[URL_TO_DELETE] = url
 
         context.user_data[PAYMENT_ID] = payment_id
         context.user_data[SUBSCRIPTION_TYPE] = "1"
@@ -169,8 +182,12 @@ async def subscriptions_callback(
                     "Оплатить",
                     url=url,
                 ),
+                InlineKeyboardButton(WATCH_ANOTHER_MSG, callback_data=WATCH_ANOTHER),
             ],
         ]
+
+        """ save message with url to pay for deleting """
+        context.user_data[URL_TO_DELETE] = url
 
         context.user_data[PAYMENT_ID] = payment_id
         context.user_data[SUBSCRIPTION_TYPE] = "2"
@@ -202,8 +219,12 @@ async def subscriptions_callback(
                     "Оплатить",
                     url=url,
                 ),
+                InlineKeyboardButton(WATCH_ANOTHER_MSG, callback_data=WATCH_ANOTHER),
             ],
         ]
+
+        """ save message with url to pay for deleting """
+        context.user_data[URL_TO_DELETE] = url
 
         context.user_data[PAYMENT_ID] = payment_id
         context.user_data[SUBSCRIPTION_TYPE] = "3"
@@ -224,47 +245,12 @@ async def subscriptions_callback(
 
         return SUBSCRIPTIONS
 
-    elif int(query.data) == MASSAGE_4:
-        url, payment_id = await send_pay_request(
-            amount=790, description="Массаж всего лица"
-        )
-
-        keyboard = [
-            [
-                InlineKeyboardButton(
-                    "Оплатить",
-                    url=url,
-                ),
-            ],
-        ]
-
-        context.user_data[PAYMENT_ID] = payment_id
-        context.user_data[SUBSCRIPTION_TYPE] = "4"
-
-        await context.bot.send_message(
-            chat_id=chat_id,
-            text=escape_text(DESCRIPTION_4_MSG),
-            reply_markup=InlineKeyboardMarkup(keyboard),
-            parse_mode=ParseMode.MARKDOWN_V2,
-        )
-
-        context.job_queue.run_once(
-            pay_confirmation_job,
-            CONFIRMATION_JOB_TIME,
-            chat_id=chat_id,
-            name=f"{chat_id}-{CONFIRMATION_JOB_ID}",
-        )
-
-        return SUBSCRIPTIONS
-
     elif int(query.data) == CONFIRMATION:
         payment_id = context.user_data[PAYMENT_ID]
         payment = Payment.find_one(payment_id)
 
         print(int(str(payment.amount.value).split(".")[0]))
         if payment.paid:
-            print("PAID")
-
             subs_type = context.user_data[SUBSCRIPTION_TYPE]
 
             """delete job dont buy"""
@@ -287,35 +273,48 @@ async def subscriptions_callback(
 
             """send video"""
             if int(subs_type) == 1:
-                with open("face_bot/video/movie_1st.mp4", "rb") as f:
-                    await context.bot.send_video(
-                        chat_id=chat_id,
-                        video=f,
-                        caption="Поднимите мне веки",
-                        parse_mode=ParseMode.MARKDOWN_V2,
-                    )
+                await context.bot.send_message(
+                    chat_id=chat_id,
+                    text="отправляем 1-ое видео",
+                )
+
+                # with open("face_bot/video/movie_1st.mp4", "rb") as f:
+                #     await context.bot.send_video(
+                #         chat_id=chat_id,
+                #         video=f,
+                #         caption="Поднимите мне веки",
+                #         parse_mode=ParseMode.MARKDOWN_V2,
+                #     )
 
                 return await show_subscriptions(update, context)
 
             elif int(subs_type) == 2:
-                with open("face_bot/video/movie_1st.mp4", "rb") as f:
-                    await context.bot.send_video(
-                        chat_id=chat_id,
-                        video=f,
-                        caption="Гладкий лоб",
-                        parse_mode=ParseMode.MARKDOWN_V2,
-                    )
+                # with open("face_bot/video/movie_1st.mp4", "rb") as f:
+                #     await context.bot.send_video(
+                #         chat_id=chat_id,
+                #         video=f,
+                #         caption="Гладкий лоб",
+                #         parse_mode=ParseMode.MARKDOWN_V2,
+                #     )
+                await context.bot.send_message(
+                    chat_id=chat_id,
+                    text="отправляем 2-ое видео",
+                )
 
                 return await show_subscriptions(update, context)
 
             elif int(subs_type) == 3:
-                with open("face_bot/video/movie_1st.mp4", "rb") as f:
-                    await context.bot.send_video(
-                        chat_id=chat_id,
-                        video=f,
-                        caption="Анти-отек",
-                        parse_mode=ParseMode.MARKDOWN_V2,
-                    )
+                # with open("face_bot/video/movie_1st.mp4", "rb") as f:
+                #     await context.bot.send_video(
+                #         chat_id=chat_id,
+                #         video=f,
+                #         caption="Анти-отек",
+                #         parse_mode=ParseMode.MARKDOWN_V2,
+                #     )
+                await context.bot.send_message(
+                    chat_id=chat_id,
+                    text="отправляем 3-е видео",
+                )
 
             else:
                 await context.bot.forwardMessage(

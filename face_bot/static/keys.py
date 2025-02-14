@@ -10,3 +10,5 @@ SUBSCRIPTION_TYPE = "subscription_bought"
 PAYMENT_ID = "payment_id"
 
 CURRENT_CASE = "current_case"
+
+URL_TO_DELETE = "URL_TO_DELETE"

@@ -41,25 +41,15 @@ async def send_case_job(context: ContextTypes.DEFAULT_TYPE) -> int:
             parse_mode=ParseMode.MARKDOWN_V2,
         )
 
-    update_case(job.chat_id)
+    await update_case(job.chat_id)
 
 
 async def young_guide_job(context: ContextTypes.DEFAULT_TYPE) -> int:
     job = context.job
 
-    keyboard = [
-        [
-            InlineKeyboardButton(
-                "Посмотреть",
-                url="https://www.notion.so/51287ed9579b405da2640f30dd4669cb?pvs=21",
-            ),
-        ],
-    ]
-
     await context.bot.send_message(
         chat_id=job.chat_id,
         text=escape_text(EXPRESS_YOUNG_MESSAGE),
-        reply_markup=InlineKeyboardMarkup(keyboard),
         parse_mode=ParseMode.MARKDOWN_V2,
     )
 
@@ -84,7 +74,7 @@ async def already_try_job(context: ContextTypes.DEFAULT_TYPE) -> int:
 
     await context.bot.send_message(
         chat_id=job.chat_id,
-        text=escape_text("Успела попробовать что-нибудь из гайда?"),
+        text=escape_text("Успела попробовать что-нибудь из видео?"),
         reply_markup=InlineKeyboardMarkup(keyboard),
         parse_mode=ParseMode.MARKDOWN_V2,
     )

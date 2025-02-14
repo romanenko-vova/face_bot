@@ -14,4 +14,5 @@
     ENROLL,
     CONFIRMATION,
     PAY,
-) = range(15)
+    WATCH_ANOTHER,
+) = range(16)

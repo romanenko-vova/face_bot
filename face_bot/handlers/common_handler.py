@@ -15,14 +15,11 @@ from face_bot.static.callbacks import (
     MAIL,
     LEARN_HOW,
 )
-from face_bot.static.keys import (
-    GROUP_MESSAGE,
-    FIRST_MSG,
-)
+from face_bot.static.keys import GROUP_MESSAGE, FIRST_MSG, CURRENT_CASE
 from face_bot.static.texts import (
     FIRST_PROGREV_MESSAGE,
     SEND_CONTACT_GROUP_MSG,
-    CHECK_LIST_MESSAGE,
+    VIDEO_CAPTION,
 )
 from face_bot.static.ids import GROUP_ID
 
@@ -32,9 +29,14 @@ from face_bot.database.db import register, save_phone
 
 from face_bot.handlers.subscriptions_handler import show_subscriptions
 
-from face_bot.jobs.jobs import young_guide_job, already_try_job, remove_job_if_exists
+from face_bot.jobs.jobs import (
+    young_guide_job,
+    already_try_job,
+    remove_job_if_exists,
+    send_case_job,
+)
 from face_bot.jobs.id_jobs import YOUNG_JOB_ID, ALREADY_TRY_JOB_ID, CASE_JOB_ID
-from face_bot.jobs.times import YOUNG_GUIDE_TIME, ALREADY_TRY_JOB_TIME
+from face_bot.jobs.times import YOUNG_GUIDE_TIME, ALREADY_TRY_JOB_TIME, CASES_TIME
 
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -144,26 +146,53 @@ async def get_phone(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
             message_id=context.user_data[GROUP_MESSAGE][FIRST_MSG],
         )
 
-    """delete job if send number"""
-    for i in range(4):
-        remove_job_if_exists(name=f"{user_id}-{CASE_JOB_ID}-{i}", context=context)
+    """delete job БОЛЬНОЕ СООБЩЕНИЕ - 1r"""
+    remove_job_if_exists(name=f"{user_id}-{CASE_JOB_ID}-1", context=context)
 
-    """send url with guide"""
-    keyboard = [
-        [
-            InlineKeyboardButton(
-                text="Посмотреть",
-                url="https://www.notion.so/51287ed9579b405da2640f30dd4669cb?pvs=21",
-            ),
-        ],
-    ]
+    """send free movie"""
+    with open("face_bot/video/free.MP4", "rb") as f:
+        await context.bot.send_message(
+            chat_id=chat_id,
+            text="send video",
+        )
 
-    """create job with express in 1 hour"""
+        # send video
+
+        # await context.bot.send_video(
+        #     chat_id=chat_id,
+        #     video=f,
+        #     caption=escape_text(VIDEO_CAPTION),
+        #     parse_mode=ParseMode.MARKDOWN_V2,
+        #     reply_markup=ReplyKeyboardRemove(),
+        #     read_timeout=60,
+        #     write_timeout=60,
+        # )
+
+        # await context.bot.send_document(
+        #     chat_id=chat_id,
+        #     document=f,
+        #     caption=escape_text(VIDEO_CAPTION),
+        #     parse_mode=ParseMode.MARKDOWN_V2,
+        #     read_timeout=60,
+        #     write_timeout=60,
+        # )
+
+    await context.bot.send_message(
+        chat_id=chat_id,
+        text="отправляется 'ПРИЕМЫ ДОПОЛНЯЮТ' через 10 секунд (10 минут в релизе)",
+    )
+
+    """create job with ПРИЕМЫ ДОПОЛНЯЮТ"""
     context.job_queue.run_once(
         young_guide_job,
         YOUNG_GUIDE_TIME,
         chat_id=user_id,
         name=f"{user_id}-{YOUNG_JOB_ID}",
+    )
+
+    await context.bot.send_message(
+        chat_id=chat_id,
+        text="отправляется вопрос 'попробовала?' через 15 секунд (15 минут в релизе)",
     )
 
     """create job already try"""
@@ -174,17 +203,21 @@ async def get_phone(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         name=f"{user_id}-{ALREADY_TRY_JOB_ID}",
     )
 
-    await context.bot.send_message(
-        chat_id=user_id,
-        text="Спасибо!",
-        reply_markup=ReplyKeyboardRemove(),
-    )
+    """send БОЛЬНОЕ СООБЩЕНИЕ - 2"""
 
     await context.bot.send_message(
-        chat_id=user_id,
-        text=escape_text(CHECK_LIST_MESSAGE),
-        reply_markup=InlineKeyboardMarkup(keyboard),
-        parse_mode=ParseMode.MARKDOWN_V2,
+        chat_id=chat_id,
+        text="отправляется кейс через 60 секунд (60 минут в релизе)",
     )
+
+    context.job_queue.run_once(
+        send_case_job,
+        CASES_TIME * 4,
+        chat_id=user_id,
+        name=f"{user_id}-{CASE_JOB_ID}-2",
+        data={CURRENT_CASE: 2},
+    )
+
+    # TODO may be send already try again
 
     return PROGREV_MESSAGES

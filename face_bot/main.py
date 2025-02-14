@@ -71,7 +71,7 @@ def main():
             ],
         },
         fallbacks=[],
-        persistent=True,
+        persistent=False,
     )
 
     application.add_handler(conv_handler)
