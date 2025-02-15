@@ -150,32 +150,61 @@ async def get_phone(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     remove_job_if_exists(name=f"{user_id}-{CASE_JOB_ID}-1", context=context)
 
     """send free movie"""
-    with open("face_bot/video/free.MP4", "rb") as f:
-        await context.bot.send_message(
-            chat_id=chat_id,
-            text="send video",
-        )
+    # with open("face_bot/video/free.MP4", "rb") as f:
+    #     await context.bot.send_message(
+    #         chat_id=chat_id,
+    #         text="send video",
+    #     )
 
-        # send video
+    # send video
 
-        # await context.bot.send_video(
-        #     chat_id=chat_id,
-        #     video=f,
-        #     caption=escape_text(VIDEO_CAPTION),
-        #     parse_mode=ParseMode.MARKDOWN_V2,
-        #     reply_markup=ReplyKeyboardRemove(),
-        #     read_timeout=60,
-        #     write_timeout=60,
-        # )
+    # await context.bot.send_video(
+    #     chat_id=chat_id,
+    #     video=f,
+    #     caption=escape_text(VIDEO_CAPTION),
+    #     parse_mode=ParseMode.MARKDOWN_V2,
+    #     reply_markup=ReplyKeyboardRemove(),
+    #     read_timeout=60,
+    #     write_timeout=60,
+    # )
 
-        # await context.bot.send_document(
-        #     chat_id=chat_id,
-        #     document=f,
-        #     caption=escape_text(VIDEO_CAPTION),
-        #     parse_mode=ParseMode.MARKDOWN_V2,
-        #     read_timeout=60,
-        #     write_timeout=60,
-        # )
+    # await context.bot.send_document(
+    #     chat_id=chat_id,
+    #     document=f,
+    #     caption=escape_text(VIDEO_CAPTION),
+    #     parse_mode=ParseMode.MARKDOWN_V2,
+    #     read_timeout=60,
+    #     write_timeout=60,
+    # )
+
+    await context.bot.send_message(
+        chat_id=chat_id,
+        text=escape_text("Спасибо ❤"),
+        reply_markup=ReplyKeyboardRemove(),
+        parse_mode=ParseMode.MARKDOWN_V2,
+    )
+
+    keyboard = [
+        [
+            InlineKeyboardButton(
+                "YouTube",
+                url="https://youtu.be/cOm_aAKFK5Y",
+            ),
+        ],
+        [
+            InlineKeyboardButton(
+                "Google Disk",
+                url="https://drive.google.com/file/d/1c7fM94C0jXpd4TBZ4mlYnPSaqxH81V6p/view?usp=drivesdk",
+            ),
+        ],
+    ]
+
+    await context.bot.send_message(
+        chat_id=chat_id,
+        text=escape_text("Смотрите видео на удобной для Вас площадке"),
+        reply_markup=InlineKeyboardMarkup(keyboard),
+        parse_mode=ParseMode.MARKDOWN_V2,
+    )
 
     await context.bot.send_message(
         chat_id=chat_id,

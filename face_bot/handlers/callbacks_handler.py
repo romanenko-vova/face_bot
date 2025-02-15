@@ -68,7 +68,7 @@ async def user_progrev_callback(
             data={CURRENT_CASE: 1},
         )
 
-        keyboard = [[KeyboardButton("Отправить контакт", request_contact=True)]]
+        keyboard = [[KeyboardButton("📱 Отправить контакт", request_contact=True)]]
 
         await context.bot.send_message(
             chat_id=chat_id,
@@ -76,6 +76,7 @@ async def user_progrev_callback(
             parse_mode=ParseMode.MARKDOWN_V2,
             reply_markup=ReplyKeyboardMarkup(
                 keyboard,
+                resize_keyboard=True,
                 one_time_keyboard=True,
                 input_field_placeholder="79998765432 или ⬇️",
             ),

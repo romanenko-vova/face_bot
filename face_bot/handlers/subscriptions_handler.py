@@ -273,9 +273,26 @@ async def subscriptions_callback(
 
             """send video"""
             if int(subs_type) == 1:
+                keyboard = [
+                    [
+                        InlineKeyboardButton(
+                            "YouTube",
+                            url="https://youtu.be/ndkQQETkINQ",
+                        ),
+                    ],
+                    [
+                        InlineKeyboardButton(
+                            "Google Disk",
+                            url="https://drive.google.com/file/d/1-kjFU-4O-UAysVpNz3VYhJ_CDl9e8zkc",
+                        ),
+                    ],
+                ]
+
                 await context.bot.send_message(
                     chat_id=chat_id,
-                    text="отправляем 1-ое видео",
+                    text=escape_text("Смотрите видео на удобной для Вас площадке"),
+                    reply_markup=InlineKeyboardMarkup(keyboard),
+                    parse_mode=ParseMode.MARKDOWN_V2,
                 )
 
                 # with open("face_bot/video/movie_1st.mp4", "rb") as f:
@@ -296,9 +313,27 @@ async def subscriptions_callback(
                 #         caption="Гладкий лоб",
                 #         parse_mode=ParseMode.MARKDOWN_V2,
                 #     )
+
+                keyboard = [
+                    [
+                        InlineKeyboardButton(
+                            "YouTube",
+                            url="https://youtu.be/Xy1nhTEPO9c",
+                        ),
+                    ],
+                    [
+                        InlineKeyboardButton(
+                            "Google Disk",
+                            url="https://drive.google.com/file/d/1SO0IS6CG8TMLL8MW1ZMgYBBV7NwFyu7C",
+                        ),
+                    ],
+                ]
+
                 await context.bot.send_message(
                     chat_id=chat_id,
-                    text="отправляем 2-ое видео",
+                    text=escape_text("Смотрите видео на удобной для Вас площадке"),
+                    reply_markup=InlineKeyboardMarkup(keyboard),
+                    parse_mode=ParseMode.MARKDOWN_V2,
                 )
 
                 return await show_subscriptions(update, context)
@@ -311,9 +346,27 @@ async def subscriptions_callback(
                 #         caption="Анти-отек",
                 #         parse_mode=ParseMode.MARKDOWN_V2,
                 #     )
+
+                keyboard = [
+                    [
+                        InlineKeyboardButton(
+                            "YouTube",
+                            url="https://youtu.be/FrUcOn9dCIs",
+                        ),
+                    ],
+                    [
+                        InlineKeyboardButton(
+                            "Google Disk",
+                            url="https://drive.google.com/file/d/1mibR5gzt-pdz7b1RdDS6et4u_eYbDcDE",
+                        ),
+                    ],
+                ]
+
                 await context.bot.send_message(
                     chat_id=chat_id,
-                    text="отправляем 3-е видео",
+                    text=escape_text("Смотрите видео на удобной для Вас площадке"),
+                    reply_markup=InlineKeyboardMarkup(keyboard),
+                    parse_mode=ParseMode.MARKDOWN_V2,
                 )
 
             else:
