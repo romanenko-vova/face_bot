@@ -85,9 +85,7 @@ SUBSCRIPTION_DESCRIPTION_MSG = """
 **Мои услуги**. Выбирайте, что Вам больше подходит:
 """
 
-WATCH_ANOTHER_MSG = """
-Посмотреть другое
-"""
+WATCH_ANOTHER_MSG = "Посмотреть другое"
 
 DESCRIPTION_1_MSG = """
 *Экспресс-лифтинг всего лица за 11 минут*
