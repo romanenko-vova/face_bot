@@ -8,15 +8,24 @@ from telegram.ext import (
 )
 
 from telegram.constants import ParseMode
+from face_bot.static.keys import PAYMENT_ID, SUBSCRIPTION_TYPE, FIRST_MSG
+from face_bot.static.ids import GROUP_ID
 
 from face_bot.utils.escape_text import escape_text
 
-from face_bot.static.texts import CASES_MESSAGES, EXPRESS_YOUNG_MESSAGE, DONT_BUY_MSG
-from face_bot.static.callbacks import YES_TRY, NO_TRY, ENROLL, CONFIRMATION
-
+from face_bot.static.texts import (
+    CASES_MESSAGES,
+    EXPRESS_YOUNG_MESSAGE,
+    DONT_BUY_MSG,
+    SEND_SUBS_GROUP_MSG,
+)
+from face_bot.static.callbacks import YES_TRY, NO_TRY, ENROLL
+from face_bot.jobs.id_jobs import CONFIRMATION_JOB_ID
 from face_bot.static.keys import CURRENT_CASE
 
-from face_bot.database.db import update_case
+from face_bot.database.db import update_case, save_subscription
+
+from yookassa import Payment
 
 # async def show_cases_job(context: ContextTypes.DEFAULT_TYPE) -> int:
 #     job = context.job
@@ -103,15 +112,153 @@ async def dont_buy_job(context: ContextTypes.DEFAULT_TYPE) -> int:
 async def pay_confirmation_job(context: ContextTypes.DEFAULT_TYPE) -> None:
     job = context.job
 
-    keyboard = [
-        [InlineKeyboardButton("Проверить", callback_data=CONFIRMATION)],
-    ]
+    payment_id = job.data[PAYMENT_ID]
+    payment = Payment.find_one(payment_id)
 
-    await context.bot.send_message(
-        chat_id=job.chat_id,
-        text="Проверить оплату?",
-        reply_markup=InlineKeyboardMarkup(keyboard),
-    )
+    user_name = job.data["user_name"]
+    chat_id = job.data["chat_id"]
+    user_id = job.data["user_id"]
+    first_message = job.data[FIRST_MSG]
+
+    if payment.paid:
+        await context.bot.send_message(
+            chat_id=chat_id,
+            text=escape_text("Спасибо за покупку!"),
+            parse_mode=ParseMode.MARKDOWN_V2,
+        )
+
+        subs_type = job.data[SUBSCRIPTION_TYPE]
+
+        """delete all jobs"""
+        for i in range(49):
+            remove_job_if_exists(
+                name=f"{chat_id}-{CONFIRMATION_JOB_ID}-{i}", context=context
+            )
+
+        """save in db conv_status and subscription"""
+        await save_subscription(subs=subs_type, user_id=user_id)
+
+        """send to group"""
+        await context.bot.send_message(
+            chat_id=GROUP_ID,
+            text=SEND_SUBS_GROUP_MSG,
+        )
+
+        if "@" in user_name:
+            await context.bot.send_message(
+                chat_id=GROUP_ID,
+                text=f"{user_name} - {subs_type}",
+            )
+        else:
+            await context.bot.forwardMessage(
+                chat_id=GROUP_ID,
+                from_chat_id=chat_id,
+                message_id=first_message,
+            )
+
+            await context.bot.send_message(
+                chat_id=GROUP_ID,
+                text=f"тип подписки - {subs_type}",
+            )
+
+        """send video"""
+        if int(subs_type) == 1:
+            keyboard = [
+                [
+                    InlineKeyboardButton(
+                        "YouTube",
+                        url="https://youtu.be/ndkQQETkINQ",
+                    ),
+                ],
+                [
+                    InlineKeyboardButton(
+                        "Google Disk",
+                        url="https://drive.google.com/file/d/1-kjFU-4O-UAysVpNz3VYhJ_CDl9e8zkc",
+                    ),
+                ],
+            ]
+
+            await context.bot.send_message(
+                chat_id=chat_id,
+                text=escape_text(
+                    "Смотрите урок *«Экспресс-лифтинг всего лица за 11 минут»* на удобной для Вас площадке"
+                ),
+                reply_markup=InlineKeyboardMarkup(keyboard),
+                parse_mode=ParseMode.MARKDOWN_V2,
+            )
+
+        elif int(subs_type) == 2:
+            keyboard = [
+                [
+                    InlineKeyboardButton(
+                        "YouTube",
+                        url="https://youtu.be/Xy1nhTEPO9c",
+                    ),
+                ],
+                [
+                    InlineKeyboardButton(
+                        "Google Disk",
+                        url="https://drive.google.com/file/d/1SO0IS6CG8TMLL8MW1ZMgYBBV7NwFyu7C",
+                    ),
+                ],
+            ]
+
+            await context.bot.send_message(
+                chat_id=chat_id,
+                text=escape_text(
+                    "Смотрите урок *«Гладкий лоб» за 18 минут* на удобной для Вас площадке"
+                ),
+                reply_markup=InlineKeyboardMarkup(keyboard),
+                parse_mode=ParseMode.MARKDOWN_V2,
+            )
+
+        elif int(subs_type) == 3:
+            keyboard = [
+                [
+                    InlineKeyboardButton(
+                        "YouTube",
+                        url="https://youtu.be/FrUcOn9dCIs",
+                    ),
+                ],
+                [
+                    InlineKeyboardButton(
+                        "Google Disk",
+                        url="https://drive.google.com/file/d/1mibR5gzt-pdz7b1RdDS6et4u_eYbDcDE",
+                    ),
+                ],
+            ]
+
+            await context.bot.send_message(
+                chat_id=chat_id,
+                text=escape_text(
+                    "Смотрите урок *Комплекс «АНТИ-ОТЕК» - 27 минут упражнений для тела и волшебных приемов для лица* на удобной для Вас площадке"
+                ),
+                reply_markup=InlineKeyboardMarkup(keyboard),
+                parse_mode=ParseMode.MARKDOWN_V2,
+            )
+
+        elif int(subs_type) == 4:
+            keyboard = [
+                [
+                    InlineKeyboardButton(
+                        "YouTube",
+                        url="https://youtu.be/FrUcOn9dCIs",
+                    ),
+                ],
+                [
+                    InlineKeyboardButton(
+                        "Google Disk",
+                        url="https://drive.google.com/file/d/1mibR5gzt-pdz7b1RdDS6et4u_eYbDcDE",
+                    ),
+                ],
+            ]
+
+            await context.bot.send_message(
+                chat_id=chat_id,
+                text=escape_text("Смотрите все видео на удобной для Вас площадке"),
+                reply_markup=InlineKeyboardMarkup(keyboard),
+                parse_mode=ParseMode.MARKDOWN_V2,
+            )
 
 
 def remove_job_if_exists(name: str, context: ContextTypes.DEFAULT_TYPE) -> bool:

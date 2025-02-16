@@ -19,7 +19,6 @@ from face_bot.static.keys import GROUP_MESSAGE, FIRST_MSG, CURRENT_CASE
 from face_bot.static.texts import (
     FIRST_PROGREV_MESSAGE,
     SEND_CONTACT_GROUP_MSG,
-    VIDEO_CAPTION,
 )
 from face_bot.static.ids import GROUP_ID
 
