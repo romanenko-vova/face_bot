@@ -19,6 +19,7 @@ from face_bot.handlers.subscriptions_handler import (
     subscriptions_callback,
     get_name,
     send_warning_name,
+    show_subscriptions,
 )
 
 from face_bot.static.states import (
@@ -70,7 +71,11 @@ def main():
                 ),
             ],
         },
-        fallbacks=[],
+        fallbacks=[
+            MessageHandler(
+                filters.TEXT & filters.Regex("^🛒 Магазин$"), show_subscriptions
+            )
+        ],
         persistent=False,
     )
 

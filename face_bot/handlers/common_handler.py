@@ -145,7 +145,7 @@ async def get_phone(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
             message_id=context.user_data[GROUP_MESSAGE][FIRST_MSG],
         )
 
-    """delete job БОЛЬНОЕ СООБЩЕНИЕ - 1r"""
+    """delete job БОЛЬНОЕ СООБЩЕНИЕ - 1"""
     remove_job_if_exists(name=f"{user_id}-{CASE_JOB_ID}-1", context=context)
 
     """send free movie"""
@@ -205,10 +205,10 @@ async def get_phone(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         parse_mode=ParseMode.MARKDOWN_V2,
     )
 
-    await context.bot.send_message(
-        chat_id=chat_id,
-        text="отправляется 'ПРИЕМЫ ДОПОЛНЯЮТ' через 10 секунд (10 минут в релизе)",
-    )
+    # await context.bot.send_message(
+    #     chat_id=chat_id,
+    #     text="отправляется 'ПРИЕМЫ ДОПОЛНЯЮТ' через 10 секунд (10 минут в релизе)",
+    # )
 
     """create job with ПРИЕМЫ ДОПОЛНЯЮТ"""
     context.job_queue.run_once(
@@ -218,10 +218,10 @@ async def get_phone(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         name=f"{user_id}-{YOUNG_JOB_ID}",
     )
 
-    await context.bot.send_message(
-        chat_id=chat_id,
-        text="отправляется вопрос 'попробовала?' через 15 секунд (15 минут в релизе)",
-    )
+    # await context.bot.send_message(
+    #     chat_id=chat_id,
+    #     text="отправляется вопрос 'попробовала?' через 15 секунд (15 минут в релизе)",
+    # )
 
     """create job already try"""
     context.job_queue.run_once(
@@ -233,10 +233,10 @@ async def get_phone(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
 
     """send БОЛЬНОЕ СООБЩЕНИЕ - 2"""
 
-    await context.bot.send_message(
-        chat_id=chat_id,
-        text="отправляется кейс через 60 секунд (60 минут в релизе)",
-    )
+    # await context.bot.send_message(
+    #     chat_id=chat_id,
+    #     text="отправляется кейс через 60 секунд (60 минут в релизе)",
+    # )
 
     context.job_queue.run_once(
         send_case_job,

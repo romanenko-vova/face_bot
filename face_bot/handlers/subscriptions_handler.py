@@ -15,7 +15,6 @@ from face_bot.static.callbacks import (
     MASSAGE_3,
     MASSAGE_4,
     ENROLL,
-    CONFIRMATION,
     WATCH_ANOTHER,
     PAY_MASSAGE_1,
     PAY_MASSAGE_2,
@@ -23,7 +22,7 @@ from face_bot.static.callbacks import (
     PAY_MASSAGE_4,
 )
 from face_bot.static.ids import GROUP_ID
-from face_bot.static.keys import PAYMENT_ID, SUBSCRIPTION_TYPE, URL_TO_DELETE
+from face_bot.static.keys import PAYMENT_ID, SUBSCRIPTION_TYPE
 
 from face_bot.static.texts import (
     SUBSCRIPTION_DESCRIPTION_MSG,
@@ -33,17 +32,16 @@ from face_bot.static.texts import (
     DESCRIPTION_4_MSG,
     FEEDBACK_NAME_MSG,
     SEND_NAME_MSG,
-    SEND_SUBS_GROUP_MSG,
     WATCH_ANOTHER_MSG,
 )
 
 from face_bot.utils.escape_text import escape_text
 
-from face_bot.database.db import save_name, save_subscription
+from face_bot.database.db import save_name
 
-from face_bot.jobs.jobs import pay_confirmation_job, remove_job_if_exists
-from face_bot.jobs.id_jobs import DONT_BUY_JOB_ID, CONFIRMATION_JOB_ID
-from face_bot.jobs.times import CONFIRMATION_JOB_TIME
+from face_bot.jobs.jobs import pay_confirmation_job, show_shop
+from face_bot.jobs.id_jobs import CONFIRMATION_JOB_ID, SHOW_SHOP
+from face_bot.jobs.times import CONFIRMATION_JOB_TIME, SHOW_SHOP_TIME
 
 from yookassa import Configuration, Payment
 
@@ -59,7 +57,7 @@ async def show_subscriptions(update: Update, context: ContextTypes.DEFAULT_TYPE)
     keyboard = []
     msg = SUBSCRIPTION_DESCRIPTION_MSG
 
-    if subs_type != 1:
+    if subs_type != 1 and subs_type != 4:
         keyboard.append(
             [
                 InlineKeyboardButton(
@@ -68,14 +66,14 @@ async def show_subscriptions(update: Update, context: ContextTypes.DEFAULT_TYPE)
             ]
         )
         msg += "\n1. Экспресс-лифтинг всего лица за 11 минут"
-    if subs_type != 2:
+    if subs_type != 2 and subs_type != 4:
         keyboard.append(
             [
                 InlineKeyboardButton("«Гладкий лоб» — 1290р", callback_data=MASSAGE_2),
             ]
         )
         msg += "\n2. «Гладкий лоб» за 18 минут"
-    if subs_type != 3:
+    if subs_type != 3 and subs_type != 4:
         keyboard.append(
             [
                 InlineKeyboardButton(
@@ -94,14 +92,40 @@ async def show_subscriptions(update: Update, context: ContextTypes.DEFAULT_TYPE)
         )
         msg += "\n4. Комплекс «3 в 1»"
 
-    await context.bot.send_message(
-        chat_id=chat_id,
-        text=escape_text(msg),
-        reply_markup=InlineKeyboardMarkup(keyboard),
-        parse_mode=ParseMode.MARKDOWN_V2,
-    )
+        await context.bot.send_message(
+            chat_id=chat_id,
+            text=escape_text(msg),
+            reply_markup=InlineKeyboardMarkup(keyboard),
+            parse_mode=ParseMode.MARKDOWN_V2,
+        )
 
-    return SUBSCRIPTIONS
+        return SUBSCRIPTIONS
+
+    else:
+        if (
+            "already_entered" in context.user_data
+            and context.user_data["already_entered"]
+        ):
+            await context.bot.send_message(
+                chat_id=chat_id,
+                text=escape_text(
+                    "Благодарю Вас за проявленный интерес! Обязательно сообщу Вам, когда появятся новые уроки)"
+                ),
+                reply_markup=InlineKeyboardMarkup(keyboard),
+                parse_mode=ParseMode.MARKDOWN_V2,
+            )
+
+            return SUBSCRIPTIONS
+
+        else:
+            context.user_data["already_entered"] = True
+
+            await context.bot.send_message(
+                chat_id=chat_id,
+                text="Как Вас зовут?",
+            )
+
+            return NAME
 
 
 async def subscriptions_callback(
@@ -232,10 +256,10 @@ async def subscriptions_callback(
         )
 
         "run a lot of jobs"
-        for i in range(49):
+        for i in range(30):
             context.job_queue.run_once(
                 pay_confirmation_job,
-                CONFIRMATION_JOB_TIME * (i + 1),
+                CONFIRMATION_JOB_TIME * i,
                 chat_id=chat_id,
                 name=f"{chat_id}-{CONFIRMATION_JOB_ID}-{i}",
                 data={
@@ -249,6 +273,14 @@ async def subscriptions_callback(
                     "user_id": update.effective_user.id,
                 },
             )
+
+        """show shop"""
+        context.job_queue.run_once(
+            show_shop,
+            SHOW_SHOP_TIME,
+            chat_id=chat_id,
+            name=f"{chat_id}-{SHOW_SHOP}",
+        )
 
     elif int(query.data) == PAY_MASSAGE_2:
         url, payment_id = await send_pay_request(amount=1290, description="Гладкий лоб")
@@ -273,10 +305,10 @@ async def subscriptions_callback(
         )
 
         "run a lot of jobs"
-        for i in range(49):
+        for i in range(30):
             context.job_queue.run_once(
                 pay_confirmation_job,
-                CONFIRMATION_JOB_TIME * (i + 1),
+                CONFIRMATION_JOB_TIME * i,
                 chat_id=chat_id,
                 name=f"{chat_id}-{CONFIRMATION_JOB_ID}-{i}",
                 data={
@@ -290,6 +322,14 @@ async def subscriptions_callback(
                     "user_id": update.effective_user.id,
                 },
             )
+
+        """show shop"""
+        context.job_queue.run_once(
+            show_shop,
+            SHOW_SHOP_TIME,
+            chat_id=chat_id,
+            name=f"{chat_id}-{SHOW_SHOP}",
+        )
 
     elif int(query.data) == PAY_MASSAGE_3:
         url, payment_id = await send_pay_request(amount=1890, description="АНТИ-ОТЕК")
@@ -314,10 +354,10 @@ async def subscriptions_callback(
         )
 
         "run a lot of jobs"
-        for i in range(49):
+        for i in range(30):
             context.job_queue.run_once(
                 pay_confirmation_job,
-                CONFIRMATION_JOB_TIME * (i + 1),
+                CONFIRMATION_JOB_TIME * i,
                 chat_id=chat_id,
                 name=f"{chat_id}-{CONFIRMATION_JOB_ID}-{i}",
                 data={
@@ -332,7 +372,15 @@ async def subscriptions_callback(
                 },
             )
 
-    elif int(query.data) == PAY_MASSAGE_3:
+        """show shop"""
+        context.job_queue.run_once(
+            show_shop,
+            SHOW_SHOP_TIME,
+            chat_id=chat_id,
+            name=f"{chat_id}-{SHOW_SHOP}",
+        )
+
+    elif int(query.data) == PAY_MASSAGE_4:
         url, payment_id = await send_pay_request(
             amount=1990, description="ЭКСПРЕСС-ОМОЛОЖЕНИЕ"
         )
@@ -356,11 +404,11 @@ async def subscriptions_callback(
             parse_mode=ParseMode.MARKDOWN_V2,
         )
 
-        "run a lot of jobs"
-        for i in range(49):
+        """run a lot of jobs"""
+        for i in range(30):
             context.job_queue.run_once(
                 pay_confirmation_job,
-                CONFIRMATION_JOB_TIME * (i + 1),
+                CONFIRMATION_JOB_TIME * i,
                 chat_id=chat_id,
                 name=f"{chat_id}-{CONFIRMATION_JOB_ID}-{i}",
                 data={
@@ -374,6 +422,16 @@ async def subscriptions_callback(
                     "user_id": update.effective_user.id,
                 },
             )
+
+        """show shop"""
+        context.job_queue.run_once(
+            show_shop,
+            SHOW_SHOP_TIME,
+            chat_id=chat_id,
+            name=f"{chat_id}-{SHOW_SHOP}",
+        )
+
+    return SUBSCRIPTIONS
 
 
 async def send_warning_name(update: Update, context: ContextTypes.DEFAULT_TYPE):

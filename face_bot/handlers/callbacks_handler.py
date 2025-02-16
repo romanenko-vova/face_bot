@@ -4,6 +4,8 @@ from telegram import (
     Update,
     KeyboardButton,
     ReplyKeyboardMarkup,
+    InlineKeyboardButton,
+    InlineKeyboardMarkup,
 )
 
 from face_bot.static.states import PHONE
@@ -55,10 +57,10 @@ async def user_progrev_callback(
 
         """send БОЛЬНОЕ СООБЩЕНИЕ - 1"""
 
-        await context.bot.send_message(
-            chat_id=chat_id,
-            text="отправляется кейс через 15 секунд (15 минут в релизе)",
-        )
+        # await context.bot.send_message(
+        #     chat_id=chat_id,
+        #     text="отправляется кейс через 15 секунд (15 минут в релизе)",
+        # )
 
         context.job_queue.run_once(
             send_case_job,
@@ -104,9 +106,25 @@ async def user_progrev_callback(
             message_id=update.effective_message.message_id,
         )
 
+        keyboard = [
+            [
+                InlineKeyboardButton(
+                    "YouTube",
+                    url="https://youtu.be/cOm_aAKFK5Y",
+                ),
+            ],
+            [
+                InlineKeyboardButton(
+                    "Google Disk",
+                    url="https://drive.google.com/file/d/1c7fM94C0jXpd4TBZ4mlYnPSaqxH81V6p/view?usp=drivesdk",
+                ),
+            ],
+        ]
+
         await context.bot.send_message(
             chat_id=chat_id,
             text=escape_text("*Скорее смотри*"),
+            keyboard=InlineKeyboardMarkup(keyboard),
             parse_mode=ParseMode.MARKDOWN_V2,
         )
 
