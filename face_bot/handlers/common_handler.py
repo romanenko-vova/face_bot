@@ -75,7 +75,7 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
             ],
         ]
 
-        with open("face_bot/img/face.jpg", "rb") as f:
+        with open("face_bot/img/face.jpeg", "rb") as f:
             await context.bot.send_photo(
                 chat_id=chat_id,
                 photo=f,
