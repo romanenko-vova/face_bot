@@ -14,4 +14,9 @@
     ENROLL,
     CONFIRMATION,
     PAY,
-) = range(15)
+    WATCH_ANOTHER,
+    PAY_MASSAGE_1,
+    PAY_MASSAGE_2,
+    PAY_MASSAGE_3,
+    PAY_MASSAGE_4,
+) = range(20)

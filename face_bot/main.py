@@ -10,6 +10,7 @@ from telegram.ext import (
     CallbackQueryHandler,
     MessageHandler,
     filters,
+    PicklePersistence,
 )
 
 from face_bot.database.db import init_db
@@ -19,6 +20,7 @@ from face_bot.handlers.subscriptions_handler import (
     subscriptions_callback,
     get_name,
     send_warning_name,
+    show_subscriptions,
 )
 
 from face_bot.static.states import (
@@ -38,17 +40,10 @@ load_dotenv()
 
 def main():
     print("MAIN")
-
-    """
-    TODO 
-    1. нужна фотка татьяны или массажа оставить
-    2. добавить видосы и указать их время в таймингах для джобов
-    3. создать 3 времени: 12, 15, 18 
-        - если ничего не купил, присылаем кейсы и переводим на меню покупок
-        - если купил какую-то одну, не фул, присылаем информацию о других подписках
-    """
-
-    application = Application.builder().token(os.getenv("TOKEN")).build()
+    persistence = PicklePersistence(filepath="users_cache")
+    application = (
+        Application.builder().token(os.getenv("TOKEN")).persistence(persistence).build()
+    )
 
     conv_handler = ConversationHandler(
         entry_points=[CommandHandler("start", start)],
@@ -60,7 +55,10 @@ def main():
                 MessageHandler(filters.CONTACT, get_phone),
                 MessageHandler(filters.Regex("^7\d{10}$"), get_phone),
                 MessageHandler(
-                    filters.TEXT & (~filters.Regex("^7\d{10}$")) & (~filters.CONTACT),
+                    filters.TEXT
+                    & (~filters.Regex("^7\d{10}$"))
+                    & (~filters.CONTACT)
+                    & (~filters.COMMAND),
                     send_warning_phone,
                 ),
             ],
@@ -79,7 +77,14 @@ def main():
                 ),
             ],
         },
-        fallbacks=[],
+        fallbacks=[
+            MessageHandler(
+                filters.TEXT & filters.Regex("^🛒 Магазин$"), show_subscriptions
+            ),
+            CommandHandler("start", start),
+        ],
+        persistent=True,
+        name="conv_handler",
     )
 
     application.add_handler(conv_handler)

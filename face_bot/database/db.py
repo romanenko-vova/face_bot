@@ -17,7 +17,8 @@ async def init_db():
             CREATE TABLE IF NOT EXISTS users (
                 id INTEGER PRIMARY KEY,
                 id_tg INTEGER default 0,
-                status INTEGER default 0,        
+                status INTEGER default 0, 
+                case_num INTEGER default 1,       
                 name TEXT,
                 phone TEXT,
                 subscriptions TEXT default ""
@@ -44,6 +45,39 @@ async def register(user_id, name):
                         name,
                     ),
                 )
+
+            await db.commit()
+
+
+async def get_current_case(user_id):
+    current_case = 0
+
+    async with aiosqlite.connect(DB_PATH) as db:
+        async with db.execute(
+            "SELECT case_num FROM users WHERE id_tg = ?", (user_id,)
+        ) as cursor:
+            row = await cursor.fetchone()
+
+            current_case = row[0]
+
+    return current_case
+
+
+async def update_case(user_id):
+    async with aiosqlite.connect(DB_PATH) as db:
+        async with db.execute(
+            "SELECT case_num FROM users WHERE id_tg = ?", (user_id,)
+        ) as cursor:
+            row = await cursor.fetchone()
+
+            await db.execute(
+                """
+                        UPDATE users
+                        SET case_num = ?
+                        WHERE id_tg = ?
+                    """,
+                (row[0] + 1, user_id),
+            )
 
             await db.commit()
 

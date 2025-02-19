@@ -9,10 +9,11 @@ from telegram import (
 )
 
 from face_bot.static.states import PHONE
+from face_bot.static.keys import CURRENT_CASE
 from face_bot.static.callbacks import LEARN_HOW, YES_TRY, NO_TRY
 from face_bot.static.conversions import TRY_GUIDE_CONV
 
-from face_bot.static.texts import CONTACT_MESSAGE, CASE_2_MSG
+from face_bot.static.texts import CONTACT_MESSAGE
 
 from face_bot.utils.escape_text import escape_text
 
@@ -20,7 +21,7 @@ from face_bot.database.db import update_status
 
 from face_bot.handlers.subscriptions_handler import show_subscriptions
 
-from face_bot.jobs.jobs import show_cases_job, already_try_job
+from face_bot.jobs.jobs import send_case_job, already_try_job, remove_job_if_exists
 from face_bot.jobs.id_jobs import CASE_JOB_ID, ALREADY_TRY_JOB_ID
 from face_bot.jobs.times import CASES_TIME, ALREADY_TRY_JOB_TIME
 
@@ -35,17 +36,41 @@ async def user_progrev_callback(
     user_id = update._effective_user.id
 
     if int(query.data) == LEARN_HOW:
-        """TODO send video"""
+        # with open("face_bot/video/movie_1st.mp4", "rb") as f:
+        #     await context.bot.send_video(
+        #         chat_id=chat_id,
+        #         video=f,
+        #         caption=escape_text(VIDEO_CAPTION),
+        #         parse_mode=ParseMode.MARKDOWN_V2,
+        #     )
 
-        """create job with cases"""
+        # """TODO send all cases"""
+        # for i in range(4):
+        #     context.job_queue.run_once(
+        #         send_case_job,
+        #         CASES_TIME,
+        #         chat_id=user_id,
+        #         name=f"{user_id}-{CASE_JOB_ID}-{i}",
+        #         data={CURRENT_CASE: i},
+        #         # data={CURRENT_CASE: await get_current_case(user_id=user_id)},
+        #     )
+
+        """send БОЛЬНОЕ СООБЩЕНИЕ - 1"""
+
+        # await context.bot.send_message(
+        #     chat_id=chat_id,
+        #     text="отправляется кейс через 15 секунд (15 минут в релизе)",
+        # )
+
         context.job_queue.run_once(
-            show_cases_job,
+            send_case_job,
             CASES_TIME,
             chat_id=user_id,
-            name=f"{user_id}-{CASE_JOB_ID}",
+            name=f"{user_id}-{CASE_JOB_ID}-1",
+            data={CURRENT_CASE: 1},
         )
 
-        keyboard = [[KeyboardButton("Отправить контакт", request_contact=True)]]
+        keyboard = [[KeyboardButton("📱 Отправить контакт", request_contact=True)]]
 
         await context.bot.send_message(
             chat_id=chat_id,
@@ -53,6 +78,7 @@ async def user_progrev_callback(
             parse_mode=ParseMode.MARKDOWN_V2,
             reply_markup=ReplyKeyboardMarkup(
                 keyboard,
+                resize_keyboard=True,
                 one_time_keyboard=True,
                 input_field_placeholder="79998765432 или ⬇️",
             ),
@@ -66,16 +92,11 @@ async def user_progrev_callback(
             message_id=update.effective_message.message_id,
         )
 
+        # remove БОЛЬНОЕ СООБЩЕНИЕ - 2
+        remove_job_if_exists(name=f"{user_id}-{CASE_JOB_ID}-2", context=context)
+
         """change status to 3"""
         await update_status(status=TRY_GUIDE_CONV, user_id=user_id)
-
-        with open("face_bot/img/case_2.jpg", "rb") as f:
-            await context.bot.send_photo(
-                chat_id=chat_id,
-                photo=f,
-                caption=escape_text(CASE_2_MSG),
-                parse_mode=ParseMode.MARKDOWN_V2,
-            )
 
         return await show_subscriptions(update, context)
 
@@ -88,8 +109,14 @@ async def user_progrev_callback(
         keyboard = [
             [
                 InlineKeyboardButton(
-                    "Посмотреть",
-                    url="https://www.notion.so/51287ed9579b405da2640f30dd4669cb?pvs=21",
+                    "YouTube",
+                    url="https://youtu.be/cOm_aAKFK5Y",
+                ),
+            ],
+            [
+                InlineKeyboardButton(
+                    "Google Disk",
+                    url="https://drive.google.com/file/d/1c7fM94C0jXpd4TBZ4mlYnPSaqxH81V6p/view?usp=drivesdk",
                 ),
             ],
         ]
@@ -97,8 +124,13 @@ async def user_progrev_callback(
         await context.bot.send_message(
             chat_id=chat_id,
             text=escape_text("*Скорее смотри*"),
-            reply_markup=InlineKeyboardMarkup(keyboard),
+            keyboard=InlineKeyboardMarkup(keyboard),
             parse_mode=ParseMode.MARKDOWN_V2,
+        )
+
+        await context.bot.send_message(
+            chat_id=chat_id,
+            text="отправляется вопрос 'попробовала?' через 15 секунд (15 минут в релизе)",
         )
 
         context.job_queue.run_once(

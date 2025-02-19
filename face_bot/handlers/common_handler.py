@@ -15,14 +15,10 @@ from face_bot.static.callbacks import (
     MAIL,
     LEARN_HOW,
 )
-from face_bot.static.keys import (
-    GROUP_MESSAGE,
-    FIRST_MSG,
-)
+from face_bot.static.keys import GROUP_MESSAGE, FIRST_MSG, CURRENT_CASE
 from face_bot.static.texts import (
     FIRST_PROGREV_MESSAGE,
     SEND_CONTACT_GROUP_MSG,
-    CHECK_LIST_MESSAGE,
 )
 from face_bot.static.ids import GROUP_ID
 
@@ -32,9 +28,14 @@ from face_bot.database.db import register, save_phone
 
 from face_bot.handlers.subscriptions_handler import show_subscriptions
 
-from face_bot.jobs.jobs import young_guide_job, already_try_job
-from face_bot.jobs.id_jobs import YOUNG_JOB_ID, ALREADY_TRY_JOB_ID
-from face_bot.jobs.times import YOUNG_GUIDE_TIME, ALREADY_TRY_JOB_TIME
+from face_bot.jobs.jobs import (
+    young_guide_job,
+    already_try_job,
+    remove_job_if_exists,
+    send_case_job,
+)
+from face_bot.jobs.id_jobs import YOUNG_JOB_ID, ALREADY_TRY_JOB_ID, CASE_JOB_ID
+from face_bot.jobs.times import YOUNG_GUIDE_TIME, ALREADY_TRY_JOB_TIME, CASES_TIME
 
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -70,11 +71,11 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
         keyboard = [
             [
-                InlineKeyboardButton("Узнать как", callback_data=LEARN_HOW),
+                InlineKeyboardButton("Узнать", callback_data=LEARN_HOW),
             ],
         ]
 
-        with open("face_bot/img/face.jpg", "rb") as f:
+        with open("face_bot/img/face.jpeg", "rb") as f:
             await context.bot.send_photo(
                 chat_id=chat_id,
                 photo=f,
@@ -125,42 +126,102 @@ async def get_phone(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
 
     await save_phone(user_id=user_id, phone_number=phone_number)
 
-    """send user to group"""
+    # """send user to group"""
+    # await context.bot.send_message(
+    #     chat_id=GROUP_ID,
+    #     text=SEND_CONTACT_GROUP_MSG,
+    # )
+
+    # if "@" in update.effective_user.name:
+    #     await context.bot.send_message(
+    #         chat_id=GROUP_ID,
+    #         text=update.effective_user.name,
+    #     )
+
+    # else:
+    #     await context.bot.forwardMessage(
+    #         chat_id=GROUP_ID,
+    #         from_chat_id=chat_id,
+    #         message_id=context.user_data[GROUP_MESSAGE][FIRST_MSG],
+    #     )
+
+    """delete job БОЛЬНОЕ СООБЩЕНИЕ - 1"""
+    remove_job_if_exists(name=f"{user_id}-{CASE_JOB_ID}-1", context=context)
+
+    """send free movie"""
+    # with open("face_bot/video/free.MP4", "rb") as f:
+    #     await context.bot.send_message(
+    #         chat_id=chat_id,
+    #         text="send video",
+    #     )
+
+    # send video
+
+    # await context.bot.send_video(
+    #     chat_id=chat_id,
+    #     video=f,
+    #     caption=escape_text(VIDEO_CAPTION),
+    #     parse_mode=ParseMode.MARKDOWN_V2,
+    #     reply_markup=ReplyKeyboardRemove(),
+    #     read_timeout=60,
+    #     write_timeout=60,
+    # )
+
+    # await context.bot.send_document(
+    #     chat_id=chat_id,
+    #     document=f,
+    #     caption=escape_text(VIDEO_CAPTION),
+    #     parse_mode=ParseMode.MARKDOWN_V2,
+    #     read_timeout=60,
+    #     write_timeout=60,
+    # )
+
     await context.bot.send_message(
-        chat_id=GROUP_ID,
-        text=SEND_CONTACT_GROUP_MSG,
+        chat_id=chat_id,
+        text=escape_text("Спасибо ❤"),
+        reply_markup=ReplyKeyboardRemove(),
+        parse_mode=ParseMode.MARKDOWN_V2,
     )
 
-    if "@" in update.effective_user.name:
-        await context.bot.send_message(
-            chat_id=GROUP_ID,
-            text=update.effective_user.name,
-        )
-
-    else:
-        await context.bot.forwardMessage(
-            chat_id=GROUP_ID,
-            from_chat_id=chat_id,
-            message_id=context.user_data[GROUP_MESSAGE][FIRST_MSG],
-        )
-
-    """send url with guide"""
     keyboard = [
         [
             InlineKeyboardButton(
-                "Чек-лист",
-                url="https://www.notion.so/51287ed9579b405da2640f30dd4669cb?pvs=21",
+                "YouTube",
+                url="https://youtu.be/cOm_aAKFK5Y",
+            ),
+        ],
+        [
+            InlineKeyboardButton(
+                "Google Disk",
+                url="https://drive.google.com/file/d/1c7fM94C0jXpd4TBZ4mlYnPSaqxH81V6p/view?usp=drivesdk",
             ),
         ],
     ]
 
-    """create job with express in 1 hour"""
+    await context.bot.send_message(
+        chat_id=chat_id,
+        text=escape_text("Смотрите видео на удобной для Вас площадке"),
+        reply_markup=InlineKeyboardMarkup(keyboard),
+        parse_mode=ParseMode.MARKDOWN_V2,
+    )
+
+    # await context.bot.send_message(
+    #     chat_id=chat_id,
+    #     text="отправляется 'ПРИЕМЫ ДОПОЛНЯЮТ' через 10 секунд (10 минут в релизе)",
+    # )
+
+    """create job with ПРИЕМЫ ДОПОЛНЯЮТ"""
     context.job_queue.run_once(
         young_guide_job,
         YOUNG_GUIDE_TIME,
         chat_id=user_id,
         name=f"{user_id}-{YOUNG_JOB_ID}",
     )
+
+    # await context.bot.send_message(
+    #     chat_id=chat_id,
+    #     text="отправляется вопрос 'попробовала?' через 15 секунд (15 минут в релизе)",
+    # )
 
     """create job already try"""
     context.job_queue.run_once(
@@ -170,17 +231,21 @@ async def get_phone(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         name=f"{user_id}-{ALREADY_TRY_JOB_ID}",
     )
 
-    await context.bot.send_message(
+    """send БОЛЬНОЕ СООБЩЕНИЕ - 2"""
+
+    # await context.bot.send_message(
+    #     chat_id=chat_id,
+    #     text="отправляется кейс через 60 секунд (60 минут в релизе)",
+    # )
+
+    context.job_queue.run_once(
+        send_case_job,
+        CASES_TIME * 4,
         chat_id=user_id,
-        text="Спасибо!",
-        reply_markup=ReplyKeyboardRemove(),
+        name=f"{user_id}-{CASE_JOB_ID}-2",
+        data={CURRENT_CASE: 2},
     )
 
-    await context.bot.send_message(
-        chat_id=user_id,
-        text=escape_text(CHECK_LIST_MESSAGE),
-        reply_markup=InlineKeyboardMarkup(keyboard),
-        parse_mode=ParseMode.MARKDOWN_V2,
-    )
+    # TODO may be send already try again
 
     return PROGREV_MESSAGES
