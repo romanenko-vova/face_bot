@@ -222,7 +222,7 @@ async def subscriptions_callback(
 
         await context.bot.send_message(
             chat_id=chat_id,
-            text=escape_text(DESCRIPTION_4_MSG),
+            text=DESCRIPTION_4_MSG,
             reply_markup=InlineKeyboardMarkup(keyboard),
             parse_mode=ParseMode.MARKDOWN_V2,
         )

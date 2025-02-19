@@ -75,7 +75,7 @@ async def young_guide_job(context: ContextTypes.DEFAULT_TYPE) -> int:
 
     await context.bot.send_message(
         chat_id=job.chat_id,
-        text=escape_text(EXPRESS_YOUNG_MESSAGE),
+        text=EXPRESS_YOUNG_MESSAGE,
         reply_markup=ReplyKeyboardMarkup(
             keyboard, resize_keyboard=True, one_time_keyboard=True
         ),

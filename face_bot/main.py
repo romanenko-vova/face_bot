@@ -10,6 +10,7 @@ from telegram.ext import (
     CallbackQueryHandler,
     MessageHandler,
     filters,
+    PicklePersistence,
 )
 
 from face_bot.database.db import init_db
@@ -39,8 +40,10 @@ load_dotenv()
 
 def main():
     print("MAIN")
-
-    application = Application.builder().token(os.getenv("TOKEN")).build()
+    persistence = PicklePersistence(filepath="users_cache")
+    application = (
+        Application.builder().token(os.getenv("TOKEN")).persistence(persistence).build()
+    )
 
     conv_handler = ConversationHandler(
         entry_points=[CommandHandler("start", start)],
@@ -52,7 +55,10 @@ def main():
                 MessageHandler(filters.CONTACT, get_phone),
                 MessageHandler(filters.Regex("^7\d{10}$"), get_phone),
                 MessageHandler(
-                    filters.TEXT & (~filters.Regex("^7\d{10}$")) & (~filters.CONTACT),
+                    filters.TEXT
+                    & (~filters.Regex("^7\d{10}$"))
+                    & (~filters.CONTACT)
+                    & (~filters.COMMAND),
                     send_warning_phone,
                 ),
             ],
@@ -74,9 +80,11 @@ def main():
         fallbacks=[
             MessageHandler(
                 filters.TEXT & filters.Regex("^🛒 Магазин$"), show_subscriptions
-            )
+            ),
+            CommandHandler("start", start),
         ],
-        persistent=False,
+        persistent=True,
+        name="conv_handler",
     )
 
     application.add_handler(conv_handler)

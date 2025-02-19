@@ -126,24 +126,24 @@ async def get_phone(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
 
     await save_phone(user_id=user_id, phone_number=phone_number)
 
-    """send user to group"""
-    await context.bot.send_message(
-        chat_id=GROUP_ID,
-        text=SEND_CONTACT_GROUP_MSG,
-    )
+    # """send user to group"""
+    # await context.bot.send_message(
+    #     chat_id=GROUP_ID,
+    #     text=SEND_CONTACT_GROUP_MSG,
+    # )
 
-    if "@" in update.effective_user.name:
-        await context.bot.send_message(
-            chat_id=GROUP_ID,
-            text=update.effective_user.name,
-        )
+    # if "@" in update.effective_user.name:
+    #     await context.bot.send_message(
+    #         chat_id=GROUP_ID,
+    #         text=update.effective_user.name,
+    #     )
 
-    else:
-        await context.bot.forwardMessage(
-            chat_id=GROUP_ID,
-            from_chat_id=chat_id,
-            message_id=context.user_data[GROUP_MESSAGE][FIRST_MSG],
-        )
+    # else:
+    #     await context.bot.forwardMessage(
+    #         chat_id=GROUP_ID,
+    #         from_chat_id=chat_id,
+    #         message_id=context.user_data[GROUP_MESSAGE][FIRST_MSG],
+    #     )
 
     """delete job БОЛЬНОЕ СООБЩЕНИЕ - 1"""
     remove_job_if_exists(name=f"{user_id}-{CASE_JOB_ID}-1", context=context)
