@@ -15,7 +15,7 @@ from telegram.ext import (
 
 from face_bot.database.db import init_db
 
-from face_bot.handlers.common_handler import start, get_phone, send_warning_phone
+from face_bot.handlers.common_handler import start, get_phone, send_warning_phone, cancel
 from face_bot.handlers.subscriptions_handler import (
     subscriptions_callback,
     get_name,
@@ -35,65 +35,108 @@ from face_bot.static.states import (
 from face_bot.handlers.callbacks_handler import user_progrev_callback
 from face_bot.handlers.admin_handler import admin_callbacks, get_mail
 
+from face_bot.utils.logger import logger
+from face_bot.utils.error_handler import global_error_handler
+from face_bot.utils.session_manager import schedule_session_cleanup
+from face_bot.static.config import USERS_CACHE_PATH, PHONE_REGEX, NAME_REGEX
+
 load_dotenv()
 
 
 def main():
-    print("MAIN")
-    persistence = PicklePersistence(filepath="users_cache")
-    application = (
-        Application.builder().token(os.getenv("TOKEN")).persistence(persistence).build()
-    )
+    logger.info("Запуск бота")
+    try:
+        persistence = PicklePersistence(filepath=USERS_CACHE_PATH)
+        application = (
+            Application.builder()
+            .token(os.getenv("TOKEN"))
+            .persistence(persistence)
+            .build()
+        )
 
-    conv_handler = ConversationHandler(
-        entry_points=[CommandHandler("start", start)],
-        states={
-            PROGREV_MESSAGES: [
-                CallbackQueryHandler(user_progrev_callback),
-            ],
-            PHONE: [
-                MessageHandler(filters.CONTACT, get_phone),
-                MessageHandler(filters.Regex("^7\d{10}$"), get_phone),
+        # Добавление глобального обработчика ошибок
+        application.add_error_handler(global_error_handler)
+
+        # Настройка обработчика диалога
+        conv_handler = ConversationHandler(
+            entry_points=[CommandHandler("start", start)],
+            states={
+                PROGREV_MESSAGES: [
+                    CallbackQueryHandler(user_progrev_callback),
+                    CommandHandler("cancel", cancel),
+                    MessageHandler(filters.TEXT & ~filters.COMMAND, lambda u, c: start(u, c)),
+                ],
+                PHONE: [
+                    MessageHandler(filters.CONTACT, get_phone),
+                    MessageHandler(filters.Regex(PHONE_REGEX), get_phone),
+                    CommandHandler("cancel", cancel),
+                    MessageHandler(
+                        filters.TEXT
+                        & (~filters.Regex(PHONE_REGEX))
+                        & (~filters.CONTACT)
+                        & (~filters.COMMAND),
+                        send_warning_phone,
+                    ),
+                ],
+                ADMIN_COMMANDS: [
+                    CallbackQueryHandler(admin_callbacks),
+                    CommandHandler("cancel", cancel),
+                    MessageHandler(filters.TEXT & ~filters.COMMAND, admin_callbacks),
+                ],
+                MAILING: [
+                    MessageHandler(filters.TEXT & ~filters.COMMAND, get_mail),
+                    CommandHandler("cancel", cancel),
+                ],
+                SUBSCRIPTIONS: [
+                    CallbackQueryHandler(subscriptions_callback),
+                    CommandHandler("cancel", cancel),
+                    MessageHandler(filters.TEXT & ~filters.COMMAND, show_subscriptions),
+                ],
+                NAME: [
+                    MessageHandler(filters.Regex(NAME_REGEX), get_name),
+                    CommandHandler("cancel", cancel),
+                    MessageHandler(
+                        filters.TEXT & (~filters.Regex(NAME_REGEX)),
+                        send_warning_name,
+                    ),
+                ],
+            },
+            fallbacks=[
                 MessageHandler(
-                    filters.TEXT
-                    & (~filters.Regex("^7\d{10}$"))
-                    & (~filters.CONTACT)
-                    & (~filters.COMMAND),
-                    send_warning_phone,
+                    filters.TEXT & filters.Regex("^🛒 Магазин$"), show_subscriptions
                 ),
+                CommandHandler("start", start),
+                CommandHandler("cancel", cancel),
+                # Обработчик для неизвестных команд
+                MessageHandler(filters.COMMAND, start),
+                # Обработчик для всех остальных сообщений
+                MessageHandler(filters.ALL, lambda u, c: start(u, c)),
             ],
-            ADMIN_COMMANDS: [
-                CallbackQueryHandler(admin_callbacks),
-            ],
-            MAILING: [MessageHandler(filters.TEXT & ~filters.COMMAND, get_mail)],
-            SUBSCRIPTIONS: [
-                CallbackQueryHandler(subscriptions_callback),
-            ],
-            NAME: [
-                MessageHandler(filters.Regex("^[A-Za-zА-Яа-яёЁ\-'\s]+$"), get_name),
-                MessageHandler(
-                    filters.TEXT & (~filters.Regex("^[A-Za-zА-Яа-яёЁ\-'\s]+$")),
-                    send_warning_name,
-                ),
-            ],
-        },
-        fallbacks=[
-            MessageHandler(
-                filters.TEXT & filters.Regex("^🛒 Магазин$"), show_subscriptions
-            ),
-            CommandHandler("start", start),
-        ],
-        persistent=True,
-        name="conv_handler",
-    )
+            persistent=True,
+            name="conv_handler",
+            allow_reentry=True,  # Разрешаем повторный вход в разговор
+        )
 
-    application.add_handler(conv_handler)
+        application.add_handler(conv_handler)
 
-    application.run_polling()
+        # Настройка очистки сессий
+        schedule_session_cleanup(application)
+
+        logger.info("Бот запущен и готов к работе")
+        application.run_polling()
+
+    except Exception as e:
+        logger.critical(f"Критическая ошибка при запуске бота: {str(e)}", exc_info=True)
+        raise
 
 
 if __name__ == "__main__":
-    loop = asyncio.get_event_loop()
-    loop.run_until_complete(init_db())
+    try:
+        logger.info("Инициализация базы данных")
+        loop = asyncio.get_event_loop()
+        loop.run_until_complete(init_db())
+        logger.info("База данных успешно инициализирована")
 
-    main()
+        main()
+    except Exception as e:
+        logger.critical(f"Ошибка при запуске приложения: {str(e)}", exc_info=True)

@@ -36,39 +36,8 @@ async def user_progrev_callback(
     user_id = update._effective_user.id
 
     if int(query.data) == LEARN_HOW:
-        # with open("face_bot/video/movie_1st.mp4", "rb") as f:
-        #     await context.bot.send_video(
-        #         chat_id=chat_id,
-        #         video=f,
-        #         caption=escape_text(VIDEO_CAPTION),
-        #         parse_mode=ParseMode.MARKDOWN_V2,
-        #     )
-
-        # """TODO send all cases"""
-        # for i in range(4):
-        #     context.job_queue.run_once(
-        #         send_case_job,
-        #         CASES_TIME,
-        #         chat_id=user_id,
-        #         name=f"{user_id}-{CASE_JOB_ID}-{i}",
-        #         data={CURRENT_CASE: i},
-        #         # data={CURRENT_CASE: await get_current_case(user_id=user_id)},
-        #     )
-
-        """send БОЛЬНОЕ СООБЩЕНИЕ - 1"""
-
-        # await context.bot.send_message(
-        #     chat_id=chat_id,
-        #     text="отправляется кейс через 15 секунд (15 минут в релизе)",
-        # )
-
-        context.job_queue.run_once(
-            send_case_job,
-            CASES_TIME,
-            chat_id=user_id,
-            name=f"{user_id}-{CASE_JOB_ID}-1",
-            data={CURRENT_CASE: 1},
-        )
+        
+        await send_case_job(context, CASES_TIME, user_id)
 
         keyboard = [[KeyboardButton("📱 Отправить контакт", request_contact=True)]]
 
@@ -124,14 +93,14 @@ async def user_progrev_callback(
         await context.bot.send_message(
             chat_id=chat_id,
             text=escape_text("*Скорее смотри*"),
-            keyboard=InlineKeyboardMarkup(keyboard),
+            reply_markup=InlineKeyboardMarkup(keyboard),
             parse_mode=ParseMode.MARKDOWN_V2,
         )
 
-        await context.bot.send_message(
-            chat_id=chat_id,
-            text="отправляется вопрос 'попробовала?' через 15 секунд (15 минут в релизе)",
-        )
+        # await context.bot.send_message(
+        #     chat_id=chat_id,
+        #     text="отправляется вопрос 'попробовала?' через 15 секунд (15 минут в релизе)",
+        # )
 
         context.job_queue.run_once(
             already_try_job,
@@ -139,9 +108,6 @@ async def user_progrev_callback(
             chat_id=user_id,
             name=f"{user_id}-{ALREADY_TRY_JOB_ID}",
         )
-
-        """TODO start 2"""
-        """TODO update admin with 3"""
 
     else:
         await context.bot.delete_message(

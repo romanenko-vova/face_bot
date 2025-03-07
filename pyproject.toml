@@ -15,8 +15,12 @@ uvicorn = ">=0.23.2,<0.24.0"
 asgiref = ">=3.7.2,<3.8.0"
 ngrok = "^1.4.0"
 yookassa = "^3.3.0"
+watchdog = "^6.0.0"
 
 
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
+
+[tool.poetry.scripts]
+dev = "python:dev_reload.main"

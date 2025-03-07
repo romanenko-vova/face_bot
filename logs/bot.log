@@ -1,0 +1,745 @@
+2025-03-06 15:54:40,135 - face_bot - INFO - Инициализация базы данных
+2025-03-06 15:54:40,138 - face_bot - INFO - База данных успешно инициализирована
+2025-03-06 15:54:40,138 - face_bot - INFO - Запуск бота
+2025-03-06 15:54:40,156 - face_bot - INFO - Запланирована регулярная очистка устаревших сессий
+2025-03-06 15:54:40,156 - face_bot - INFO - Бот запущен и готов к работе
+2025-03-06 15:54:45,958 - face_bot - ERROR - Conflict error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+2025-03-06 15:54:50,164 - face_bot - ERROR - Необработанное исключение: object NoneType can't be used in 'await' expression
+Traceback (most recent call last):
+  File "/Users/vladimirromanenko/programs/face_bot/face_bot/utils/error_handler.py", line 79, in global_error_handler
+    raise error
+  File "/Users/vladimirromanenko/Library/Caches/pypoetry/virtualenvs/face-bot-mgCG9TEw-py3.12/lib/python3.12/site-packages/telegram/ext/_jobqueue.py", line 971, in _run
+    await self.callback(context)
+TypeError: object NoneType can't be used in 'await' expression
+
+2025-03-06 15:54:51,794 - face_bot - ERROR - Conflict error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+2025-03-06 15:57:49,374 - face_bot - INFO - Инициализация базы данных
+2025-03-06 15:57:49,379 - face_bot - INFO - База данных успешно инициализирована
+2025-03-06 15:57:49,379 - face_bot - INFO - Запуск бота
+2025-03-06 15:57:49,411 - face_bot - INFO - Запланирована регулярная очистка устаревших сессий
+2025-03-06 15:57:49,411 - face_bot - INFO - Бот запущен и готов к работе
+2025-03-06 15:57:59,436 - face_bot - ERROR - Необработанное исключение: object NoneType can't be used in 'await' expression
+Traceback (most recent call last):
+  File "/Users/vladimirromanenko/programs/face_bot/face_bot/utils/error_handler.py", line 79, in global_error_handler
+    raise error
+  File "/Users/vladimirromanenko/Library/Caches/pypoetry/virtualenvs/face-bot-mgCG9TEw-py3.12/lib/python3.12/site-packages/telegram/ext/_jobqueue.py", line 971, in _run
+    await self.callback(context)
+TypeError: object NoneType can't be used in 'await' expression
+
+2025-03-06 15:58:29,664 - face_bot - INFO - Пользователь 431425615 запустил команду /start
+2025-03-06 16:01:50,002 - face_bot - INFO - Инициализация базы данных
+2025-03-06 16:01:50,003 - face_bot - INFO - База данных успешно инициализирована
+2025-03-06 16:01:50,004 - face_bot - INFO - Запуск бота
+2025-03-06 16:01:50,020 - face_bot - INFO - Запланирована регулярная очистка устаревших сессий
+2025-03-06 16:01:50,020 - face_bot - INFO - Бот запущен и готов к работе
+2025-03-06 16:02:00,026 - face_bot - ERROR - Необработанное исключение: object NoneType can't be used in 'await' expression
+Traceback (most recent call last):
+  File "/Users/vladimirromanenko/programs/face_bot/face_bot/utils/error_handler.py", line 79, in global_error_handler
+    raise error
+  File "/Users/vladimirromanenko/Library/Caches/pypoetry/virtualenvs/face-bot-mgCG9TEw-py3.12/lib/python3.12/site-packages/telegram/ext/_jobqueue.py", line 971, in _run
+    await self.callback(context)
+TypeError: object NoneType can't be used in 'await' expression
+
+2025-03-06 16:02:03,156 - face_bot - INFO - Пользователь 431425615 запустил команду /start
+2025-03-06 16:06:45,830 - face_bot - INFO - Инициализация базы данных
+2025-03-06 16:06:45,831 - face_bot - INFO - База данных успешно инициализирована
+2025-03-06 16:06:45,831 - face_bot - INFO - Запуск бота
+2025-03-06 16:06:45,848 - face_bot - INFO - Запланирована регулярная очистка устаревших сессий
+2025-03-06 16:06:45,848 - face_bot - INFO - Бот запущен и готов к работе
+2025-03-06 16:06:48,790 - face_bot - INFO - Пользователь 431425615 запустил команду /start
+2025-03-06 16:44:00,869 - face_bot - ERROR - Network error: httpx.ConnectError: [Errno 8] nodename nor servname provided, or not known
+2025-03-06 16:59:39,856 - face_bot - ERROR - Network error: httpx.ConnectError: [Errno 8] nodename nor servname provided, or not known
+2025-03-06 17:04:44,547 - face_bot - ERROR - Network error: httpx.ConnectError: [Errno 8] nodename nor servname provided, or not known
+2025-03-06 17:39:32,423 - face_bot - ERROR - Network error: httpx.RemoteProtocolError: Server disconnected without sending a response.
+2025-03-07 00:51:14,290 - face_bot - INFO - Инициализация базы данных
+2025-03-07 00:51:14,294 - face_bot - INFO - База данных успешно инициализирована
+2025-03-07 00:51:14,294 - face_bot - INFO - Запуск бота
+2025-03-07 00:51:14,315 - face_bot - INFO - Запланирована регулярная очистка устаревших сессий
+2025-03-07 00:51:14,315 - face_bot - INFO - Бот запущен и готов к работе
+2025-03-07 00:52:59,160 - face_bot - INFO - Пользователь 431425615 запустил команду /start
+2025-03-07 00:54:12,887 - face_bot - INFO - Инициализация базы данных
+2025-03-07 00:54:12,888 - face_bot - INFO - База данных успешно инициализирована
+2025-03-07 00:54:12,888 - face_bot - INFO - Запуск бота
+2025-03-07 00:54:12,905 - face_bot - INFO - Запланирована регулярная очистка устаревших сессий
+2025-03-07 00:54:12,905 - face_bot - INFO - Бот запущен и готов к работе
+2025-03-07 00:54:18,431 - face_bot - INFO - Пользователь 431425615 запустил команду /start
+2025-03-07 01:14:14,334 - face_bot - INFO - Инициализация базы данных
+2025-03-07 01:14:14,335 - face_bot - INFO - База данных успешно инициализирована
+2025-03-07 01:14:14,335 - face_bot - INFO - Запуск бота
+2025-03-07 01:14:14,351 - face_bot - INFO - Запланирована регулярная очистка устаревших сессий
+2025-03-07 01:14:14,351 - face_bot - INFO - Бот запущен и готов к работе
+2025-03-07 01:14:30,078 - face_bot - INFO - Пользователь 431425615 запустил команду /start
+2025-03-07 01:14:38,895 - face_bot - INFO - Получен номер телефона от пользователя 431425615
+2025-03-07 01:14:39,062 - face_bot - ERROR - Не удалось отправить отзыв (feedback_1): [Errno 2] No such file or directory: 'face_bot/img/feedback_1.jpg'
+2025-03-07 01:14:50,403 - face_bot.jobs.jobs - ERROR - Не удалось отправить отзыв (feedback_2): [Errno 2] No such file or directory: 'face_bot/img/feedback_2.jpg'
+2025-03-07 01:14:55,404 - face_bot.jobs.jobs - ERROR - Не удалось отправить отзыв (feedback_3): [Errno 2] No such file or directory: 'face_bot/img/feedback_3.jpg'
+2025-03-07 01:15:05,735 - face_bot - ERROR - Необработанное исключение: ExtBot.send_message() got an unexpected keyword argument 'keyboard'
+Traceback (most recent call last):
+  File "/Users/vladimirromanenko/programs/face_bot/face_bot/utils/error_handler.py", line 79, in global_error_handler
+    raise error
+  File "/Users/vladimirromanenko/Library/Caches/pypoetry/virtualenvs/face-bot-mgCG9TEw-py3.12/lib/python3.12/site-packages/telegram/ext/_application.py", line 1335, in process_update
+    await coroutine
+  File "/Users/vladimirromanenko/Library/Caches/pypoetry/virtualenvs/face-bot-mgCG9TEw-py3.12/lib/python3.12/site-packages/telegram/ext/_handlers/conversationhandler.py", line 857, in handle_update
+    new_state: object = await handler.handle_update(
+                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/vladimirromanenko/Library/Caches/pypoetry/virtualenvs/face-bot-mgCG9TEw-py3.12/lib/python3.12/site-packages/telegram/ext/_handlers/basehandler.py", line 157, in handle_update
+    return await self.callback(update, context)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/vladimirromanenko/programs/face_bot/face_bot/handlers/callbacks_handler.py", line 124, in user_progrev_callback
+    await context.bot.send_message(
+          ^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: ExtBot.send_message() got an unexpected keyword argument 'keyboard'
+
+2025-03-07 01:15:41,291 - face_bot.jobs.jobs - ERROR - Не удалось отправить отзыв (feedback_4): [Errno 2] No such file or directory: 'face_bot/img/feedback_4.jpg'
+2025-03-07 01:16:01,560 - face_bot - INFO - Инициализация базы данных
+2025-03-07 01:16:01,561 - face_bot - INFO - База данных успешно инициализирована
+2025-03-07 01:16:01,561 - face_bot - INFO - Запуск бота
+2025-03-07 01:16:01,577 - face_bot - INFO - Запланирована регулярная очистка устаревших сессий
+2025-03-07 01:16:01,577 - face_bot - INFO - Бот запущен и готов к работе
+2025-03-07 01:16:07,891 - face_bot - INFO - Пользователь 431425615 запустил команду /start
+2025-03-07 01:16:21,127 - face_bot - INFO - Получен номер телефона от пользователя 431425615
+2025-03-07 01:16:21,608 - face_bot - ERROR - Не удалось отправить отзыв (feedback_1): [Errno 2] No such file or directory: 'face_bot/img/feedback_1.jpg'
+2025-03-07 01:16:32,933 - face_bot.jobs.jobs - ERROR - Не удалось отправить отзыв (feedback_2): [Errno 2] No such file or directory: 'face_bot/img/feedback_2.jpg'
+2025-03-07 01:16:37,934 - face_bot.jobs.jobs - ERROR - Не удалось отправить отзыв (feedback_3): [Errno 2] No such file or directory: 'face_bot/img/feedback_3.jpg'
+2025-03-07 01:16:59,323 - face_bot.jobs.jobs - ERROR - Не удалось отправить отзыв (feedback_3): [Errno 2] No such file or directory: 'face_bot/img/feedback_3.jpg'
+2025-03-07 01:18:19,067 - face_bot - INFO - Получено имя от пользователя 431425615: Вова
+2025-03-07 01:19:19,451 - face_bot - INFO - Инициализация базы данных
+2025-03-07 01:19:19,452 - face_bot - INFO - База данных успешно инициализирована
+2025-03-07 01:19:19,452 - face_bot - INFO - Запуск бота
+2025-03-07 01:19:19,468 - face_bot - INFO - Запланирована регулярная очистка устаревших сессий
+2025-03-07 01:19:19,468 - face_bot - INFO - Бот запущен и готов к работе
+2025-03-07 01:19:36,496 - face_bot - INFO - Пользователь 431425615 запустил команду /start
+2025-03-07 01:19:43,162 - face_bot - INFO - Получен номер телефона от пользователя 431425615
+2025-03-07 01:24:31,500 - face_bot - INFO - Инициализация базы данных
+2025-03-07 01:24:31,501 - face_bot - INFO - База данных успешно инициализирована
+2025-03-07 01:24:31,501 - face_bot - INFO - Запуск бота
+2025-03-07 01:24:31,518 - face_bot - INFO - Запланирована регулярная очистка устаревших сессий
+2025-03-07 01:24:31,518 - face_bot - INFO - Бот запущен и готов к работе
+2025-03-07 01:24:50,365 - face_bot - INFO - Пользователь 431425615 запустил команду /start
+2025-03-07 01:25:23,790 - face_bot - INFO - Пользователь 5150156527 запустил команду /start
+2025-03-07 01:25:35,232 - face_bot - INFO - Получен номер телефона от пользователя 5150156527
+2025-03-07 01:25:41,741 - face_bot - INFO - Получен номер телефона от пользователя 431425615
+2025-03-07 01:26:57,929 - face_bot - INFO - Инициализация базы данных
+2025-03-07 01:26:57,930 - face_bot - INFO - База данных успешно инициализирована
+2025-03-07 01:26:57,930 - face_bot - INFO - Запуск бота
+2025-03-07 01:26:57,946 - face_bot - INFO - Запланирована регулярная очистка устаревших сессий
+2025-03-07 01:26:57,946 - face_bot - INFO - Бот запущен и готов к работе
+2025-03-07 01:27:04,101 - face_bot - INFO - Пользователь 5150156527 запустил команду /start
+2025-03-07 01:27:15,080 - face_bot - INFO - Получен номер телефона от пользователя 5150156527
+2025-03-07 01:27:26,124 - face_bot - INFO - Пользователь 431425615 запустил команду /start
+2025-03-07 02:35:51,430 - face_bot - INFO - Инициализация базы данных
+2025-03-07 02:35:51,444 - face_bot - INFO - База данных успешно инициализирована
+2025-03-07 02:35:51,445 - face_bot - INFO - Запуск бота
+2025-03-07 02:35:51,470 - face_bot - INFO - Запланирована регулярная очистка устаревших сессий
+2025-03-07 02:35:51,470 - face_bot - INFO - Бот запущен и готов к работе
+2025-03-07 02:36:01,480 - face_bot - INFO - Пользователь 431425615 запустил команду /start
+2025-03-07 02:49:36,092 - face_bot - INFO - Пользователь 431425615 запустил команду /start
+2025-03-07 02:49:42,423 - face_bot - INFO - Получен номер телефона от пользователя 431425615
+2025-03-07 03:04:12,767 - face_bot - INFO - Инициализация базы данных
+2025-03-07 03:04:12,768 - face_bot - INFO - База данных успешно инициализирована
+2025-03-07 03:04:12,769 - face_bot - INFO - Запуск бота
+2025-03-07 03:04:12,787 - face_bot - INFO - Запланирована регулярная очистка устаревших сессий
+2025-03-07 03:04:12,787 - face_bot - INFO - Бот запущен и готов к работе
+2025-03-07 03:04:15,117 - face_bot - INFO - Пользователь 431425615 запустил команду /start
+2025-03-07 03:44:39,468 - face_bot - INFO - Инициализация базы данных
+2025-03-07 03:44:39,469 - face_bot - INFO - База данных успешно инициализирована
+2025-03-07 03:44:39,469 - face_bot - INFO - Запуск бота
+2025-03-07 03:44:39,486 - face_bot - INFO - Запланирована регулярная очистка устаревших сессий
+2025-03-07 03:44:39,486 - face_bot - INFO - Бот запущен и готов к работе
+2025-03-07 03:44:45,184 - face_bot - INFO - Пользователь 431425615 запустил команду /start
+2025-03-07 03:44:48,228 - face_bot - ERROR - Необработанное исключение: object Job can't be used in 'await' expression
+Traceback (most recent call last):
+  File "/Users/vladimirromanenko/programs/face_bot/face_bot/utils/error_handler.py", line 79, in global_error_handler
+    raise error
+  File "/Users/vladimirromanenko/Library/Caches/pypoetry/virtualenvs/face-bot-mgCG9TEw-py3.12/lib/python3.12/site-packages/telegram/ext/_application.py", line 1335, in process_update
+    await coroutine
+  File "/Users/vladimirromanenko/Library/Caches/pypoetry/virtualenvs/face-bot-mgCG9TEw-py3.12/lib/python3.12/site-packages/telegram/ext/_handlers/conversationhandler.py", line 857, in handle_update
+    new_state: object = await handler.handle_update(
+                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/vladimirromanenko/Library/Caches/pypoetry/virtualenvs/face-bot-mgCG9TEw-py3.12/lib/python3.12/site-packages/telegram/ext/_handlers/basehandler.py", line 157, in handle_update
+    return await self.callback(update, context)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/vladimirromanenko/programs/face_bot/face_bot/handlers/callbacks_handler.py", line 40, in user_progrev_callback
+    await send_case_job(context, CASES_TIME, user_id)
+  File "/Users/vladimirromanenko/programs/face_bot/face_bot/jobs/jobs.py", line 70, in send_case_job
+    await context.job_queue.run_once(
+TypeError: object Job can't be used in 'await' expression
+
+2025-03-07 03:45:21,516 - face_bot - INFO - Инициализация базы данных
+2025-03-07 03:45:21,517 - face_bot - INFO - База данных успешно инициализирована
+2025-03-07 03:45:21,517 - face_bot - INFO - Запуск бота
+2025-03-07 03:45:21,534 - face_bot - INFO - Запланирована регулярная очистка устаревших сессий
+2025-03-07 03:45:21,534 - face_bot - INFO - Бот запущен и готов к работе
+2025-03-07 03:45:23,880 - face_bot - INFO - Пользователь 431425615 запустил команду /start
+2025-03-07 03:45:37,680 - face_bot - INFO - Получен номер телефона от пользователя 431425615
+2025-03-07 03:45:51,037 - face_bot - ERROR - Необработанное исключение: [Errno 2] No such file or directory: 'face_bot/img/case_10.jpg'
+Traceback (most recent call last):
+  File "/Users/vladimirromanenko/programs/face_bot/face_bot/utils/error_handler.py", line 79, in global_error_handler
+    raise error
+  File "/Users/vladimirromanenko/Library/Caches/pypoetry/virtualenvs/face-bot-mgCG9TEw-py3.12/lib/python3.12/site-packages/telegram/ext/_jobqueue.py", line 971, in _run
+    await self.callback(context)
+  File "/Users/vladimirromanenko/programs/face_bot/face_bot/jobs/jobs.py", line 56, in case_job
+    with open(f"face_bot/img/case_{job.data[CURRENT_CASE]}.jpg", "rb") as f:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: 'face_bot/img/case_10.jpg'
+
+2025-03-07 03:47:38,757 - face_bot - ERROR - Необработанное исключение: no such table: users
+Traceback (most recent call last):
+  File "/Users/vladimirromanenko/programs/face_bot/face_bot/utils/error_handler.py", line 79, in global_error_handler
+    raise error
+  File "/Users/vladimirromanenko/Library/Caches/pypoetry/virtualenvs/face-bot-mgCG9TEw-py3.12/lib/python3.12/site-packages/telegram/ext/_jobqueue.py", line 971, in _run
+    await self.callback(context)
+  File "/Users/vladimirromanenko/programs/face_bot/face_bot/jobs/jobs.py", line 64, in case_job
+    await update_case(job.chat_id)
+  File "/Users/vladimirromanenko/programs/face_bot/face_bot/database/db.py", line 68, in update_case
+    async with db.execute(
+               ^^^^^^^^^^^
+  File "/Users/vladimirromanenko/Library/Caches/pypoetry/virtualenvs/face-bot-mgCG9TEw-py3.12/lib/python3.12/site-packages/aiosqlite/context.py", line 39, in __aenter__
+    self._obj = await self._coro
+                ^^^^^^^^^^^^^^^^
+  File "/Users/vladimirromanenko/Library/Caches/pypoetry/virtualenvs/face-bot-mgCG9TEw-py3.12/lib/python3.12/site-packages/aiosqlite/core.py", line 193, in execute
+    cursor = await self._execute(self._conn.execute, sql, parameters)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/vladimirromanenko/Library/Caches/pypoetry/virtualenvs/face-bot-mgCG9TEw-py3.12/lib/python3.12/site-packages/aiosqlite/core.py", line 132, in _execute
+    return await future
+           ^^^^^^^^^^^^
+  File "/Users/vladimirromanenko/Library/Caches/pypoetry/virtualenvs/face-bot-mgCG9TEw-py3.12/lib/python3.12/site-packages/aiosqlite/core.py", line 115, in run
+    result = function()
+             ^^^^^^^^^^
+sqlite3.OperationalError: no such table: users
+
+2025-03-07 03:49:12,963 - face_bot - INFO - Инициализация базы данных
+2025-03-07 03:49:12,964 - face_bot - INFO - База данных успешно инициализирована
+2025-03-07 03:49:12,964 - face_bot - INFO - Запуск бота
+2025-03-07 03:49:12,981 - face_bot - INFO - Запланирована регулярная очистка устаревших сессий
+2025-03-07 03:49:12,981 - face_bot - INFO - Бот запущен и готов к работе
+2025-03-07 03:49:21,507 - face_bot - INFO - Пользователь 431425615 запустил команду /start
+2025-03-07 03:49:27,423 - face_bot - INFO - Получен номер телефона от пользователя 431425615
+2025-03-07 03:54:15,935 - face_bot - INFO - Пользователь 431425615 запустил команду /start
+2025-03-07 03:54:15,936 - face_bot - ERROR - Необработанное исключение: object of type 'NoneType' has no len()
+Traceback (most recent call last):
+  File "/Users/vladimirromanenko/programs/face_bot/face_bot/utils/error_handler.py", line 27, in wrapper
+    return await func(update, context, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/vladimirromanenko/programs/face_bot/face_bot/handlers/common_handler.py", line 87, in start
+    elif len(context.args) == 0 or context.args[0] == "1":
+         ^^^^^^^^^^^^^^^^^
+TypeError: object of type 'NoneType' has no len()
+
+2025-03-07 04:05:39,264 - face_bot - INFO - Инициализация базы данных
+2025-03-07 04:05:39,267 - face_bot - INFO - База данных успешно инициализирована
+2025-03-07 04:05:39,267 - face_bot - INFO - Запуск бота
+2025-03-07 04:05:39,285 - face_bot - INFO - Запланирована регулярная очистка устаревших сессий
+2025-03-07 04:05:39,285 - face_bot - INFO - Бот запущен и готов к работе
+2025-03-07 04:05:46,777 - face_bot - INFO - Пользователь 431425615 запустил команду /start
+2025-03-07 04:05:51,194 - face_bot - INFO - Получен номер телефона от пользователя 431425615
+2025-03-07 04:06:21,916 - face_bot - ERROR - Bad request: Can't parse entities: character '(' is reserved and must be escaped with the preceding '\'
+2025-03-07 04:10:13,969 - face_bot - INFO - Инициализация базы данных
+2025-03-07 04:10:13,970 - face_bot - INFO - База данных успешно инициализирована
+2025-03-07 04:10:13,970 - face_bot - INFO - Запуск бота
+2025-03-07 04:10:13,987 - face_bot - INFO - Запланирована регулярная очистка устаревших сессий
+2025-03-07 04:10:13,987 - face_bot - INFO - Бот запущен и готов к работе
+2025-03-07 04:10:23,989 - face_bot - WARNING - Файл кэша /Users/vladimirromanenko/programs/face_bot/users_cache не найден
+2025-03-07 04:10:24,760 - face_bot - INFO - Пользователь 431425615 запустил команду /start
+2025-03-07 04:10:30,127 - face_bot - INFO - Получен номер телефона от пользователя 431425615
+2025-03-07 04:11:00,744 - face_bot - ERROR - Bad request: Can't parse entities: character '(' is reserved and must be escaped with the preceding '\'
+2025-03-07 04:11:56,738 - face_bot - INFO - Инициализация базы данных
+2025-03-07 04:11:56,739 - face_bot - INFO - База данных успешно инициализирована
+2025-03-07 04:11:56,739 - face_bot - INFO - Запуск бота
+2025-03-07 04:11:56,755 - face_bot - INFO - Запланирована регулярная очистка устаревших сессий
+2025-03-07 04:11:56,755 - face_bot - INFO - Бот запущен и готов к работе
+2025-03-07 04:12:01,446 - face_bot - INFO - Пользователь 431425615 запустил команду /start
+2025-03-07 04:12:07,506 - face_bot - INFO - Получен номер телефона от пользователя 431425615
+2025-03-07 04:36:42,265 - face_bot - ERROR - Network error: httpx.RemoteProtocolError: Server disconnected without sending a response.
+2025-03-07 10:14:09,016 - face_bot - ERROR - Network error: httpx.RemoteProtocolError: Server disconnected without sending a response.
+2025-03-07 11:19:33,445 - face_bot - ERROR - Network error: httpx.RemoteProtocolError: Server disconnected without sending a response.
+2025-03-07 11:58:56,616 - face_bot - ERROR - Network error: httpx.ConnectError: [Errno 8] nodename nor servname provided, or not known
+2025-03-07 12:14:08,608 - face_bot - ERROR - Network error: httpx.ConnectError: [Errno 8] nodename nor servname provided, or not known
+2025-03-07 12:20:32,574 - face_bot - ERROR - Network error: httpx.ConnectError: [Errno 8] nodename nor servname provided, or not known
+2025-03-07 12:30:37,852 - face_bot - ERROR - Network error: httpx.ConnectError: [Errno 8] nodename nor servname provided, or not known
+2025-03-07 12:49:04,840 - face_bot - INFO - Инициализация базы данных
+2025-03-07 12:49:04,845 - face_bot - INFO - База данных успешно инициализирована
+2025-03-07 12:49:04,845 - face_bot - INFO - Запуск бота
+2025-03-07 12:49:04,863 - face_bot - INFO - Запланирована регулярная очистка устаревших сессий
+2025-03-07 12:49:04,863 - face_bot - INFO - Бот запущен и готов к работе
+2025-03-07 12:49:14,864 - face_bot - WARNING - Файл кэша /Users/vladimirromanenko/programs/face_bot/users_cache не найден
+2025-03-07 12:51:48,647 - face_bot - INFO - Пользователь 431425615 запустил команду /start
+2025-03-07 12:52:16,040 - face_bot - ERROR - Необработанное исключение: [Errno 2] No such file or directory: 'face_bot/img/case_9.jpg'
+Traceback (most recent call last):
+  File "/Users/vladimirromanenko/programs/face_bot/face_bot/utils/error_handler.py", line 79, in global_error_handler
+    raise error
+  File "/Users/vladimirromanenko/Library/Caches/pypoetry/virtualenvs/face-bot-mgCG9TEw-py3.12/lib/python3.12/site-packages/telegram/ext/_jobqueue.py", line 971, in _run
+    await self.callback(context)
+  File "/Users/vladimirromanenko/programs/face_bot/face_bot/jobs/jobs.py", line 56, in case_job
+    with open(f"face_bot/img/case_{job.data[CURRENT_CASE]}.jpg", "rb") as f:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: 'face_bot/img/case_9.jpg'
+
+2025-03-07 12:52:37,886 - face_bot - INFO - Инициализация базы данных
+2025-03-07 12:52:37,889 - face_bot - INFO - База данных успешно инициализирована
+2025-03-07 12:52:37,889 - face_bot - INFO - Запуск бота
+2025-03-07 12:52:37,906 - face_bot - INFO - Запланирована регулярная очистка устаревших сессий
+2025-03-07 12:52:37,906 - face_bot - INFO - Бот запущен и готов к работе
+2025-03-07 12:52:47,906 - face_bot - WARNING - Файл кэша /Users/vladimirromanenko/programs/face_bot/users_cache не найден
+2025-03-07 12:52:55,574 - face_bot - INFO - Пользователь 431425615 запустил команду /start
+2025-03-07 12:53:01,358 - face_bot - INFO - Пользователь 431425615 запустил команду /start
+2025-03-07 12:53:09,433 - face_bot - INFO - Получен номер телефона от пользователя 431425615
+2025-03-07 12:57:44,013 - face_bot - INFO - Инициализация базы данных
+2025-03-07 12:57:44,014 - face_bot - INFO - База данных успешно инициализирована
+2025-03-07 12:57:44,015 - face_bot - INFO - Запуск бота
+2025-03-07 12:57:44,031 - face_bot - INFO - Запланирована регулярная очистка устаревших сессий
+2025-03-07 12:57:44,031 - face_bot - INFO - Бот запущен и готов к работе
+2025-03-07 12:57:53,580 - face_bot - INFO - Пользователь 431425615 запустил команду /start
+2025-03-07 12:57:54,042 - face_bot - WARNING - Файл кэша /Users/vladimirromanenko/programs/face_bot/users_cache не найден
+2025-03-07 12:59:07,438 - face_bot - INFO - Инициализация базы данных
+2025-03-07 12:59:07,440 - face_bot - INFO - База данных успешно инициализирована
+2025-03-07 12:59:07,440 - face_bot - INFO - Запуск бота
+2025-03-07 12:59:07,455 - face_bot - INFO - Запланирована регулярная очистка устаревших сессий
+2025-03-07 12:59:07,455 - face_bot - INFO - Бот запущен и готов к работе
+2025-03-07 12:59:16,289 - face_bot - INFO - Пользователь 431425615 запустил команду /start
+2025-03-07 12:59:17,456 - face_bot - WARNING - Файл кэша /Users/vladimirromanenko/programs/face_bot/users_cache не найден
+2025-03-07 12:59:57,373 - face_bot - INFO - Инициализация базы данных
+2025-03-07 12:59:57,373 - face_bot - INFO - База данных успешно инициализирована
+2025-03-07 12:59:57,373 - face_bot - INFO - Запуск бота
+2025-03-07 12:59:57,389 - face_bot - INFO - Запланирована регулярная очистка устаревших сессий
+2025-03-07 12:59:57,389 - face_bot - INFO - Бот запущен и готов к работе
+2025-03-07 13:00:04,650 - face_bot - INFO - Пользователь 431425615 запустил команду /start
+2025-03-07 13:01:20,214 - face_bot - INFO - Инициализация базы данных
+2025-03-07 13:01:20,215 - face_bot - INFO - База данных успешно инициализирована
+2025-03-07 13:01:20,215 - face_bot - INFO - Запуск бота
+2025-03-07 13:01:20,232 - face_bot - INFO - Запланирована регулярная очистка устаревших сессий
+2025-03-07 13:01:20,232 - face_bot - INFO - Бот запущен и готов к работе
+2025-03-07 13:01:26,794 - face_bot - INFO - Пользователь 431425615 запустил команду /start
+2025-03-07 13:01:57,275 - face_bot - INFO - Инициализация базы данных
+2025-03-07 13:01:57,276 - face_bot - INFO - База данных успешно инициализирована
+2025-03-07 13:01:57,276 - face_bot - INFO - Запуск бота
+2025-03-07 13:01:57,292 - face_bot - INFO - Запланирована регулярная очистка устаревших сессий
+2025-03-07 13:01:57,292 - face_bot - INFO - Бот запущен и готов к работе
+2025-03-07 13:02:02,669 - face_bot - INFO - Пользователь 431425615 запустил команду /start
+2025-03-07 13:07:54,336 - face_bot - INFO - Инициализация базы данных
+2025-03-07 13:07:54,340 - face_bot - INFO - База данных успешно инициализирована
+2025-03-07 13:07:54,340 - face_bot - INFO - Запуск бота
+2025-03-07 13:07:54,357 - face_bot - INFO - Запланирована регулярная очистка устаревших сессий
+2025-03-07 13:07:54,357 - face_bot - INFO - Бот запущен и готов к работе
+2025-03-07 13:10:47,600 - face_bot - INFO - Инициализация базы данных
+2025-03-07 13:10:47,604 - face_bot - INFO - База данных успешно инициализирована
+2025-03-07 13:10:47,604 - face_bot - INFO - Запуск бота
+2025-03-07 13:10:47,620 - face_bot - INFO - Запланирована регулярная очистка устаревших сессий
+2025-03-07 13:10:47,620 - face_bot - INFO - Бот запущен и готов к работе
+2025-03-07 13:11:06,238 - face_bot - WARNING - Пользователь 431425615 отправил номер телефона в неверном формате
+2025-03-07 13:11:11,245 - face_bot - INFO - Пользователь 431425615 запустил команду /start
+2025-03-07 13:12:37,532 - face_bot - INFO - Инициализация базы данных
+2025-03-07 13:12:37,533 - face_bot - INFO - База данных успешно инициализирована
+2025-03-07 13:12:37,533 - face_bot - INFO - Запуск бота
+2025-03-07 13:12:37,550 - face_bot - INFO - Запланирована регулярная очистка устаревших сессий
+2025-03-07 13:12:37,550 - face_bot - INFO - Бот запущен и готов к работе
+2025-03-07 13:12:48,908 - face_bot - INFO - Пользователь 431425615 запустил команду /start
+2025-03-07 13:12:59,678 - face_bot - INFO - Инициализация базы данных
+2025-03-07 13:12:59,679 - face_bot - INFO - База данных успешно инициализирована
+2025-03-07 13:12:59,679 - face_bot - INFO - Запуск бота
+2025-03-07 13:12:59,696 - face_bot - INFO - Запланирована регулярная очистка устаревших сессий
+2025-03-07 13:12:59,696 - face_bot - INFO - Бот запущен и готов к работе
+2025-03-07 13:13:55,102 - face_bot - INFO - Инициализация базы данных
+2025-03-07 13:13:55,103 - face_bot - INFO - База данных успешно инициализирована
+2025-03-07 13:13:55,103 - face_bot - INFO - Запуск бота
+2025-03-07 13:13:55,120 - face_bot - INFO - Запланирована регулярная очистка устаревших сессий
+2025-03-07 13:13:55,120 - face_bot - INFO - Бот запущен и готов к работе
+2025-03-07 13:20:21,062 - face_bot - INFO - Инициализация базы данных
+2025-03-07 13:20:21,063 - face_bot - INFO - База данных успешно инициализирована
+2025-03-07 13:20:21,063 - face_bot - INFO - Запуск бота
+2025-03-07 13:20:21,080 - face_bot - INFO - Запланирована регулярная очистка устаревших сессий
+2025-03-07 13:20:21,080 - face_bot - INFO - Бот запущен и готов к работе
+2025-03-07 13:30:18,197 - face_bot - INFO - Пользователь 431425615 запустил команду /start
+2025-03-07 13:30:24,808 - face_bot - INFO - Получен номер телефона от пользователя 431425615
+2025-03-07 13:35:24,831 - face_bot - INFO - Инициализация базы данных
+2025-03-07 13:35:24,832 - face_bot - INFO - База данных успешно инициализирована
+2025-03-07 13:35:24,832 - face_bot - INFO - Запуск бота
+2025-03-07 13:35:24,848 - face_bot - INFO - Запланирована регулярная очистка устаревших сессий
+2025-03-07 13:35:24,849 - face_bot - INFO - Бот запущен и готов к работе
+2025-03-07 13:41:48,607 - face_bot - INFO - Инициализация базы данных
+2025-03-07 13:41:48,608 - face_bot - INFO - База данных успешно инициализирована
+2025-03-07 13:41:48,608 - face_bot - INFO - Запуск бота
+2025-03-07 13:41:48,625 - face_bot - INFO - Запланирована регулярная очистка устаревших сессий
+2025-03-07 13:41:48,625 - face_bot - INFO - Бот запущен и готов к работе
+2025-03-07 13:42:34,622 - face_bot - INFO - Инициализация базы данных
+2025-03-07 13:42:34,623 - face_bot - INFO - База данных успешно инициализирована
+2025-03-07 13:42:34,623 - face_bot - INFO - Запуск бота
+2025-03-07 13:42:34,639 - face_bot - INFO - Запланирована регулярная очистка устаревших сессий
+2025-03-07 13:42:34,639 - face_bot - INFO - Бот запущен и готов к работе
+2025-03-07 13:47:45,885 - face_bot - INFO - Инициализация базы данных
+2025-03-07 13:47:45,886 - face_bot - INFO - База данных успешно инициализирована
+2025-03-07 13:47:45,886 - face_bot - INFO - Запуск бота
+2025-03-07 13:47:45,902 - face_bot - INFO - Запланирована регулярная очистка устаревших сессий
+2025-03-07 13:47:45,902 - face_bot - INFO - Бот запущен и готов к работе
+2025-03-07 13:47:51,273 - face_bot - INFO - Инициализация базы данных
+2025-03-07 13:47:51,274 - face_bot - INFO - База данных успешно инициализирована
+2025-03-07 13:47:51,274 - face_bot - INFO - Запуск бота
+2025-03-07 13:47:51,290 - face_bot - INFO - Запланирована регулярная очистка устаревших сессий
+2025-03-07 13:47:51,290 - face_bot - INFO - Бот запущен и готов к работе
+2025-03-07 13:48:11,085 - face_bot - INFO - Инициализация базы данных
+2025-03-07 13:48:11,087 - face_bot - INFO - База данных успешно инициализирована
+2025-03-07 13:48:11,087 - face_bot - INFO - Запуск бота
+2025-03-07 13:48:11,104 - face_bot - INFO - Запланирована регулярная очистка устаревших сессий
+2025-03-07 13:48:11,104 - face_bot - INFO - Бот запущен и готов к работе
+2025-03-07 13:48:28,357 - face_bot - INFO - Инициализация базы данных
+2025-03-07 13:48:28,359 - face_bot - INFO - База данных успешно инициализирована
+2025-03-07 13:48:28,359 - face_bot - INFO - Запуск бота
+2025-03-07 13:48:28,375 - face_bot - INFO - Запланирована регулярная очистка устаревших сессий
+2025-03-07 13:48:28,375 - face_bot - INFO - Бот запущен и готов к работе
+2025-03-07 13:48:35,269 - face_bot - INFO - Пользователь 431425615 запустил команду /start
+2025-03-07 13:48:35,904 - face_bot - ERROR - Необработанное исключение: 'NoneType' object is not subscriptable
+Traceback (most recent call last):
+  File "/Users/vladimirromanenko/programs/face_bot/face_bot/utils/error_handler.py", line 27, in wrapper
+    return await func(update, context, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/vladimirromanenko/programs/face_bot/face_bot/handlers/common_handler.py", line 105, in start
+    await send_case_job(context, 5, user_id)
+  File "/Users/vladimirromanenko/programs/face_bot/face_bot/jobs/jobs.py", line 67, in send_case_job
+    cur_case = await get_current_case(chat_id)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/vladimirromanenko/programs/face_bot/face_bot/database/db.py", line 61, in get_current_case
+    current_case = row[0]
+                   ~~~^^^
+TypeError: 'NoneType' object is not subscriptable
+
+2025-03-07 13:48:38,377 - face_bot - WARNING - Файл кэша /Users/vladimirromanenko/programs/face_bot/users_cache не найден
+2025-03-07 13:49:02,207 - face_bot - INFO - Инициализация базы данных
+2025-03-07 13:49:02,208 - face_bot - INFO - База данных успешно инициализирована
+2025-03-07 13:49:02,208 - face_bot - INFO - Запуск бота
+2025-03-07 13:49:02,225 - face_bot - INFO - Запланирована регулярная очистка устаревших сессий
+2025-03-07 13:49:02,225 - face_bot - INFO - Бот запущен и готов к работе
+2025-03-07 13:49:11,254 - face_bot - INFO - Инициализация базы данных
+2025-03-07 13:49:11,256 - face_bot - INFO - База данных успешно инициализирована
+2025-03-07 13:49:11,256 - face_bot - INFO - Запуск бота
+2025-03-07 13:49:11,272 - face_bot - INFO - Запланирована регулярная очистка устаревших сессий
+2025-03-07 13:49:11,272 - face_bot - INFO - Бот запущен и готов к работе
+2025-03-07 13:49:14,734 - face_bot - INFO - Пользователь 431425615 запустил команду /start
+2025-03-07 13:49:21,274 - face_bot - WARNING - Файл кэша /Users/vladimirromanenko/programs/face_bot/users_cache не найден
+2025-03-07 13:52:21,027 - face_bot - INFO - Инициализация базы данных
+2025-03-07 13:52:21,028 - face_bot - INFO - База данных успешно инициализирована
+2025-03-07 13:52:21,028 - face_bot - INFO - Запуск бота
+2025-03-07 13:52:21,044 - face_bot - INFO - Запланирована регулярная очистка устаревших сессий
+2025-03-07 13:52:21,044 - face_bot - INFO - Бот запущен и готов к работе
+2025-03-07 13:52:49,244 - face_bot - INFO - Инициализация базы данных
+2025-03-07 13:52:49,245 - face_bot - INFO - База данных успешно инициализирована
+2025-03-07 13:52:49,245 - face_bot - INFO - Запуск бота
+2025-03-07 13:52:49,261 - face_bot - INFO - Запланирована регулярная очистка устаревших сессий
+2025-03-07 13:52:49,261 - face_bot - INFO - Бот запущен и готов к работе
+2025-03-07 13:52:59,262 - face_bot - WARNING - Файл кэша /Users/vladimirromanenko/programs/face_bot/users_cache не найден
+2025-03-07 13:53:10,588 - face_bot - INFO - Инициализация базы данных
+2025-03-07 13:53:10,595 - face_bot - INFO - База данных успешно инициализирована
+2025-03-07 13:53:10,596 - face_bot - INFO - Запуск бота
+2025-03-07 13:53:10,613 - face_bot - INFO - Запланирована регулярная очистка устаревших сессий
+2025-03-07 13:53:10,613 - face_bot - INFO - Бот запущен и готов к работе
+2025-03-07 13:53:11,268 - face_bot - ERROR - Conflict error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+2025-03-07 13:53:15,490 - face_bot - ERROR - Conflict error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+2025-03-07 13:53:16,683 - face_bot - ERROR - Conflict error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+2025-03-07 13:53:24,645 - face_bot - INFO - Инициализация базы данных
+2025-03-07 13:53:24,646 - face_bot - INFO - База данных успешно инициализирована
+2025-03-07 13:53:24,646 - face_bot - INFO - Запуск бота
+2025-03-07 13:53:24,662 - face_bot - INFO - Запланирована регулярная очистка устаревших сессий
+2025-03-07 13:53:24,662 - face_bot - INFO - Бот запущен и готов к работе
+2025-03-07 13:53:25,284 - face_bot - ERROR - Conflict error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+2025-03-07 13:54:00,940 - face_bot - INFO - Инициализация базы данных
+2025-03-07 13:54:00,941 - face_bot - INFO - База данных успешно инициализирована
+2025-03-07 13:54:00,941 - face_bot - INFO - Запуск бота
+2025-03-07 13:54:00,958 - face_bot - INFO - Запланирована регулярная очистка устаревших сессий
+2025-03-07 13:54:00,958 - face_bot - INFO - Бот запущен и готов к работе
+2025-03-07 13:54:01,652 - face_bot - ERROR - Conflict error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+2025-03-07 13:54:05,869 - face_bot - ERROR - Conflict error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+2025-03-07 13:54:06,977 - face_bot - ERROR - Conflict error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+2025-03-07 13:54:10,960 - face_bot - WARNING - Файл кэша /Users/vladimirromanenko/programs/face_bot/users_cache не найден
+2025-03-07 13:54:11,602 - face_bot - ERROR - Conflict error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+2025-03-07 13:54:25,965 - face_bot - INFO - Инициализация базы данных
+2025-03-07 13:54:25,966 - face_bot - INFO - База данных успешно инициализирована
+2025-03-07 13:54:25,966 - face_bot - INFO - Запуск бота
+2025-03-07 13:54:25,983 - face_bot - INFO - Запланирована регулярная очистка устаревших сессий
+2025-03-07 13:54:25,983 - face_bot - INFO - Бот запущен и готов к работе
+2025-03-07 13:54:26,620 - face_bot - ERROR - Conflict error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+2025-03-07 13:54:30,752 - face_bot - ERROR - Conflict error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+2025-03-07 13:54:31,866 - face_bot - ERROR - Conflict error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+2025-03-07 13:54:35,984 - face_bot - WARNING - Файл кэша /Users/vladimirromanenko/programs/face_bot/users_cache не найден
+2025-03-07 13:54:36,588 - face_bot - ERROR - Conflict error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+2025-03-07 13:54:38,186 - face_bot - ERROR - Conflict error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+2025-03-07 13:54:43,655 - face_bot - ERROR - Conflict error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+2025-03-07 13:54:45,991 - face_bot - ERROR - Conflict error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+2025-03-07 13:54:49,503 - face_bot - ERROR - Conflict error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+2025-03-07 13:54:52,992 - face_bot - ERROR - Conflict error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+2025-03-07 13:54:58,321 - face_bot - ERROR - Conflict error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+2025-03-07 13:55:03,675 - face_bot - ERROR - Conflict error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+2025-03-07 13:55:11,534 - face_bot - ERROR - Conflict error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+2025-03-07 13:55:19,372 - face_bot - ERROR - Conflict error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+2025-03-07 13:56:00,032 - face_bot - INFO - Инициализация базы данных
+2025-03-07 13:56:00,035 - face_bot - INFO - База данных успешно инициализирована
+2025-03-07 13:56:00,035 - face_bot - INFO - Запуск бота
+2025-03-07 13:56:00,055 - face_bot - INFO - Запланирована регулярная очистка устаревших сессий
+2025-03-07 13:56:00,056 - face_bot - INFO - Бот запущен и готов к работе
+2025-03-07 13:56:00,710 - face_bot - ERROR - Conflict error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+2025-03-07 13:56:04,809 - face_bot - ERROR - Conflict error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+2025-03-07 13:56:05,921 - face_bot - ERROR - Conflict error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+2025-03-07 13:56:10,056 - face_bot - WARNING - Файл кэша /Users/vladimirromanenko/programs/face_bot/users_cache не найден
+2025-03-07 13:56:10,590 - face_bot - ERROR - Conflict error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+2025-03-07 13:56:12,201 - face_bot - ERROR - Conflict error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+2025-03-07 13:56:19,986 - face_bot - INFO - Инициализация базы данных
+2025-03-07 13:56:19,987 - face_bot - INFO - База данных успешно инициализирована
+2025-03-07 13:56:19,987 - face_bot - INFO - Запуск бота
+2025-03-07 13:56:20,004 - face_bot - INFO - Запланирована регулярная очистка устаревших сессий
+2025-03-07 13:56:20,004 - face_bot - INFO - Бот запущен и готов к работе
+2025-03-07 13:56:20,618 - face_bot - ERROR - Conflict error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+2025-03-07 13:56:24,082 - face_bot - ERROR - Conflict error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+2025-03-07 13:56:25,312 - face_bot - INFO - Пользователь 431425615 запустил команду /start
+2025-03-07 13:56:28,220 - face_bot - ERROR - Conflict error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+2025-03-07 13:56:30,006 - face_bot - WARNING - Файл кэша /Users/vladimirromanenko/programs/face_bot/users_cache не найден
+2025-03-07 13:56:33,555 - face_bot - ERROR - Conflict error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+2025-03-07 13:56:37,753 - face_bot - ERROR - Conflict error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+2025-03-07 13:56:45,658 - face_bot - ERROR - Conflict error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+2025-03-07 13:56:49,765 - face_bot - ERROR - Conflict error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+2025-03-07 13:57:01,392 - face_bot - ERROR - Conflict error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+2025-03-07 13:57:05,579 - face_bot - ERROR - Conflict error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+2025-03-07 13:57:22,952 - face_bot - ERROR - Conflict error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+2025-03-07 13:57:27,391 - face_bot - ERROR - Conflict error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+2025-03-07 13:57:28,414 - face_bot - INFO - Получен номер телефона от пользователя 431425615
+2025-03-07 13:57:53,383 - face_bot - ERROR - Conflict error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+2025-03-07 13:57:57,530 - face_bot - ERROR - Conflict error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+2025-03-07 13:58:27,881 - face_bot - ERROR - Conflict error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+2025-03-07 13:58:31,995 - face_bot - ERROR - Conflict error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+2025-03-07 13:59:02,313 - face_bot - ERROR - Conflict error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+2025-03-07 13:59:06,619 - face_bot - ERROR - Conflict error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+2025-03-07 13:59:36,914 - face_bot - ERROR - Conflict error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+2025-03-07 13:59:41,036 - face_bot - ERROR - Conflict error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+2025-03-07 14:00:11,369 - face_bot - ERROR - Conflict error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+2025-03-07 14:00:15,590 - face_bot - ERROR - Conflict error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+2025-03-07 14:00:45,890 - face_bot - ERROR - Conflict error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+2025-03-07 14:00:49,995 - face_bot - ERROR - Conflict error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+2025-03-07 14:02:15,200 - face_bot - INFO - Инициализация базы данных
+2025-03-07 14:02:15,212 - face_bot - INFO - База данных успешно инициализирована
+2025-03-07 14:02:15,212 - face_bot - INFO - Запуск бота
+2025-03-07 14:02:15,244 - face_bot - INFO - Запланирована регулярная очистка устаревших сессий
+2025-03-07 14:02:15,244 - face_bot - INFO - Бот запущен и готов к работе
+2025-03-07 14:02:15,254 - face_bot - CRITICAL - Критическая ошибка при запуске бота: httpx.ConnectError: [Errno 8] nodename nor servname provided, or not known
+Traceback (most recent call last):
+  File "/Users/vladimirromanenko/Library/Caches/pypoetry/virtualenvs/face-bot-mgCG9TEw-py3.12/lib/python3.12/site-packages/httpx/_transports/default.py", line 69, in map_httpcore_exceptions
+    yield
+  File "/Users/vladimirromanenko/Library/Caches/pypoetry/virtualenvs/face-bot-mgCG9TEw-py3.12/lib/python3.12/site-packages/httpx/_transports/default.py", line 373, in handle_async_request
+    resp = await self._pool.handle_async_request(req)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/vladimirromanenko/Library/Caches/pypoetry/virtualenvs/face-bot-mgCG9TEw-py3.12/lib/python3.12/site-packages/httpcore/_async/connection_pool.py", line 216, in handle_async_request
+    raise exc from None
+  File "/Users/vladimirromanenko/Library/Caches/pypoetry/virtualenvs/face-bot-mgCG9TEw-py3.12/lib/python3.12/site-packages/httpcore/_async/connection_pool.py", line 196, in handle_async_request
+    response = await connection.handle_async_request(
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/vladimirromanenko/Library/Caches/pypoetry/virtualenvs/face-bot-mgCG9TEw-py3.12/lib/python3.12/site-packages/httpcore/_async/connection.py", line 99, in handle_async_request
+    raise exc
+  File "/Users/vladimirromanenko/Library/Caches/pypoetry/virtualenvs/face-bot-mgCG9TEw-py3.12/lib/python3.12/site-packages/httpcore/_async/connection.py", line 76, in handle_async_request
+    stream = await self._connect(request)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/vladimirromanenko/Library/Caches/pypoetry/virtualenvs/face-bot-mgCG9TEw-py3.12/lib/python3.12/site-packages/httpcore/_async/connection.py", line 122, in _connect
+    stream = await self._network_backend.connect_tcp(**kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/vladimirromanenko/Library/Caches/pypoetry/virtualenvs/face-bot-mgCG9TEw-py3.12/lib/python3.12/site-packages/httpcore/_backends/auto.py", line 30, in connect_tcp
+    return await self._backend.connect_tcp(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/vladimirromanenko/Library/Caches/pypoetry/virtualenvs/face-bot-mgCG9TEw-py3.12/lib/python3.12/site-packages/httpcore/_backends/anyio.py", line 114, in connect_tcp
+    with map_exceptions(exc_map):
+         ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.12/3.12.6/Frameworks/Python.framework/Versions/3.12/lib/python3.12/contextlib.py", line 158, in __exit__
+    self.gen.throw(value)
+  File "/Users/vladimirromanenko/Library/Caches/pypoetry/virtualenvs/face-bot-mgCG9TEw-py3.12/lib/python3.12/site-packages/httpcore/_exceptions.py", line 14, in map_exceptions
+    raise to_exc(exc) from exc
+httpcore.ConnectError: [Errno 8] nodename nor servname provided, or not known
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/Users/vladimirromanenko/Library/Caches/pypoetry/virtualenvs/face-bot-mgCG9TEw-py3.12/lib/python3.12/site-packages/telegram/request/_httpxrequest.py", line 276, in do_request
+    res = await self._client.request(
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/vladimirromanenko/Library/Caches/pypoetry/virtualenvs/face-bot-mgCG9TEw-py3.12/lib/python3.12/site-packages/httpx/_client.py", line 1574, in request
+    return await self.send(request, auth=auth, follow_redirects=follow_redirects)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/vladimirromanenko/Library/Caches/pypoetry/virtualenvs/face-bot-mgCG9TEw-py3.12/lib/python3.12/site-packages/httpx/_client.py", line 1661, in send
+    response = await self._send_handling_auth(
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/vladimirromanenko/Library/Caches/pypoetry/virtualenvs/face-bot-mgCG9TEw-py3.12/lib/python3.12/site-packages/httpx/_client.py", line 1689, in _send_handling_auth
+    response = await self._send_handling_redirects(
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/vladimirromanenko/Library/Caches/pypoetry/virtualenvs/face-bot-mgCG9TEw-py3.12/lib/python3.12/site-packages/httpx/_client.py", line 1726, in _send_handling_redirects
+    response = await self._send_single_request(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/vladimirromanenko/Library/Caches/pypoetry/virtualenvs/face-bot-mgCG9TEw-py3.12/lib/python3.12/site-packages/httpx/_client.py", line 1763, in _send_single_request
+    response = await transport.handle_async_request(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/vladimirromanenko/Library/Caches/pypoetry/virtualenvs/face-bot-mgCG9TEw-py3.12/lib/python3.12/site-packages/httpx/_transports/default.py", line 372, in handle_async_request
+    with map_httpcore_exceptions():
+         ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.12/3.12.6/Frameworks/Python.framework/Versions/3.12/lib/python3.12/contextlib.py", line 158, in __exit__
+    self.gen.throw(value)
+  File "/Users/vladimirromanenko/Library/Caches/pypoetry/virtualenvs/face-bot-mgCG9TEw-py3.12/lib/python3.12/site-packages/httpx/_transports/default.py", line 86, in map_httpcore_exceptions
+    raise mapped_exc(message) from exc
+httpx.ConnectError: [Errno 8] nodename nor servname provided, or not known
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/Users/vladimirromanenko/programs/face_bot/face_bot/main.py", line 126, in main
+    application.run_polling()
+  File "/Users/vladimirromanenko/Library/Caches/pypoetry/virtualenvs/face-bot-mgCG9TEw-py3.12/lib/python3.12/site-packages/telegram/ext/_application.py", line 881, in run_polling
+    return self.__run(
+           ^^^^^^^^^^^
+  File "/Users/vladimirromanenko/Library/Caches/pypoetry/virtualenvs/face-bot-mgCG9TEw-py3.12/lib/python3.12/site-packages/telegram/ext/_application.py", line 1079, in __run
+    loop.run_until_complete(self.initialize())
+  File "/opt/homebrew/Cellar/python@3.12/3.12.6/Frameworks/Python.framework/Versions/3.12/lib/python3.12/asyncio/base_events.py", line 687, in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+  File "/Users/vladimirromanenko/Library/Caches/pypoetry/virtualenvs/face-bot-mgCG9TEw-py3.12/lib/python3.12/site-packages/telegram/ext/_application.py", line 503, in initialize
+    await self.bot.initialize()
+  File "/Users/vladimirromanenko/Library/Caches/pypoetry/virtualenvs/face-bot-mgCG9TEw-py3.12/lib/python3.12/site-packages/telegram/ext/_extbot.py", line 301, in initialize
+    await super().initialize()
+  File "/Users/vladimirromanenko/Library/Caches/pypoetry/virtualenvs/face-bot-mgCG9TEw-py3.12/lib/python3.12/site-packages/telegram/_bot.py", line 776, in initialize
+    await self.get_me()
+  File "/Users/vladimirromanenko/Library/Caches/pypoetry/virtualenvs/face-bot-mgCG9TEw-py3.12/lib/python3.12/site-packages/telegram/ext/_extbot.py", line 1920, in get_me
+    return await super().get_me(
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/vladimirromanenko/Library/Caches/pypoetry/virtualenvs/face-bot-mgCG9TEw-py3.12/lib/python3.12/site-packages/telegram/_bot.py", line 908, in get_me
+    result = await self._post(
+             ^^^^^^^^^^^^^^^^^
+  File "/Users/vladimirromanenko/Library/Caches/pypoetry/virtualenvs/face-bot-mgCG9TEw-py3.12/lib/python3.12/site-packages/telegram/_bot.py", line 622, in _post
+    return await self._do_post(
+           ^^^^^^^^^^^^^^^^^^^^
+  File "/Users/vladimirromanenko/Library/Caches/pypoetry/virtualenvs/face-bot-mgCG9TEw-py3.12/lib/python3.12/site-packages/telegram/ext/_extbot.py", line 355, in _do_post
+    return await super()._do_post(
+           ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/vladimirromanenko/Library/Caches/pypoetry/virtualenvs/face-bot-mgCG9TEw-py3.12/lib/python3.12/site-packages/telegram/_bot.py", line 651, in _do_post
+    result = await request.post(
+             ^^^^^^^^^^^^^^^^^^^
+  File "/Users/vladimirromanenko/Library/Caches/pypoetry/virtualenvs/face-bot-mgCG9TEw-py3.12/lib/python3.12/site-packages/telegram/request/_baserequest.py", line 200, in post
+    result = await self._request_wrapper(
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/vladimirromanenko/Library/Caches/pypoetry/virtualenvs/face-bot-mgCG9TEw-py3.12/lib/python3.12/site-packages/telegram/request/_baserequest.py", line 342, in _request_wrapper
+    raise exc
+  File "/Users/vladimirromanenko/Library/Caches/pypoetry/virtualenvs/face-bot-mgCG9TEw-py3.12/lib/python3.12/site-packages/telegram/request/_baserequest.py", line 332, in _request_wrapper
+    code, payload = await self.do_request(
+                    ^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/vladimirromanenko/Library/Caches/pypoetry/virtualenvs/face-bot-mgCG9TEw-py3.12/lib/python3.12/site-packages/telegram/request/_httpxrequest.py", line 300, in do_request
+    raise NetworkError(f"httpx.{err.__class__.__name__}: {err}") from err
+telegram.error.NetworkError: httpx.ConnectError: [Errno 8] nodename nor servname provided, or not known
+2025-03-07 14:02:15,269 - face_bot - CRITICAL - Ошибка при запуске приложения: httpx.ConnectError: [Errno 8] nodename nor servname provided, or not known
+Traceback (most recent call last):
+  File "/Users/vladimirromanenko/Library/Caches/pypoetry/virtualenvs/face-bot-mgCG9TEw-py3.12/lib/python3.12/site-packages/httpx/_transports/default.py", line 69, in map_httpcore_exceptions
+    yield
+  File "/Users/vladimirromanenko/Library/Caches/pypoetry/virtualenvs/face-bot-mgCG9TEw-py3.12/lib/python3.12/site-packages/httpx/_transports/default.py", line 373, in handle_async_request
+    resp = await self._pool.handle_async_request(req)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/vladimirromanenko/Library/Caches/pypoetry/virtualenvs/face-bot-mgCG9TEw-py3.12/lib/python3.12/site-packages/httpcore/_async/connection_pool.py", line 216, in handle_async_request
+    raise exc from None
+  File "/Users/vladimirromanenko/Library/Caches/pypoetry/virtualenvs/face-bot-mgCG9TEw-py3.12/lib/python3.12/site-packages/httpcore/_async/connection_pool.py", line 196, in handle_async_request
+    response = await connection.handle_async_request(
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/vladimirromanenko/Library/Caches/pypoetry/virtualenvs/face-bot-mgCG9TEw-py3.12/lib/python3.12/site-packages/httpcore/_async/connection.py", line 99, in handle_async_request
+    raise exc
+  File "/Users/vladimirromanenko/Library/Caches/pypoetry/virtualenvs/face-bot-mgCG9TEw-py3.12/lib/python3.12/site-packages/httpcore/_async/connection.py", line 76, in handle_async_request
+    stream = await self._connect(request)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/vladimirromanenko/Library/Caches/pypoetry/virtualenvs/face-bot-mgCG9TEw-py3.12/lib/python3.12/site-packages/httpcore/_async/connection.py", line 122, in _connect
+    stream = await self._network_backend.connect_tcp(**kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/vladimirromanenko/Library/Caches/pypoetry/virtualenvs/face-bot-mgCG9TEw-py3.12/lib/python3.12/site-packages/httpcore/_backends/auto.py", line 30, in connect_tcp
+    return await self._backend.connect_tcp(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/vladimirromanenko/Library/Caches/pypoetry/virtualenvs/face-bot-mgCG9TEw-py3.12/lib/python3.12/site-packages/httpcore/_backends/anyio.py", line 114, in connect_tcp
+    with map_exceptions(exc_map):
+         ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.12/3.12.6/Frameworks/Python.framework/Versions/3.12/lib/python3.12/contextlib.py", line 158, in __exit__
+    self.gen.throw(value)
+  File "/Users/vladimirromanenko/Library/Caches/pypoetry/virtualenvs/face-bot-mgCG9TEw-py3.12/lib/python3.12/site-packages/httpcore/_exceptions.py", line 14, in map_exceptions
+    raise to_exc(exc) from exc
+httpcore.ConnectError: [Errno 8] nodename nor servname provided, or not known
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/Users/vladimirromanenko/Library/Caches/pypoetry/virtualenvs/face-bot-mgCG9TEw-py3.12/lib/python3.12/site-packages/telegram/request/_httpxrequest.py", line 276, in do_request
+    res = await self._client.request(
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/vladimirromanenko/Library/Caches/pypoetry/virtualenvs/face-bot-mgCG9TEw-py3.12/lib/python3.12/site-packages/httpx/_client.py", line 1574, in request
+    return await self.send(request, auth=auth, follow_redirects=follow_redirects)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/vladimirromanenko/Library/Caches/pypoetry/virtualenvs/face-bot-mgCG9TEw-py3.12/lib/python3.12/site-packages/httpx/_client.py", line 1661, in send
+    response = await self._send_handling_auth(
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/vladimirromanenko/Library/Caches/pypoetry/virtualenvs/face-bot-mgCG9TEw-py3.12/lib/python3.12/site-packages/httpx/_client.py", line 1689, in _send_handling_auth
+    response = await self._send_handling_redirects(
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/vladimirromanenko/Library/Caches/pypoetry/virtualenvs/face-bot-mgCG9TEw-py3.12/lib/python3.12/site-packages/httpx/_client.py", line 1726, in _send_handling_redirects
+    response = await self._send_single_request(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/vladimirromanenko/Library/Caches/pypoetry/virtualenvs/face-bot-mgCG9TEw-py3.12/lib/python3.12/site-packages/httpx/_client.py", line 1763, in _send_single_request
+    response = await transport.handle_async_request(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/vladimirromanenko/Library/Caches/pypoetry/virtualenvs/face-bot-mgCG9TEw-py3.12/lib/python3.12/site-packages/httpx/_transports/default.py", line 372, in handle_async_request
+    with map_httpcore_exceptions():
+         ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.12/3.12.6/Frameworks/Python.framework/Versions/3.12/lib/python3.12/contextlib.py", line 158, in __exit__
+    self.gen.throw(value)
+  File "/Users/vladimirromanenko/Library/Caches/pypoetry/virtualenvs/face-bot-mgCG9TEw-py3.12/lib/python3.12/site-packages/httpx/_transports/default.py", line 86, in map_httpcore_exceptions
+    raise mapped_exc(message) from exc
+httpx.ConnectError: [Errno 8] nodename nor servname provided, or not known
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/Users/vladimirromanenko/programs/face_bot/face_bot/main.py", line 140, in <module>
+    main()
+  File "/Users/vladimirromanenko/programs/face_bot/face_bot/main.py", line 126, in main
+    application.run_polling()
+  File "/Users/vladimirromanenko/Library/Caches/pypoetry/virtualenvs/face-bot-mgCG9TEw-py3.12/lib/python3.12/site-packages/telegram/ext/_application.py", line 881, in run_polling
+    return self.__run(
+           ^^^^^^^^^^^
+  File "/Users/vladimirromanenko/Library/Caches/pypoetry/virtualenvs/face-bot-mgCG9TEw-py3.12/lib/python3.12/site-packages/telegram/ext/_application.py", line 1079, in __run
+    loop.run_until_complete(self.initialize())
+  File "/opt/homebrew/Cellar/python@3.12/3.12.6/Frameworks/Python.framework/Versions/3.12/lib/python3.12/asyncio/base_events.py", line 687, in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+  File "/Users/vladimirromanenko/Library/Caches/pypoetry/virtualenvs/face-bot-mgCG9TEw-py3.12/lib/python3.12/site-packages/telegram/ext/_application.py", line 503, in initialize
+    await self.bot.initialize()
+  File "/Users/vladimirromanenko/Library/Caches/pypoetry/virtualenvs/face-bot-mgCG9TEw-py3.12/lib/python3.12/site-packages/telegram/ext/_extbot.py", line 301, in initialize
+    await super().initialize()
+  File "/Users/vladimirromanenko/Library/Caches/pypoetry/virtualenvs/face-bot-mgCG9TEw-py3.12/lib/python3.12/site-packages/telegram/_bot.py", line 776, in initialize
+    await self.get_me()
+  File "/Users/vladimirromanenko/Library/Caches/pypoetry/virtualenvs/face-bot-mgCG9TEw-py3.12/lib/python3.12/site-packages/telegram/ext/_extbot.py", line 1920, in get_me
+    return await super().get_me(
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/vladimirromanenko/Library/Caches/pypoetry/virtualenvs/face-bot-mgCG9TEw-py3.12/lib/python3.12/site-packages/telegram/_bot.py", line 908, in get_me
+    result = await self._post(
+             ^^^^^^^^^^^^^^^^^
+  File "/Users/vladimirromanenko/Library/Caches/pypoetry/virtualenvs/face-bot-mgCG9TEw-py3.12/lib/python3.12/site-packages/telegram/_bot.py", line 622, in _post
+    return await self._do_post(
+           ^^^^^^^^^^^^^^^^^^^^
+  File "/Users/vladimirromanenko/Library/Caches/pypoetry/virtualenvs/face-bot-mgCG9TEw-py3.12/lib/python3.12/site-packages/telegram/ext/_extbot.py", line 355, in _do_post
+    return await super()._do_post(
+           ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/vladimirromanenko/Library/Caches/pypoetry/virtualenvs/face-bot-mgCG9TEw-py3.12/lib/python3.12/site-packages/telegram/_bot.py", line 651, in _do_post
+    result = await request.post(
+             ^^^^^^^^^^^^^^^^^^^
+  File "/Users/vladimirromanenko/Library/Caches/pypoetry/virtualenvs/face-bot-mgCG9TEw-py3.12/lib/python3.12/site-packages/telegram/request/_baserequest.py", line 200, in post
+    result = await self._request_wrapper(
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/vladimirromanenko/Library/Caches/pypoetry/virtualenvs/face-bot-mgCG9TEw-py3.12/lib/python3.12/site-packages/telegram/request/_baserequest.py", line 342, in _request_wrapper
+    raise exc
+  File "/Users/vladimirromanenko/Library/Caches/pypoetry/virtualenvs/face-bot-mgCG9TEw-py3.12/lib/python3.12/site-packages/telegram/request/_baserequest.py", line 332, in _request_wrapper
+    code, payload = await self.do_request(
+                    ^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/vladimirromanenko/Library/Caches/pypoetry/virtualenvs/face-bot-mgCG9TEw-py3.12/lib/python3.12/site-packages/telegram/request/_httpxrequest.py", line 300, in do_request
+    raise NetworkError(f"httpx.{err.__class__.__name__}: {err}") from err
+telegram.error.NetworkError: httpx.ConnectError: [Errno 8] nodename nor servname provided, or not known
+2025-03-07 14:02:59,738 - face_bot - INFO - Инициализация базы данных
+2025-03-07 14:02:59,741 - face_bot - INFO - База данных успешно инициализирована
+2025-03-07 14:02:59,741 - face_bot - INFO - Запуск бота
+2025-03-07 14:02:59,760 - face_bot - INFO - Запланирована регулярная очистка устаревших сессий
+2025-03-07 14:02:59,760 - face_bot - INFO - Бот запущен и готов к работе
+2025-03-07 14:05:02,054 - face_bot - INFO - Инициализация базы данных
+2025-03-07 14:05:02,056 - face_bot - INFO - База данных успешно инициализирована
+2025-03-07 14:05:02,056 - face_bot - INFO - Запуск бота
+2025-03-07 14:05:02,072 - face_bot - INFO - Запланирована регулярная очистка устаревших сессий
+2025-03-07 14:05:02,072 - face_bot - INFO - Бот запущен и готов к работе
+2025-03-07 14:05:12,072 - face_bot - WARNING - Файл кэша /Users/vladimirromanenko/programs/face_bot/users_cache не найден

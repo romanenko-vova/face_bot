@@ -21,7 +21,7 @@ from face_bot.static.callbacks import (
     PAY_MASSAGE_3,
     PAY_MASSAGE_4,
 )
-from face_bot.static.ids import GROUP_ID
+
 from face_bot.static.keys import PAYMENT_ID, SUBSCRIPTION_TYPE
 
 from face_bot.static.texts import (
@@ -45,8 +45,15 @@ from face_bot.jobs.times import CONFIRMATION_JOB_TIME, SHOW_SHOP_TIME
 
 from yookassa import Configuration, Payment
 
+from face_bot.utils.logger import logger
+from face_bot.utils.error_handler import error_handler
+from face_bot.utils.session_manager import SessionManager
+from face_bot.static.config import NAME_REGEX, ADMINS, GROUP_ID
 
-async def show_subscriptions(update: Update, context: ContextTypes.DEFAULT_TYPE):
+
+async def show_subscriptions(
+    update: Update, context: ContextTypes.DEFAULT_TYPE
+):
     chat_id = update.effective_chat.id
 
     subs_type = 0
@@ -61,7 +68,8 @@ async def show_subscriptions(update: Update, context: ContextTypes.DEFAULT_TYPE)
         keyboard.append(
             [
                 InlineKeyboardButton(
-                    "«Экспресс-лифтинг всего лица» — 490р", callback_data=MASSAGE_1
+                    "«Экспресс-лифтинг всего лица» — 490р",
+                    callback_data=MASSAGE_1,
                 ),
             ]
         )
@@ -69,7 +77,9 @@ async def show_subscriptions(update: Update, context: ContextTypes.DEFAULT_TYPE)
     if subs_type != 2 and subs_type != 4:
         keyboard.append(
             [
-                InlineKeyboardButton("«Гладкий лоб» — 1290р", callback_data=MASSAGE_2),
+                InlineKeyboardButton(
+                    "«Гладкий лоб» — 1290р", callback_data=MASSAGE_2
+                ),
             ]
         )
         msg += "\n2. «Гладкий лоб» за 18 минут"
@@ -157,7 +167,9 @@ async def subscriptions_callback(
                 InlineKeyboardButton("Купить", callback_data=PAY_MASSAGE_1),
             ],
             [
-                InlineKeyboardButton(WATCH_ANOTHER_MSG, callback_data=WATCH_ANOTHER),
+                InlineKeyboardButton(
+                    WATCH_ANOTHER_MSG, callback_data=WATCH_ANOTHER
+                ),
             ],
         ]
 
@@ -178,7 +190,9 @@ async def subscriptions_callback(
                 InlineKeyboardButton("Купить", callback_data=PAY_MASSAGE_2),
             ],
             [
-                InlineKeyboardButton(WATCH_ANOTHER_MSG, callback_data=WATCH_ANOTHER),
+                InlineKeyboardButton(
+                    WATCH_ANOTHER_MSG, callback_data=WATCH_ANOTHER
+                ),
             ],
         ]
 
@@ -197,7 +211,9 @@ async def subscriptions_callback(
                 InlineKeyboardButton("Купить", callback_data=PAY_MASSAGE_3),
             ],
             [
-                InlineKeyboardButton(WATCH_ANOTHER_MSG, callback_data=WATCH_ANOTHER),
+                InlineKeyboardButton(
+                    WATCH_ANOTHER_MSG, callback_data=WATCH_ANOTHER
+                ),
             ],
         ]
 
@@ -216,7 +232,9 @@ async def subscriptions_callback(
                 InlineKeyboardButton("Купить", callback_data=PAY_MASSAGE_4),
             ],
             [
-                InlineKeyboardButton(WATCH_ANOTHER_MSG, callback_data=WATCH_ANOTHER),
+                InlineKeyboardButton(
+                    WATCH_ANOTHER_MSG, callback_data=WATCH_ANOTHER
+                ),
             ],
         ]
 
@@ -283,7 +301,9 @@ async def subscriptions_callback(
         )
 
     elif int(query.data) == PAY_MASSAGE_2:
-        url, payment_id = await send_pay_request(amount=1290, description="Гладкий лоб")
+        url, payment_id = await send_pay_request(
+            amount=1290, description="Гладкий лоб"
+        )
 
         context.user_data[PAYMENT_ID] = payment_id
         context.user_data[SUBSCRIPTION_TYPE] = "2"
@@ -332,7 +352,9 @@ async def subscriptions_callback(
         )
 
     elif int(query.data) == PAY_MASSAGE_3:
-        url, payment_id = await send_pay_request(amount=1890, description="АНТИ-ОТЕК")
+        url, payment_id = await send_pay_request(
+            amount=1890, description="АНТИ-ОТЕК"
+        )
 
         context.user_data[PAYMENT_ID] = payment_id
         context.user_data[SUBSCRIPTION_TYPE] = "3"
@@ -434,50 +456,63 @@ async def subscriptions_callback(
     return SUBSCRIPTIONS
 
 
-async def send_warning_name(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    chat_id = update.effective_chat.id
+@error_handler
+async def send_warning_name(
+    update: Update, context: ContextTypes.DEFAULT_TYPE
+) -> int:
+    """Warning about wrong name format."""
+    user_id = update.effective_user.id
 
-    await context.bot.send_message(
-        chat_id=chat_id,
-        text=escape_text(
-            "*Неверный формат имени.* Имя *не может* содержать __цифры и иные специальные символы__"
-        ),
-        parse_mode=ParseMode.MARKDOWN_V2,
+    # Обновление времени последней активности пользователя
+    SessionManager.update_user_activity(context, user_id)
+
+    logger.warning(f"Пользователь {user_id} отправил имя в неверном формате")
+
+    await update.message.reply_text(
+        "Пожалуйста, введите корректное имя. Используйте только буквы, дефис, апостроф и пробелы. Длина имени от 2 до 50 символов."
     )
-
     return NAME
 
 
-async def get_name(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+@error_handler
+async def get_name(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
+    """Get name from user and save it."""
     user_id = update.effective_user.id
     chat_id = update.effective_chat.id
+    name = update.message.text
 
-    name = update.effective_message.text
+    # Обновление времени последней активности пользователя
+    SessionManager.update_user_activity(context, user_id)
 
-    """send user name to the group"""
-    await context.bot.send_message(
-        chat_id=GROUP_ID,
-        text=escape_text(SEND_NAME_MSG),
-        parse_mode=ParseMode.MARKDOWN_V2,
-    )
+    logger.info(f"Получено имя от пользователя {user_id}: {name}")
 
-    if "@" in update.effective_user.name:
-        await context.bot.send_message(
-            chat_id=GROUP_ID,
-            text=f"{update.effective_user.name} - {name}",
-        )
+    # Сохраняем имя в контексте
+    context.user_data["name"] = name
 
-    else:
-        await context.bot.forwardMessage(
-            chat_id=GROUP_ID,
-            from_chat_id=chat_id,
-            message_id=context.user_data[GROUP_MESSAGE][FIRST_MSG],
-        )
+    # """send user name to the group"""
+    # await context.bot.send_message(
+    #     chat_id=GROUP_ID,
+    #     text=escape_text(SEND_NAME_MSG),
+    #     parse_mode=ParseMode.MARKDOWN_V2,
+    # )
 
-        await context.bot.send_message(
-            chat_id=GROUP_ID,
-            text=name,
-        )
+    # if "@" in update.effective_user.name:
+    #     await context.bot.send_message(
+    #         chat_id=GROUP_ID,
+    #         text=f"{update.effective_user.name} - {name}",
+    #     )
+
+    # else:
+    #     await context.bot.forwardMessage(
+    #         chat_id=GROUP_ID,
+    #         from_chat_id=chat_id,
+    #         message_id=context.user_data[GROUP_MESSAGE][FIRST_MSG],
+    #     )
+
+    #     await context.bot.send_message(
+    #         chat_id=GROUP_ID,
+    #         text=name,
+    #     )
 
     await save_name(user_id=user_id, name=name)
 
