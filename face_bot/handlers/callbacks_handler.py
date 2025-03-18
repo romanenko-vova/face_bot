@@ -21,7 +21,12 @@ from face_bot.database.db import update_status
 
 from face_bot.handlers.subscriptions_handler import show_subscriptions
 
-from face_bot.jobs.jobs import send_case_job, already_try_job, remove_job_if_exists
+from face_bot.jobs.jobs import (
+    send_case_job,
+    already_try_job,
+    remove_job_if_exists,
+    remove_all_jobs,
+)
 from face_bot.jobs.id_jobs import CASE_JOB_ID, ALREADY_TRY_JOB_ID
 from face_bot.jobs.times import CASES_TIME, ALREADY_TRY_JOB_TIME
 
@@ -36,10 +41,12 @@ async def user_progrev_callback(
     user_id = update._effective_user.id
 
     if int(query.data) == LEARN_HOW:
-        
+        await remove_all_jobs(chat_id, context)
         await send_case_job(context, CASES_TIME, user_id)
 
-        keyboard = [[KeyboardButton("📱 Отправить контакт", request_contact=True)]]
+        keyboard = [
+            [KeyboardButton("📱 Отправить контакт", request_contact=True)]
+        ]
 
         await context.bot.send_message(
             chat_id=chat_id,
@@ -61,12 +68,10 @@ async def user_progrev_callback(
             message_id=update.effective_message.message_id,
         )
 
-        # remove БОЛЬНОЕ СООБЩЕНИЕ - 2
-        remove_job_if_exists(name=f"{user_id}-{CASE_JOB_ID}-2", context=context)
+        await remove_all_jobs(chat_id, context)
 
-        """change status to 3"""
         await update_status(status=TRY_GUIDE_CONV, user_id=user_id)
-
+        
         return await show_subscriptions(update, context)
 
     elif int(query.data) == NO_TRY:

@@ -21,7 +21,7 @@ async def init_db():
                 case_num INTEGER default 1,       
                 name TEXT,
                 phone TEXT,
-                subscriptions TEXT default ""
+                subscriptions TEXT default NULL
             )
         """)
         await db.commit()
@@ -82,6 +82,20 @@ async def update_case(user_id):
             await db.commit()
 
 
+async def reset_case(user_id):
+    async with aiosqlite.connect(DB_PATH) as db:
+        await db.execute(
+            """
+                    UPDATE users
+                    SET case_num = 1
+                    WHERE id_tg = ?
+                """,
+            (user_id,),
+        )
+
+        await db.commit()
+
+
 async def update_status(user_id, status):
     async with aiosqlite.connect(DB_PATH) as db:
         await db.execute(
@@ -110,7 +124,21 @@ async def save_phone(user_id, phone_number):
         await db.commit()
 
 
+async def get_subscriptions(user_id):
+    """Получает покупки пользователя"""
+    async with aiosqlite.connect(DB_PATH) as db:
+        async with db.execute(
+            "SELECT subscriptions FROM users WHERE id_tg = ?", (user_id,)
+        ) as cursor:
+            row = await cursor.fetchone()
+            if row[0]:
+                lst_subs = list(map(int, row[0].split(",")))
+                return lst_subs
+            return []
+
+
 async def save_subscription(subs, user_id):
+    """Сохраняет покупку пользователя"""
     async with aiosqlite.connect(DB_PATH) as db:
         async with db.execute(
             "SELECT name FROM users WHERE id_tg = ?", (user_id,)
@@ -131,6 +159,7 @@ async def save_subscription(subs, user_id):
 
 
 async def save_name(user_id, name):
+    """Сохраняет имя пользователя для консультации"""
     async with aiosqlite.connect(DB_PATH) as db:
         await db.execute(
             """
@@ -145,6 +174,7 @@ async def save_name(user_id, name):
 
 
 async def get_conversions():
+    """Стата для конверсии"""
     db = await aiosqlite.connect(DB_PATH)
 
     number_users = []

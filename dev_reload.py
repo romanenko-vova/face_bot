@@ -5,20 +5,10 @@ import sys
 from watchdog.observers import Observer
 from watchdog.events import FileSystemEventHandler
 
-# Добавьте в начало файла
-class Colors:
-    HEADER = '\033[95m'
-    BLUE = '\033[94m'
-    GREEN = '\033[92m'
-    WARNING = '\033[93m'
-    FAIL = '\033[91m'
-    ENDC = '\033[0m'
-    BOLD = '\033[1m'
-
 # Путь к вашему основному файлу бота
-BOT_FILE = "face_bot/main.py"  # Измените на ваш основной файл 
+BOT_FILE = "face_bot/main.py"
 # Директории для мониторинга изменений
-WATCH_PATHS = ["face_bot/"]  # Добавьте другие директории при необходимости
+WATCH_PATHS = ["face_bot/"]
 
 class ChangeHandler(FileSystemEventHandler):
     def __init__(self):
@@ -31,7 +21,7 @@ class ChangeHandler(FileSystemEventHandler):
             self.process.wait()
             print("\n🔄 Бот остановлен для перезапуска...")
             
-        print(f"{Colors.GREEN}🚀 Запуск бота через Poetry...{Colors.ENDC}")
+        print("🚀 Запуск бота через Poetry...")
         
         # Наследуем stdin, stdout и stderr от родительского процесса
         # Это позволит видеть все принты бота в консоли
@@ -61,7 +51,7 @@ def main():
     print("🔍 Запуск системы автоматического перезапуска бота")
     print(f"👀 Отслеживаемые директории: {', '.join(WATCH_PATHS)}")
     print("📋 Вывод бота будет отображаться в консоли")
-    print("-" * 50)  # Визуальное разделение
+    print("-" * 50)
     
     event_handler = ChangeHandler()
     observer = Observer()

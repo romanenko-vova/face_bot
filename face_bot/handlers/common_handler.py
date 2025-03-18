@@ -1,5 +1,6 @@
 from telegram.ext import ContextTypes, ConversationHandler
 from telegram.constants import ParseMode
+from datetime import timedelta
 from telegram import (
     Update,
     InlineKeyboardButton,
@@ -29,12 +30,13 @@ from face_bot.utils.logger import logger
 from face_bot.utils.error_handler import error_handler
 from face_bot.utils.session_manager import SessionManager
 
-from face_bot.database.db import register, save_phone
+from face_bot.database.db import register, save_phone, reset_case
 
 from face_bot.handlers.subscriptions_handler import show_subscriptions
 
 from face_bot.jobs.jobs import (
     young_guide_job,
+    young_guide_2_job,
     already_try_job,
     remove_job_if_exists,
     send_case_job,
@@ -59,6 +61,8 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     SessionManager.update_user_activity(context, user_id)
 
     logger.info(f"Пользователь {user_id} запустил команду /start")
+
+    await reset_case(user_id)
 
     if user_id in ADMINS:
         """open admin panel"""
@@ -115,7 +119,7 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
             name=f"{update.effective_user.full_name}",
         )
 
-        await send_case_job(context, 5, user_id)
+        await send_case_job(context, CASES_TIME, user_id)
         return PROGREV_MESSAGES
     else:
         return await show_subscriptions(update, context)
@@ -171,39 +175,49 @@ async def get_phone(
         parse_mode=ParseMode.MARKDOWN_V2,
     )
     
-    await send_case_job(context, 5, user_id, 1)
+    await send_case_job(context, timedelta(seconds=1), user_id, 1)
 
-    await send_feedback_job(context, 20, chat_id, 1)
+    await send_feedback_job(context, timedelta(seconds=7), chat_id, 1)
 
     # Отправляем ссылки на видео
     context.job_queue.run_once(
         send_video_links_job,
-        30,
+        timedelta(seconds=17),
         chat_id=chat_id,
         name=f"{user_id}-send_video_links",
     )
-
-    await send_case_job(context, 45, user_id, 2)
-    
-    """create job with ПРИЕМЫ ДОПОЛНЯЮТ"""
+    # Отправляем инструкцию к видео
     context.job_queue.run_once(
         young_guide_job,
-        70,
+        timedelta(seconds=30),
         chat_id=user_id,
         name=f"{user_id}-{YOUNG_JOB_ID}",
     )
 
-    """create job already try"""
+    # Отправляем Зиту
+    await send_case_job(context, timedelta(seconds=40), user_id, 2)
+    
+    # Отправляем все фигня купи курс
+    context.job_queue.run_once(
+        young_guide_2_job,
+        timedelta(seconds=50),
+        chat_id=user_id,
+        name=f"{user_id}-{YOUNG_JOB_ID}",
+    )
+
+    # Отправляем кнопку на магаз
     context.job_queue.run_once(
         already_try_job,
-        130,
+        timedelta(seconds=60),
         chat_id=user_id,
         name=f"{user_id}-{ALREADY_TRY_JOB_ID}",
     )
-
-    """send БОЛЬНОЕ СООБЩЕНИЕ - 2"""
     
-    await send_case_job(context, CASES_TIME * 8, user_id)
+    # prod
+    # await send_case_job(context, CASES_TIME, user_id)
+    # dev
+    # Если тупят — кейс
+    await send_case_job(context, timedelta(seconds=80), user_id)
 
     return PROGREV_MESSAGES
 

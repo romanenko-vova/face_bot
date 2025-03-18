@@ -33,11 +33,12 @@ from face_bot.static.texts import (
     FEEDBACK_NAME_MSG,
     SEND_NAME_MSG,
     WATCH_ANOTHER_MSG,
+    GOODS_INFO,
 )
 
 from face_bot.utils.escape_text import escape_text
 
-from face_bot.database.db import save_name
+from face_bot.database.db import save_name, get_subscriptions
 
 from face_bot.jobs.jobs import pay_confirmation_job, show_shop
 from face_bot.jobs.id_jobs import CONFIRMATION_JOB_ID, SHOW_SHOP
@@ -54,88 +55,74 @@ from face_bot.static.config import NAME_REGEX, ADMINS, GROUP_ID
 async def show_subscriptions(
     update: Update, context: ContextTypes.DEFAULT_TYPE
 ):
-    chat_id = update.effective_chat.id
+    user_id = update.effective_user.id
 
-    subs_type = 0
-
-    if SUBSCRIPTION_TYPE in context.user_data:
-        subs_type = int(context.user_data[SUBSCRIPTION_TYPE])
+    subs_type = await get_subscriptions(user_id)
 
     keyboard = []
     msg = SUBSCRIPTION_DESCRIPTION_MSG
 
-    if subs_type != 1 and subs_type != 4:
-        keyboard.append(
-            [
-                InlineKeyboardButton(
-                    "«Экспресс-лифтинг всего лица» — 490р",
-                    callback_data=MASSAGE_1,
-                ),
-            ]
-        )
-        msg += "\n1. Экспресс-лифтинг всего лица за 11 минут"
-    if subs_type != 2 and subs_type != 4:
-        keyboard.append(
-            [
-                InlineKeyboardButton(
-                    "«Гладкий лоб» — 1290р", callback_data=MASSAGE_2
-                ),
-            ]
-        )
-        msg += "\n2. «Гладкий лоб» за 18 минут"
-    if subs_type != 3 and subs_type != 4:
-        keyboard.append(
-            [
-                InlineKeyboardButton(
-                    "Комплекс «АНТИ-ОТЕК» — 1890р", callback_data=MASSAGE_3
-                ),
-            ]
-        )
-        msg += "\n3. Комплекс «АНТИ-ОТЕК» - 27 минут упражнений для тела и волшебных приемов для лица"
-    if subs_type != 4:
-        keyboard.append(
-            [
-                InlineKeyboardButton(
-                    "Комплекс «3 в 1» — 1990р", callback_data=MASSAGE_4
-                ),
-            ]
-        )
-        msg += "\n4. Комплекс «3 в 1»"
+    """Показывает список доступных подписок"""
+    n = 1
+    # Посмотреть 4й тип подписки
+    for num, info in GOODS_INFO.items():
+        if num not in subs_type:
+            keyboard.append(
+                [
+                    InlineKeyboardButton(
+                        info["name"],
+                        callback_data=info["callback_data"],
+                    ),
+                ]
+            )
+            msg += f"\n{n}. {info['description']}"
+            n += 1
 
+    query = update.callback_query
+
+    if query:
+        await query.answer()
+        if query.data == "back":
+            await query.edit_message_text(
+                text=escape_text(msg),
+                reply_markup=InlineKeyboardMarkup(keyboard),
+                parse_mode=ParseMode.MARKDOWN_V2,
+            )
+    else:
         await context.bot.send_message(
-            chat_id=chat_id,
+            chat_id=user_id,
             text=escape_text(msg),
             reply_markup=InlineKeyboardMarkup(keyboard),
             parse_mode=ParseMode.MARKDOWN_V2,
         )
 
-        return SUBSCRIPTIONS
+    return SUBSCRIPTIONS
 
-    else:
-        if (
-            "already_entered" in context.user_data
-            and context.user_data["already_entered"]
-        ):
-            await context.bot.send_message(
-                chat_id=chat_id,
-                text=escape_text(
-                    "Благодарю Вас за проявленный интерес! Обязательно сообщу Вам, когда появятся новые уроки)"
-                ),
-                reply_markup=InlineKeyboardMarkup(keyboard),
-                parse_mode=ParseMode.MARKDOWN_V2,
-            )
+    # else:
+    #     if (
+    #         "already_entered" in context.user_data
+    #         and context.user_data["already_entered"]
+    #     ):
+    #         await context.bot.send_message(
+    #             chat_id=chat_id,
+    #             text=escape_text(
+    #                 "Благодарю Вас за проявленный интерес! Обязательно сообщу Вам, когда появятся новые уроки)"
+    #             ),
+    #             reply_markup=InlineKeyboardMarkup(keyboard),
+    #             parse_mode=ParseMode.MARKDOWN_V2,
+    #         )
 
-            return SUBSCRIPTIONS
+    #         return SUBSCRIPTIONS
 
-        else:
-            context.user_data["already_entered"] = True
+    #     else:
+    #         context.user_data["already_entered"] = True
 
-            await context.bot.send_message(
-                chat_id=chat_id,
-                text="Как Вас зовут?",
-            )
+    #         await context.bot.send_message(
+    #             chat_id=chat_id,
+    #             text="Как Вас зовут?",
+    #         )
 
-            return NAME
+    #         return NAME
 
 
 async def subscriptions_callback(
@@ -144,316 +131,291 @@ async def subscriptions_callback(
     query = update.callback_query
     await query.answer()
 
-    chat_id = update.effective_chat.id
+    user_id = update.effective_user.id
 
-    await context.bot.delete_message(
-        chat_id=chat_id,
-        message_id=update.effective_message.message_id,
+    num_massage = int(query.data.split("_")[1])
+    text = GOODS_INFO[num_massage]["text"]
+    keyboard = [
+        [
+            InlineKeyboardButton(
+                "Купить", callback_data=f"PAY_MASSAGE_{num_massage}"
+            )
+        ],
+        [InlineKeyboardButton("Назад", callback_data="back")],
+    ]
+
+    await query.edit_message_text(
+        text=escape_text(text),
+        reply_markup=InlineKeyboardMarkup(keyboard),
+        parse_mode=ParseMode.MARKDOWN_V2,
     )
-    if int(query.data) == WATCH_ANOTHER:
-        return await show_subscriptions(update, context)
-
-    elif int(query.data) == ENROLL:
-        await context.bot.send_message(
-            chat_id=chat_id,
-            text="Как Вас зовут?",
-        )
-
-        return NAME
-
-    elif int(query.data) == MASSAGE_1:
-        keyboard = [
-            [
-                InlineKeyboardButton("Купить", callback_data=PAY_MASSAGE_1),
-            ],
-            [
-                InlineKeyboardButton(
-                    WATCH_ANOTHER_MSG, callback_data=WATCH_ANOTHER
-                ),
-            ],
-        ]
-
-        # context.user_data[URL_TO_DELETE] = url
-
-        await context.bot.send_message(
-            chat_id=chat_id,
-            text=escape_text(DESCRIPTION_1_MSG),
-            reply_markup=InlineKeyboardMarkup(keyboard),
-            parse_mode=ParseMode.MARKDOWN_V2,
-        )
-
-        return SUBSCRIPTIONS
-
-    elif int(query.data) == MASSAGE_2:
-        keyboard = [
-            [
-                InlineKeyboardButton("Купить", callback_data=PAY_MASSAGE_2),
-            ],
-            [
-                InlineKeyboardButton(
-                    WATCH_ANOTHER_MSG, callback_data=WATCH_ANOTHER
-                ),
-            ],
-        ]
-
-        await context.bot.send_message(
-            chat_id=chat_id,
-            text=escape_text(DESCRIPTION_2_MSG),
-            reply_markup=InlineKeyboardMarkup(keyboard),
-            parse_mode=ParseMode.MARKDOWN_V2,
-        )
-
-        return SUBSCRIPTIONS
-
-    elif int(query.data) == MASSAGE_3:
-        keyboard = [
-            [
-                InlineKeyboardButton("Купить", callback_data=PAY_MASSAGE_3),
-            ],
-            [
-                InlineKeyboardButton(
-                    WATCH_ANOTHER_MSG, callback_data=WATCH_ANOTHER
-                ),
-            ],
-        ]
-
-        await context.bot.send_message(
-            chat_id=chat_id,
-            text=escape_text(DESCRIPTION_3_MSG),
-            reply_markup=InlineKeyboardMarkup(keyboard),
-            parse_mode=ParseMode.MARKDOWN_V2,
-        )
-
-        return SUBSCRIPTIONS
-
-    elif int(query.data) == MASSAGE_4:
-        keyboard = [
-            [
-                InlineKeyboardButton("Купить", callback_data=PAY_MASSAGE_4),
-            ],
-            [
-                InlineKeyboardButton(
-                    WATCH_ANOTHER_MSG, callback_data=WATCH_ANOTHER
-                ),
-            ],
-        ]
-
-        await context.bot.send_message(
-            chat_id=chat_id,
-            text=DESCRIPTION_4_MSG,
-            reply_markup=InlineKeyboardMarkup(keyboard),
-            parse_mode=ParseMode.MARKDOWN_V2,
-        )
-
-        return SUBSCRIPTIONS
-
-    elif int(query.data) == PAY_MASSAGE_1:
-        url, payment_id = await send_pay_request(
-            amount=490, description="Поднимите мне веки"
-        )
-
-        context.user_data[PAYMENT_ID] = payment_id
-        context.user_data[SUBSCRIPTION_TYPE] = "1"
-
-        keyboard = [
-            [
-                InlineKeyboardButton("Оплатить", url=url),
-            ],
-        ]
-
-        # context.user_data[URL_TO_DELETE] = url
-
-        await context.bot.send_message(
-            chat_id=chat_id,
-            text=escape_text("""
-Спасибо, что выбрали урок *«Экспресс-лифтинг всего лица за 11 минут»*
-Стоимость: 490 рублей
-Ссылка действительна в течение 10 минут"""),
-            reply_markup=InlineKeyboardMarkup(keyboard),
-            parse_mode=ParseMode.MARKDOWN_V2,
-        )
-
-        "run a lot of jobs"
-        for i in range(30):
-            context.job_queue.run_once(
-                pay_confirmation_job,
-                CONFIRMATION_JOB_TIME * i,
-                chat_id=chat_id,
-                name=f"{chat_id}-{CONFIRMATION_JOB_ID}-{i}",
-                data={
-                    PAYMENT_ID: context.user_data[PAYMENT_ID],
-                    SUBSCRIPTION_TYPE: context.user_data[SUBSCRIPTION_TYPE],
-                    FIRST_MSG: context.user_data[GROUP_MESSAGE][FIRST_MSG]
-                    if (GROUP_MESSAGE in context.user_data)
-                    else "",
-                    "user_name": update.effective_user.name,
-                    "chat_id": update.effective_chat.id,
-                    "user_id": update.effective_user.id,
-                },
-            )
-
-        """show shop"""
-        context.job_queue.run_once(
-            show_shop,
-            SHOW_SHOP_TIME,
-            chat_id=chat_id,
-            name=f"{chat_id}-{SHOW_SHOP}",
-        )
-
-    elif int(query.data) == PAY_MASSAGE_2:
-        url, payment_id = await send_pay_request(
-            amount=1290, description="Гладкий лоб"
-        )
-
-        context.user_data[PAYMENT_ID] = payment_id
-        context.user_data[SUBSCRIPTION_TYPE] = "2"
-
-        keyboard = [
-            [
-                InlineKeyboardButton("Оплатить", url=url),
-            ],
-        ]
-
-        await context.bot.send_message(
-            chat_id=chat_id,
-            text=escape_text("""
-Спасибо, что выбрали урок *«Гладкий лоб» за 18 минут*
-Стоимость: 1290 рублей
-Ссылка действительна в течение 10 минут"""),
-            reply_markup=InlineKeyboardMarkup(keyboard),
-            parse_mode=ParseMode.MARKDOWN_V2,
-        )
-
-        "run a lot of jobs"
-        for i in range(30):
-            context.job_queue.run_once(
-                pay_confirmation_job,
-                CONFIRMATION_JOB_TIME * i,
-                chat_id=chat_id,
-                name=f"{chat_id}-{CONFIRMATION_JOB_ID}-{i}",
-                data={
-                    PAYMENT_ID: context.user_data[PAYMENT_ID],
-                    SUBSCRIPTION_TYPE: context.user_data[SUBSCRIPTION_TYPE],
-                    FIRST_MSG: context.user_data[GROUP_MESSAGE][FIRST_MSG]
-                    if (GROUP_MESSAGE in context.user_data)
-                    else "",
-                    "user_name": update.effective_user.name,
-                    "chat_id": update.effective_chat.id,
-                    "user_id": update.effective_user.id,
-                },
-            )
-
-        """show shop"""
-        context.job_queue.run_once(
-            show_shop,
-            SHOW_SHOP_TIME,
-            chat_id=chat_id,
-            name=f"{chat_id}-{SHOW_SHOP}",
-        )
-
-    elif int(query.data) == PAY_MASSAGE_3:
-        url, payment_id = await send_pay_request(
-            amount=1890, description="АНТИ-ОТЕК"
-        )
-
-        context.user_data[PAYMENT_ID] = payment_id
-        context.user_data[SUBSCRIPTION_TYPE] = "3"
-
-        keyboard = [
-            [
-                InlineKeyboardButton("Оплатить", url=url),
-            ],
-        ]
-
-        await context.bot.send_message(
-            chat_id=chat_id,
-            text=escape_text("""
-Спасибо, что выбрали урок *Комплекс «АНТИ-ОТЕК»* 
-Стоимость: 1890 рублей
-Ссылка действительна в течение 10 минут"""),
-            reply_markup=InlineKeyboardMarkup(keyboard),
-            parse_mode=ParseMode.MARKDOWN_V2,
-        )
-
-        "run a lot of jobs"
-        for i in range(30):
-            context.job_queue.run_once(
-                pay_confirmation_job,
-                CONFIRMATION_JOB_TIME * i,
-                chat_id=chat_id,
-                name=f"{chat_id}-{CONFIRMATION_JOB_ID}-{i}",
-                data={
-                    PAYMENT_ID: context.user_data[PAYMENT_ID],
-                    SUBSCRIPTION_TYPE: context.user_data[SUBSCRIPTION_TYPE],
-                    FIRST_MSG: context.user_data[GROUP_MESSAGE][FIRST_MSG]
-                    if (GROUP_MESSAGE in context.user_data)
-                    else "",
-                    "user_name": update.effective_user.name,
-                    "chat_id": update.effective_chat.id,
-                    "user_id": update.effective_user.id,
-                },
-            )
-
-        """show shop"""
-        context.job_queue.run_once(
-            show_shop,
-            SHOW_SHOP_TIME,
-            chat_id=chat_id,
-            name=f"{chat_id}-{SHOW_SHOP}",
-        )
-
-    elif int(query.data) == PAY_MASSAGE_4:
-        url, payment_id = await send_pay_request(
-            amount=1990, description="ЭКСПРЕСС-ОМОЛОЖЕНИЕ"
-        )
-
-        context.user_data[PAYMENT_ID] = payment_id
-        context.user_data[SUBSCRIPTION_TYPE] = "4"
-
-        keyboard = [
-            [
-                InlineKeyboardButton("Оплатить", url=url),
-            ],
-        ]
-
-        await context.bot.send_message(
-            chat_id=chat_id,
-            text=escape_text("""
-Спасибо, что выбрали урок *Комплекс 3-в-1 «ЭКСПРЕСС-ОМОЛОЖЕНИЕ»*
-Стоимость: 1890 рублей
-Ссылка действительна в течение 10 минут"""),
-            reply_markup=InlineKeyboardMarkup(keyboard),
-            parse_mode=ParseMode.MARKDOWN_V2,
-        )
-
-        """run a lot of jobs"""
-        for i in range(30):
-            context.job_queue.run_once(
-                pay_confirmation_job,
-                CONFIRMATION_JOB_TIME * i,
-                chat_id=chat_id,
-                name=f"{chat_id}-{CONFIRMATION_JOB_ID}-{i}",
-                data={
-                    PAYMENT_ID: context.user_data[PAYMENT_ID],
-                    SUBSCRIPTION_TYPE: context.user_data[SUBSCRIPTION_TYPE],
-                    FIRST_MSG: context.user_data[GROUP_MESSAGE][FIRST_MSG]
-                    if (GROUP_MESSAGE in context.user_data)
-                    else "",
-                    "user_name": update.effective_user.name,
-                    "chat_id": update.effective_chat.id,
-                    "user_id": update.effective_user.id,
-                },
-            )
-
-        """show shop"""
-        context.job_queue.run_once(
-            show_shop,
-            SHOW_SHOP_TIME,
-            chat_id=chat_id,
-            name=f"{chat_id}-{SHOW_SHOP}",
-        )
 
     return SUBSCRIPTIONS
+
+
+async def pay_massage_callback(
+    update: Update, context: ContextTypes.DEFAULT_TYPE
+) -> int:
+    query = update.callback_query
+    await query.answer()
+
+    user_id = update.effective_user.id
+    pay_num = int(query.data.split("_")[2])
+
+    url, payment_id = await send_pay_request(
+        amount=GOODS_INFO[pay_num]["price"],
+        description=GOODS_INFO[pay_num]["check_title"],
+    )
+    context.user_data[PAYMENT_ID] = payment_id
+    context.user_data[SUBSCRIPTION_TYPE] = "1"
+
+    keyboard = [
+        [
+            InlineKeyboardButton("Оплатить", url=url),
+        ],
+        [InlineKeyboardButton("Назад", callback_data=f"backpay_{pay_num}")],
+    ]
+
+    await context.bot.send_message(
+        chat_id=user_id,
+        text=escape_text(GOODS_INFO[pay_num]["text_pay"]),
+        reply_markup=InlineKeyboardMarkup(keyboard),
+        parse_mode=ParseMode.MARKDOWN_V2,
+    )
+
+    "run a lot of jobs"
+    for i in range(30):
+        context.job_queue.run_once(
+            pay_confirmation_job,
+            CONFIRMATION_JOB_TIME * i,
+            chat_id=user_id,
+            name=f"{user_id}-{CONFIRMATION_JOB_ID}-{i}",
+            data={
+                PAYMENT_ID: context.user_data[PAYMENT_ID],
+                SUBSCRIPTION_TYPE: context.user_data[SUBSCRIPTION_TYPE],
+                FIRST_MSG: context.user_data[GROUP_MESSAGE][FIRST_MSG]
+                if (GROUP_MESSAGE in context.user_data)
+                else "",
+                "user_name": update.effective_user.name,
+                "chat_id": update.effective_chat.id,
+                "user_id": update.effective_user.id,
+            },
+        )
+
+        """show shop"""
+        context.job_queue.run_once(
+            show_shop,
+            SHOW_SHOP_TIME,
+            chat_id=user_id,
+            name=f"{user_id}-{SHOW_SHOP}",
+        )
+
+
+# async def subscriptions_callback2(
+#     update: Update, context: ContextTypes.DEFAULT_TYPE
+# ) -> int:
+#     if int(query.data) == WATCH_ANOTHER:
+#         return await show_subscriptions(update, context)
+
+#     elif int(query.data) == ENROLL:
+#         await context.bot.send_message(
+#             chat_id=chat_id,
+#             text="Как Вас зовут?",
+#         )
+
+#         return NAME
+
+#     elif int(query.data) == PAY_MASSAGE_1:
+#         url, payment_id = await send_pay_request(
+#             amount=490, description="Поднимите мне веки"
+#         )
+
+#         context.user_data[PAYMENT_ID] = payment_id
+#         context.user_data[SUBSCRIPTION_TYPE] = "1"
+
+#         # context.user_data[URL_TO_DELETE] = url
+
+#         "run a lot of jobs"
+#         for i in range(30):
+#             context.job_queue.run_once(
+#                 pay_confirmation_job,
+#                 CONFIRMATION_JOB_TIME * i,
+#                 chat_id=chat_id,
+#                 name=f"{chat_id}-{CONFIRMATION_JOB_ID}-{i}",
+#                 data={
+#                     PAYMENT_ID: context.user_data[PAYMENT_ID],
+#                     SUBSCRIPTION_TYPE: context.user_data[SUBSCRIPTION_TYPE],
+#                     FIRST_MSG: context.user_data[GROUP_MESSAGE][FIRST_MSG]
+#                     if (GROUP_MESSAGE in context.user_data)
+#                     else "",
+#                     "user_name": update.effective_user.name,
+#                     "chat_id": update.effective_chat.id,
+#                     "user_id": update.effective_user.id,
+#                 },
+#             )
+
+#         """show shop"""
+#         context.job_queue.run_once(
+#             show_shop,
+#             SHOW_SHOP_TIME,
+#             chat_id=chat_id,
+#             name=f"{chat_id}-{SHOW_SHOP}",
+#         )
+
+#     elif int(query.data) == PAY_MASSAGE_2:
+#         url, payment_id = await send_pay_request(
+#             amount=1290, description="Гладкий лоб"
+#         )
+
+#         context.user_data[PAYMENT_ID] = payment_id
+#         context.user_data[SUBSCRIPTION_TYPE] = "2"
+
+#         keyboard = [
+#             [
+#                 InlineKeyboardButton("Оплатить", url=url),
+#             ],
+#         ]
+
+#         await context.bot.send_message(
+#             chat_id=chat_id,
+#             text=escape_text("""
+# Спасибо, что выбрали урок *«Гладкий лоб» за 18 минут*
+# Стоимость: 1290 рублей
+# Ссылка действительна в течение 10 минут"""),
+#             reply_markup=InlineKeyboardMarkup(keyboard),
+#             parse_mode=ParseMode.MARKDOWN_V2,
+#         )
+
+#         "run a lot of jobs"
+#         for i in range(30):
+#             context.job_queue.run_once(
+#                 pay_confirmation_job,
+#                 CONFIRMATION_JOB_TIME * i,
+#                 chat_id=chat_id,
+#                 name=f"{chat_id}-{CONFIRMATION_JOB_ID}-{i}",
+#                 data={
+#                     PAYMENT_ID: context.user_data[PAYMENT_ID],
+#                     SUBSCRIPTION_TYPE: context.user_data[SUBSCRIPTION_TYPE],
+#                     FIRST_MSG: context.user_data[GROUP_MESSAGE][FIRST_MSG]
+#                     if (GROUP_MESSAGE in context.user_data)
+#                     else "",
+#                     "user_name": update.effective_user.name,
+#                     "chat_id": update.effective_chat.id,
+#                     "user_id": update.effective_user.id,
+#                 },
+#             )
+
+#         """show shop"""
+#         context.job_queue.run_once(
+#             show_shop,
+#             SHOW_SHOP_TIME,
+#             chat_id=chat_id,
+#             name=f"{chat_id}-{SHOW_SHOP}",
+#         )
+
+#     elif int(query.data) == PAY_MASSAGE_3:
+#         url, payment_id = await send_pay_request(
+#             amount=1890, description="АНТИ-ОТЕК"
+#         )
+
+#         context.user_data[PAYMENT_ID] = payment_id
+#         context.user_data[SUBSCRIPTION_TYPE] = "3"
+
+#         keyboard = [
+#             [
+#                 InlineKeyboardButton("Оплатить", url=url),
+#             ],
+#         ]
+
+#         await context.bot.send_message(
+#             chat_id=chat_id,
+#             text=escape_text("""
+# Спасибо, что выбрали урок *Комплекс «АНТИ-ОТЕК»* 
+# Стоимость: 1890 рублей
+# Ссылка действительна в течение 10 минут"""),
+#             reply_markup=InlineKeyboardMarkup(keyboard),
+#             parse_mode=ParseMode.MARKDOWN_V2,
+#         )
+
+#         "run a lot of jobs"
+#         for i in range(30):
+#             context.job_queue.run_once(
+#                 pay_confirmation_job,
+#                 CONFIRMATION_JOB_TIME * i,
+#                 chat_id=chat_id,
+#                 name=f"{chat_id}-{CONFIRMATION_JOB_ID}-{i}",
+#                 data={
+#                     PAYMENT_ID: context.user_data[PAYMENT_ID],
+#                     SUBSCRIPTION_TYPE: context.user_data[SUBSCRIPTION_TYPE],
+#                     FIRST_MSG: context.user_data[GROUP_MESSAGE][FIRST_MSG]
+#                     if (GROUP_MESSAGE in context.user_data)
+#                     else "",
+#                     "user_name": update.effective_user.name,
+#                     "chat_id": update.effective_chat.id,
+#                     "user_id": update.effective_user.id,
+#                 },
+#             )
+
+#         """show shop"""
+#         context.job_queue.run_once(
+#             show_shop,
+#             SHOW_SHOP_TIME,
+#             chat_id=chat_id,
+#             name=f"{chat_id}-{SHOW_SHOP}",
+#         )
+
+#     elif int(query.data) == PAY_MASSAGE_4:
+#         url, payment_id = await send_pay_request(
+#             amount=1990, description="ЭКСПРЕСС-ОМОЛОЖЕНИЕ"
+#         )
+
+#         context.user_data[PAYMENT_ID] = payment_id
+#         context.user_data[SUBSCRIPTION_TYPE] = "4"
+
+#         keyboard = [
+#             [
+#                 InlineKeyboardButton("Оплатить", url=url),
+#             ],
+#         ]
+
+#         await context.bot.send_message(
+#             chat_id=chat_id,
+#             text=escape_text("""
+# Спасибо, что выбрали урок *Комплекс 3-в-1 «ЭКСПРЕСС-ОМОЛОЖЕНИЕ»*
+# Стоимость: 1890 рублей
+# Ссылка действительна в течение 10 минут"""),
+#             reply_markup=InlineKeyboardMarkup(keyboard),
+#             parse_mode=ParseMode.MARKDOWN_V2,
+#         )
+
+#         """run a lot of jobs"""
+#         for i in range(30):
+#             context.job_queue.run_once(
+#                 pay_confirmation_job,
+#                 CONFIRMATION_JOB_TIME * i,
+#                 chat_id=chat_id,
+#                 name=f"{chat_id}-{CONFIRMATION_JOB_ID}-{i}",
+#                 data={
+#                     PAYMENT_ID: context.user_data[PAYMENT_ID],
+#                     SUBSCRIPTION_TYPE: context.user_data[SUBSCRIPTION_TYPE],
+#                     FIRST_MSG: context.user_data[GROUP_MESSAGE][FIRST_MSG]
+#                     if (GROUP_MESSAGE in context.user_data)
+#                     else "",
+#                     "user_name": update.effective_user.name,
+#                     "chat_id": update.effective_chat.id,
+#                     "user_id": update.effective_user.id,
+#                 },
+#             )
+
+#         """show shop"""
+#         context.job_queue.run_once(
+#             show_shop,
+#             SHOW_SHOP_TIME,
+#             chat_id=chat_id,
+#             name=f"{chat_id}-{SHOW_SHOP}",
+#         )
+
+#     return SUBSCRIPTIONS
 
 
 @error_handler
@@ -529,6 +491,9 @@ async def send_pay_request(
     amount: int,
     description: str,
 ):
+    # TODO: add logging
+    # TODO: add error handling
+    # TODO: Сюда инфу для чеков
     try:
         Configuration.account_id = os.getenv("ACCOUNT_ID")
         Configuration.secret_key = os.getenv("SECRET_KEY")

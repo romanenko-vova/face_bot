@@ -15,13 +15,20 @@ from telegram.ext import (
 
 from face_bot.database.db import init_db
 
-from face_bot.handlers.common_handler import start, get_phone, send_warning_phone, cancel
+from face_bot.handlers.common_handler import (
+    start,
+    get_phone,
+    send_warning_phone,
+    cancel,
+)
 from face_bot.handlers.subscriptions_handler import (
     subscriptions_callback,
     get_name,
     send_warning_name,
     show_subscriptions,
+    pay_massage_callback,
 )
+from face_bot.static.callbacks import WATCH_ANOTHER
 
 from face_bot.static.states import (
     PROGREV_MESSAGES,
@@ -63,13 +70,13 @@ def main():
             states={
                 PROGREV_MESSAGES: [
                     CallbackQueryHandler(user_progrev_callback),
-                    CommandHandler("cancel", cancel),
-                    MessageHandler(filters.TEXT & ~filters.COMMAND, lambda u, c: start(u, c)),
+                    # CommandHandler("cancel", cancel),
+                    # MessageHandler(filters.TEXT & ~filters.COMMAND, lambda u, c: start(u, c)),
                 ],
                 PHONE: [
                     MessageHandler(filters.CONTACT, get_phone),
                     MessageHandler(filters.Regex(PHONE_REGEX), get_phone),
-                    CommandHandler("cancel", cancel),
+                    # CommandHandler("cancel", cancel),
                     MessageHandler(
                         filters.TEXT
                         & (~filters.Regex(PHONE_REGEX))
@@ -80,21 +87,36 @@ def main():
                 ],
                 ADMIN_COMMANDS: [
                     CallbackQueryHandler(admin_callbacks),
-                    CommandHandler("cancel", cancel),
-                    MessageHandler(filters.TEXT & ~filters.COMMAND, admin_callbacks),
+                    # CommandHandler("cancel", cancel),
+                    MessageHandler(
+                        filters.TEXT & ~filters.COMMAND, admin_callbacks
+                    ),
                 ],
                 MAILING: [
                     MessageHandler(filters.TEXT & ~filters.COMMAND, get_mail),
-                    CommandHandler("cancel", cancel),
+                    # CommandHandler("cancel", cancel),
                 ],
                 SUBSCRIPTIONS: [
-                    CallbackQueryHandler(subscriptions_callback),
-                    CommandHandler("cancel", cancel),
-                    MessageHandler(filters.TEXT & ~filters.COMMAND, show_subscriptions),
+                    CallbackQueryHandler(
+                        show_subscriptions, pattern="^back$"
+                    ),
+                    CallbackQueryHandler(
+                        subscriptions_callback, pattern="^MASSAGE_\d+$"
+                    ),
+                    CallbackQueryHandler(
+                        pay_massage_callback, pattern="^PAY_MASSAGE_\d+$"
+                    ),
+                    CallbackQueryHandler(
+                        subscriptions_callback, pattern="^backpay_\d+$"
+                    ),
+                    # CommandHandler("cancel", cancel),
+                    MessageHandler(
+                        filters.TEXT & ~filters.COMMAND, show_subscriptions
+                    ),
                 ],
                 NAME: [
                     MessageHandler(filters.Regex(NAME_REGEX), get_name),
-                    CommandHandler("cancel", cancel),
+                    # CommandHandler("cancel", cancel),
                     MessageHandler(
                         filters.TEXT & (~filters.Regex(NAME_REGEX)),
                         send_warning_name,
@@ -103,14 +125,13 @@ def main():
             },
             fallbacks=[
                 MessageHandler(
-                    filters.TEXT & filters.Regex("^🛒 Магазин$"), show_subscriptions
+                    filters.TEXT & filters.Regex("^🛒 Магазин$"),
+                    show_subscriptions,
                 ),
                 CommandHandler("start", start),
-                CommandHandler("cancel", cancel),
-                # Обработчик для неизвестных команд
-                MessageHandler(filters.COMMAND, start),
+                # CommandHandler("cancel", cancel),
                 # Обработчик для всех остальных сообщений
-                MessageHandler(filters.ALL, lambda u, c: start(u, c)),
+                MessageHandler(filters.ALL, start),
             ],
             persistent=True,
             name="conv_handler",
@@ -126,7 +147,9 @@ def main():
         application.run_polling()
 
     except Exception as e:
-        logger.critical(f"Критическая ошибка при запуске бота: {str(e)}", exc_info=True)
+        logger.critical(
+            f"Критическая ошибка при запуске бота: {str(e)}", exc_info=True
+        )
         raise
 
 
@@ -139,4 +162,6 @@ if __name__ == "__main__":
 
         main()
     except Exception as e:
-        logger.critical(f"Ошибка при запуске приложения: {str(e)}", exc_info=True)
+        logger.critical(
+            f"Ошибка при запуске приложения: {str(e)}", exc_info=True
+        )

@@ -25,6 +25,7 @@ from face_bot.static.texts import (
     BEFORE_AFTER_RESULTS,
     SUCCESS_STORY,
     GIFT_MESSAGE,
+    EXPRESS_YOUNG_MESSAGE_2
 )
 from face_bot.static.callbacks import (
     YES_TRY,
@@ -52,25 +53,27 @@ logger = logging.getLogger(__name__)
 
 async def case_job(context: ContextTypes.DEFAULT_TYPE) -> int:
     job = context.job
-
-    with open(f"face_bot/img/case_{job.data[CURRENT_CASE]}.jpg", "rb") as f:
+    cur_case = await get_current_case(job.chat_id)
+    case = job.data[CURRENT_CASE]
+    if case:
+        if case < cur_case:
+            return
+    else:
+        case = cur_case
+    with open(f"face_bot/img/case_{case}.jpg", "rb") as f:
         await context.bot.send_photo(
             chat_id=job.chat_id,
             photo=f,
-            caption=escape_text(CASES_MESSAGES[job.data[CURRENT_CASE]]),
+            caption=escape_text(CASES_MESSAGES[case]),
             parse_mode=ParseMode.MARKDOWN_V2,
         )
 
     await update_case(job.chat_id)
 
 async def send_case_job(context: ContextTypes.DEFAULT_TYPE, time: datetime, chat_id: int, case = None):
-    cur_case = await get_current_case(chat_id)
-    if case:
-        if case < cur_case:
-            return
-    else:
-        case = cur_case
-        
+    if not case:
+        case = 0
+    print('Я чет щас запустил', case)
     context.job_queue.run_once(
         case_job,
         time,
@@ -108,6 +111,16 @@ async def feedback_job(context: ContextTypes.DEFAULT_TYPE) -> int:
 async def young_guide_job(context: ContextTypes.DEFAULT_TYPE) -> int:
     job = context.job
 
+    await context.bot.send_message(
+        chat_id=job.chat_id,
+        text=EXPRESS_YOUNG_MESSAGE,
+        parse_mode=ParseMode.MARKDOWN_V2,
+        disable_web_page_preview=True,
+    )
+    
+async def young_guide_2_job(context: ContextTypes.DEFAULT_TYPE) -> int:
+    job = context.job
+
     keyboard = [
         [
             KeyboardButton("🛒 Магазин"),
@@ -116,7 +129,7 @@ async def young_guide_job(context: ContextTypes.DEFAULT_TYPE) -> int:
 
     await context.bot.send_message(
         chat_id=job.chat_id,
-        text=EXPRESS_YOUNG_MESSAGE,
+        text=EXPRESS_YOUNG_MESSAGE_2,
         reply_markup=ReplyKeyboardMarkup(
             keyboard, resize_keyboard=True, one_time_keyboard=True
         ),
@@ -158,7 +171,7 @@ async def already_try_job(context: ContextTypes.DEFAULT_TYPE) -> int:
     keyboard = [
         [
             InlineKeyboardButton(
-                "Да, заметила улучшения! 😊",
+                "Да, конечно 😊",
                 callback_data=YES_TRY,
             ),
         ],
@@ -172,7 +185,7 @@ async def already_try_job(context: ContextTypes.DEFAULT_TYPE) -> int:
 
     await context.bot.send_message(
         chat_id=job.chat_id,
-        text=escape_text("Успели попробовать упражнения из видео?"),
+        text=escape_text("*Готовы вдохнуть в свое лицо молодость?* ✨🌱💫"),
         reply_markup=InlineKeyboardMarkup(keyboard),
         parse_mode=ParseMode.MARKDOWN_V2,
     )
@@ -409,11 +422,6 @@ async def show_shop(context: ContextTypes.DEFAULT_TYPE) -> int:
     except Exception as e:
         # Если файлы не найдены, просто отправляем текст о результатах
         logger.error(f"Не удалось отправить фото: {e}")
-        await context.bot.send_message(
-            chat_id=job.chat_id,
-            text=escape_text(BEFORE_AFTER_RESULTS),
-            parse_mode=ParseMode.MARKDOWN_V2,
-        )
 
     keyboard = [
         [KeyboardButton("🛒 Магазин")],
@@ -438,10 +446,11 @@ async def remove_job_if_exists(
     if not current_jobs:
         return False
     for job in current_jobs:
+        print('Я чет щас удалю', job)
         job.schedule_removal()
     return True
 
 async def remove_all_jobs(chat_id: int, context: ContextTypes.DEFAULT_TYPE):
-    for case in range(1, 7):
+    for case in range(0, 7):
         await remove_job_if_exists(name=f"{chat_id}-{CASE_JOB_ID}-{case}", context=context) 
     
