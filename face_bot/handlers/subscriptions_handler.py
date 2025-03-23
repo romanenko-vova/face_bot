@@ -341,7 +341,7 @@ async def send_pay_request(
                     "return_url": "https://t.me/beautyfacegym_bot",
                 },
                 "capture": True,
-                "description": description,
+                "description": description + f" - {email}",
                 "receipt": {
                     "customer": {"email": f"{email}"},
                     "items": [
