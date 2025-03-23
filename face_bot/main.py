@@ -20,6 +20,8 @@ from face_bot.handlers.common_handler import (
     get_phone,
     send_warning_phone,
     cancel,
+    ask_email,
+    error_email,
 )
 from face_bot.handlers.subscriptions_handler import (
     subscriptions_callback,
@@ -45,7 +47,12 @@ from face_bot.handlers.admin_handler import admin_callbacks, get_mail
 from face_bot.utils.logger import logger
 from face_bot.utils.error_handler import global_error_handler
 from face_bot.utils.session_manager import schedule_session_cleanup
-from face_bot.static.config import USERS_CACHE_PATH, PHONE_REGEX, NAME_REGEX
+from face_bot.static.config import (
+    USERS_CACHE_PATH,
+    PHONE_REGEX,
+    NAME_REGEX,
+    EMAIL_REGEX,
+)
 
 load_dotenv()
 
@@ -97,21 +104,22 @@ def main():
                     # CommandHandler("cancel", cancel),
                 ],
                 SUBSCRIPTIONS: [
-                    CallbackQueryHandler(
-                        show_subscriptions, pattern="^back$"
-                    ),
+                    CallbackQueryHandler(show_subscriptions, pattern="^back$"),
                     CallbackQueryHandler(
                         subscriptions_callback, pattern="^MASSAGE_\d+$"
                     ),
                     CallbackQueryHandler(
-                        pay_massage_callback, pattern="^PAY_MASSAGE_\d+$"
+                        ask_email, pattern="^PAY_MASSAGE_\d+$"
                     ),
-                    CallbackQueryHandler(
-                        subscriptions_callback, pattern="^backpay_\d+$"
-                    ),
-                    # CommandHandler("cancel", cancel),
                     MessageHandler(
-                        filters.TEXT & ~filters.COMMAND, show_subscriptions
+                        filters.Regex(EMAIL_REGEX), pay_massage_callback
+                    ),
+                    MessageHandler(
+                        filters.TEXT
+                        & ~filters.COMMAND
+                        & ~filters.Regex(EMAIL_REGEX)
+                        & ~filters.Regex("^🛒 Магазин$"),
+                        error_email,
                     ),
                 ],
                 NAME: [

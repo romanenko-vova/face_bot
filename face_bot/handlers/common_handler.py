@@ -30,9 +30,9 @@ from face_bot.utils.logger import logger
 from face_bot.utils.error_handler import error_handler
 from face_bot.utils.session_manager import SessionManager
 
-from face_bot.database.db import register, save_phone, reset_case
+from face_bot.database.db import register, save_phone, reset_case, get_email
 
-from face_bot.handlers.subscriptions_handler import show_subscriptions
+from face_bot.handlers.subscriptions_handler import show_subscriptions, pay_massage_callback
 
 from face_bot.jobs.jobs import (
     young_guide_job,
@@ -63,6 +63,7 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     logger.info(f"Пользователь {user_id} запустил команду /start")
 
     await reset_case(user_id)
+    context.user_data["user_id"] = user_id
 
     if user_id in ADMINS:
         """open admin panel"""
@@ -106,8 +107,7 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
                 reply_markup=InlineKeyboardMarkup(keyboard),
                 parse_mode=ParseMode.MARKDOWN_V2,
             )
-        
-        
+
         """ сохраняем id сообщения, если пользователь не имеет username """
         context.user_data[GROUP_MESSAGE] = {
             FIRST_MSG: update.effective_message.id,
@@ -163,6 +163,16 @@ async def get_phone(
         phone_number = f"{update.effective_message.text}"
 
     await save_phone(user_id=user_id, phone_number=phone_number)
+    context.user_data["phone"] = phone_number
+    
+    if update.effective_user.username:
+        text = f'Пользователь @{update.effective_user.username} — {phone_number} — отправил номер телефона' 
+    else:
+        text = f'Пользователь {phone_number} — отправил номер телефона'
+    await context.bot.send_message(
+        chat_id=GROUP_ID,
+        text=text,
+    )
 
     # Удаляем предыдущие задачи, если они есть
     await remove_all_jobs(chat_id, context)
@@ -174,7 +184,7 @@ async def get_phone(
         reply_markup=ReplyKeyboardRemove(),
         parse_mode=ParseMode.MARKDOWN_V2,
     )
-    
+
     await send_case_job(context, timedelta(seconds=1), user_id, 1)
 
     await send_feedback_job(context, timedelta(seconds=7), chat_id, 1)
@@ -196,7 +206,7 @@ async def get_phone(
 
     # Отправляем Зиту
     await send_case_job(context, timedelta(seconds=40), user_id, 2)
-    
+
     # Отправляем все фигня купи курс
     context.job_queue.run_once(
         young_guide_2_job,
@@ -212,12 +222,11 @@ async def get_phone(
         chat_id=user_id,
         name=f"{user_id}-{ALREADY_TRY_JOB_ID}",
     )
-    
+
     # prod
-    # await send_case_job(context, CASES_TIME, user_id)
+    await send_case_job(context, CASES_TIME, user_id)
     # dev
-    # Если тупят — кейс
-    await send_case_job(context, timedelta(seconds=80), user_id)
+    # await send_case_job(context, timedelta(seconds=80), user_id)
 
     return PROGREV_MESSAGES
 
@@ -234,3 +243,38 @@ async def cancel(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     )
 
     return ConversationHandler.END
+
+
+@error_handler
+async def error_email(
+    update: Update, context: ContextTypes.DEFAULT_TYPE
+) -> int:
+    """Обработка ошибки при вводе email"""
+    user_id = update.effective_user.id
+    logger.error(f"Ошибка при вводе email для пользователя {user_id}")
+
+    await update.message.reply_text(
+        "Пожалуйста, введите ваш email в правильном формате",
+    )
+
+
+@error_handler
+async def ask_email(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
+    """Запрашивает email у пользователя"""
+    user_id = update.effective_user.id
+    logger.info(f"Пользователь {user_id} запросил email")
+    # Удаляем предыдущие задачи, если они есть
+    await remove_all_jobs(user_id, context)
+    
+    query = update.callback_query
+    pay_num = int(query.data.split("_")[2])
+    if await get_email(user_id) or context.user_data.get("email"):
+        await pay_massage_callback(update, context)
+    else:
+        context.user_data["pay_num"] = pay_num
+
+        await context.bot.send_message(
+            chat_id=user_id,
+            text="*Пожалуйста\, введите ваш email\. На него придет чек после оплаты*",
+            parse_mode=ParseMode.MARKDOWN_V2,
+        )

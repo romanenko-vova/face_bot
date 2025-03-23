@@ -14,12 +14,14 @@ MAX_CACHE_SIZE_MB = 50  # Максимальный размер файла кэ�
 # Регулярные выражения для валидации
 PHONE_REGEX = r"^(\+7|7|8)?[\s\-]?\(?[9][0-9]{2}\)?[\s\-]?[0-9]{3}[\s\-]?[0-9]{2}[\s\-]?[0-9]{2}$"
 NAME_REGEX = r"^[A-Za-zА-Яа-яёЁ\-'\s]{2,50}$"
+EMAIL_REGEX = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'
 
 # Параметры логирования
 LOG_LEVEL = "INFO"
 LOG_FORMAT = "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
 LOG_MAX_SIZE_MB = 10
 LOG_BACKUP_COUNT = 5
+
 
 # Параметры бота
 BOT_COMMAND_TIMEOUT = 60  # Тайм-аут команд бота в секундах
@@ -34,6 +36,7 @@ ERROR_MESSAGES = {
 } 
 
 ADMINS = [int(id) for id in os.getenv("ADMIN_IDS").split(",")]
+
 
 GROUP_ID = -1002150215263
 

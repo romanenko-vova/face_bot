@@ -25,7 +25,8 @@ from face_bot.static.texts import (
     BEFORE_AFTER_RESULTS,
     SUCCESS_STORY,
     GIFT_MESSAGE,
-    EXPRESS_YOUNG_MESSAGE_2
+    EXPRESS_YOUNG_MESSAGE_2,
+    GOODS_INFO,
 )
 from face_bot.static.callbacks import (
     YES_TRY,
@@ -39,7 +40,11 @@ from face_bot.static.callbacks import (
 from face_bot.jobs.id_jobs import CONFIRMATION_JOB_ID, SHOW_SHOP, CASE_JOB_ID
 from face_bot.static.keys import CURRENT_CASE
 
-from face_bot.database.db import update_case, save_subscription, get_current_case
+from face_bot.database.db import (
+    update_case,
+    save_subscription,
+    get_current_case,
+)
 
 from yookassa import Payment
 
@@ -70,10 +75,13 @@ async def case_job(context: ContextTypes.DEFAULT_TYPE) -> int:
 
     await update_case(job.chat_id)
 
-async def send_case_job(context: ContextTypes.DEFAULT_TYPE, time: datetime, chat_id: int, case = None):
+
+async def send_case_job(
+    context: ContextTypes.DEFAULT_TYPE, time: datetime, chat_id: int, case=None
+):
     if not case:
         case = 0
-    print('Я чет щас запустил', case)
+    print("Я чет щас запустил", case)
     context.job_queue.run_once(
         case_job,
         time,
@@ -81,15 +89,21 @@ async def send_case_job(context: ContextTypes.DEFAULT_TYPE, time: datetime, chat
         name=f"{chat_id}-{CASE_JOB_ID}-{case}",
         data={CURRENT_CASE: case},
     )
-    
-async def send_feedback_job(context: ContextTypes.DEFAULT_TYPE, time: datetime, chat_id: int, number:int):
+
+
+async def send_feedback_job(
+    context: ContextTypes.DEFAULT_TYPE,
+    time: datetime,
+    chat_id: int,
+    number: int,
+):
     context.job_queue.run_once(
         feedback_job,
         time,
         chat_id=chat_id,
         data={"number": number},
     )
-    
+
 
 async def feedback_job(context: ContextTypes.DEFAULT_TYPE) -> int:
     job = context.job
@@ -106,7 +120,10 @@ async def feedback_job(context: ContextTypes.DEFAULT_TYPE) -> int:
                 parse_mode=ParseMode.MARKDOWN_V2,
             )
     except Exception as e:
-        logger.error(f"Не удалось отправить отзыв (feedback_{number_feedback}): {str(e)}")
+        logger.error(
+            f"Не удалось отправить отзыв (feedback_{number_feedback}): {str(e)}"
+        )
+
 
 async def young_guide_job(context: ContextTypes.DEFAULT_TYPE) -> int:
     job = context.job
@@ -117,30 +134,23 @@ async def young_guide_job(context: ContextTypes.DEFAULT_TYPE) -> int:
         parse_mode=ParseMode.MARKDOWN_V2,
         disable_web_page_preview=True,
     )
-    
+
+
 async def young_guide_2_job(context: ContextTypes.DEFAULT_TYPE) -> int:
     job = context.job
-
-    keyboard = [
-        [
-            KeyboardButton("🛒 Магазин"),
-        ]
-    ]
 
     await context.bot.send_message(
         chat_id=job.chat_id,
         text=EXPRESS_YOUNG_MESSAGE_2,
-        reply_markup=ReplyKeyboardMarkup(
-            keyboard, resize_keyboard=True, one_time_keyboard=True
-        ),
         parse_mode=ParseMode.MARKDOWN_V2,
         disable_web_page_preview=True,
     )
-    
+
+
 async def send_video_links_job(context: ContextTypes.DEFAULT_TYPE) -> None:
     job = context.job
     chat_id = job.chat_id
-    
+
     # Отправляем ссылки на видео
     keyboard = [
         [
@@ -171,14 +181,8 @@ async def already_try_job(context: ContextTypes.DEFAULT_TYPE) -> int:
     keyboard = [
         [
             InlineKeyboardButton(
-                "Да, конечно 😊",
+                "Да, конечно! 😊",
                 callback_data=YES_TRY,
-            ),
-        ],
-        [
-            InlineKeyboardButton(
-                "Пока нет, но собираюсь 🤔",
-                callback_data=NO_TRY,
             ),
         ],
     ]
@@ -214,33 +218,34 @@ async def dont_buy_job(context: ContextTypes.DEFAULT_TYPE) -> int:
 async def pay_confirmation_job(context: ContextTypes.DEFAULT_TYPE) -> None:
     job = context.job
 
-    payment_id = job.data[PAYMENT_ID]
+    payment_id = job.data.get("payment_id")
     payment = Payment.find_one(payment_id)
 
     user_name = job.data["user_name"]
     chat_id = job.data["chat_id"]
     user_id = job.data["user_id"]
-    first_message = job.data[FIRST_MSG]
+    first_message = job.data["1st_msg"]
 
     if payment.paid:
         await context.bot.send_message(
             chat_id=chat_id,
-            text=escape_text("Спасибо за покупку!"),
+            text=escape_text("Спасибо за покупку! Напишите мне в личные сообщения @Tatyanagerasimova1980 для получения доступа к клубу"),
             parse_mode=ParseMode.MARKDOWN_V2,
         )
 
-        subs_type = job.data[SUBSCRIPTION_TYPE]
-
         """delete all jobs"""
         for i in range(30):
-            remove_job_if_exists(
+            await remove_job_if_exists(
                 name=f"{chat_id}-{CONFIRMATION_JOB_ID}-{i}", context=context
             )
 
         """TODO remove showing shop"""
-        remove_job_if_exists(name=f"{chat_id}-{SHOW_SHOP}", context=context)
+        await remove_job_if_exists(
+            name=f"{chat_id}-{SHOW_SHOP}", context=context
+        )
 
         """save in db conv_status and subscription"""
+        subs_type = job.data["subscription_bought"]
         await save_subscription(subs=subs_type, user_id=user_id)
 
         """send to group"""
@@ -267,135 +272,64 @@ async def pay_confirmation_job(context: ContextTypes.DEFAULT_TYPE) -> None:
             )
 
         """send video"""
-        if int(subs_type) == 1 or int(subs_type) == 4:
+        if int(subs_type) != 4:
             keyboard = [
                 [
                     InlineKeyboardButton(
                         "YouTube",
-                        url="https://youtu.be/ndkQQETkINQ",
+                        url=GOODS_INFO[subs_type]["youtube_url"],
                     ),
                 ],
                 [
                     InlineKeyboardButton(
                         "Google Disk",
-                        url="https://drive.google.com/file/d/1-kjFU-4O-UAysVpNz3VYhJ_CDl9e8zkc",
+                        url=GOODS_INFO[subs_type]["google_disk_url"],
                     ),
                 ],
             ]
 
             await context.bot.send_message(
                 chat_id=chat_id,
-                text=escape_text(
-                    "Смотрите урок *«Экспресс-лифтинг всего лица за 11 минут»* на удобной для Вас площадке"
-                ),
+                text=escape_text(GOODS_INFO[subs_type]["text_after_pay"]),
                 reply_markup=InlineKeyboardMarkup(keyboard),
                 parse_mode=ParseMode.MARKDOWN_V2,
             )
-
-        if int(subs_type) == 2 or int(subs_type) == 4:
-            keyboard = [
-                [
-                    InlineKeyboardButton(
-                        "YouTube",
-                        url="https://youtu.be/Xy1nhTEPO9c",
-                    ),
-                ],
-                [
-                    InlineKeyboardButton(
-                        "Google Disk",
-                        url="https://drive.google.com/file/d/1SO0IS6CG8TMLL8MW1ZMgYBBV7NwFyu7C",
-                    ),
-                ],
-            ]
-
+        else:
             await context.bot.send_message(
                 chat_id=chat_id,
-                text=escape_text(
-                    "Смотрите урок *«Гладкий лоб» за 18 минут* на удобной для Вас площадке"
-                ),
-                reply_markup=InlineKeyboardMarkup(keyboard),
+                text=escape_text(GOODS_INFO[subs_type]["text_after_pay"]),
                 parse_mode=ParseMode.MARKDOWN_V2,
             )
+            for subs_type in range(1, len(GOODS_INFO)):
+                keyboard = [
+                    [
+                        InlineKeyboardButton(
+                            "YouTube",
+                            url=GOODS_INFO[subs_type]["youtube_url"],
+                        ),
+                    ],
+                    [
+                        InlineKeyboardButton(
+                            "Google Disk",
+                            url=GOODS_INFO[subs_type]["google_disk_url"],
+                        ),
+                    ],
+                ]
 
-        if int(subs_type) == 3 or int(subs_type) == 4:
-            keyboard = [
-                [
-                    InlineKeyboardButton(
-                        "YouTube",
-                        url="https://youtu.be/FrUcOn9dCIs",
-                    ),
-                ],
-                [
-                    InlineKeyboardButton(
-                        "Google Disk",
-                        url="https://drive.google.com/file/d/1mibR5gzt-pdz7b1RdDS6et4u_eYbDcDE",
-                    ),
-                ],
-            ]
-
-            await context.bot.send_message(
-                chat_id=chat_id,
-                text=escape_text(
-                    "Смотрите урок *Комплекс «АНТИ-ОТЕК» - 27 минут упражнений для тела и волшебных приемов для лица* на удобной для Вас площадке"
-                ),
-                reply_markup=InlineKeyboardMarkup(keyboard),
-                parse_mode=ParseMode.MARKDOWN_V2,
-            )
+                await context.bot.send_message(
+                    chat_id=chat_id,
+                    text=escape_text(GOODS_INFO[subs_type]["text_after_pay"]),
+                    reply_markup=InlineKeyboardMarkup(keyboard),
+                    parse_mode=ParseMode.MARKDOWN_V2,
+                )
 
         """send shop"""
-        keyboard = []
-        msg = SUBSCRIPTION_DESCRIPTION_MSG
-
-        if int(subs_type) != 1 and int(subs_type) != 4:
-            keyboard.append(
-                [
-                    InlineKeyboardButton(
-                        "«Экспресс-лифтинг всего лица» — 490р",
-                        callback_data=MASSAGE_1,
-                    ),
-                ]
-            )
-            msg += "\n1. Экспресс-лифтинг всего лица за 11 минут"
-        if int(subs_type) != 2 and int(subs_type) != 4:
-            keyboard.append(
-                [
-                    InlineKeyboardButton(
-                        "«Гладкий лоб» — 1290р", callback_data=MASSAGE_2
-                    ),
-                ]
-            )
-            msg += "\n2. «Гладкий лоб» за 18 минут"
-        if int(subs_type) != 3 and int(subs_type) != 4:
-            keyboard.append(
-                [
-                    InlineKeyboardButton(
-                        "Комплекс «АНТИ-ОТЕК» — 1890р", callback_data=MASSAGE_3
-                    ),
-                ]
-            )
-            msg += "\n3. Комплекс «АНТИ-ОТЕК» - 27 минут упражнений для тела и волшебных приемов для лица"
-        if int(subs_type) != 4:
-            keyboard.append(
-                [
-                    InlineKeyboardButton(
-                        "Комплекс «3 в 1» — 1990р", callback_data=MASSAGE_4
-                    ),
-                ]
-            )
-            msg += "\n4. Комплекс «3 в 1»"
-
-            await context.bot.send_message(
-                chat_id=job.chat_id,
-                text=escape_text(msg),
-                reply_markup=InlineKeyboardMarkup(keyboard),
-                parse_mode=ParseMode.MARKDOWN_V2,
-            )
+        # TODO подумать над отправкой магазина
 
 
 async def show_shop(context: ContextTypes.DEFAULT_TYPE) -> int:
     job = context.job
 
-    
     await context.job_queue.run_once(
         send_feedback_job,
         when=timedelta(seconds=10),
@@ -411,7 +345,6 @@ async def show_shop(context: ContextTypes.DEFAULT_TYPE) -> int:
 
     # Отправляем галерею результатов
     try:
-        
         with open("face_bot/img/before_after_1.jpg", "rb") as photo:
             await context.bot.send_photo(
                 chat_id=job.chat_id,
@@ -433,7 +366,7 @@ async def show_shop(context: ContextTypes.DEFAULT_TYPE) -> int:
             "*Готовы начать свою трансформацию?*\nНажмите на кнопку «Магазин», чтобы выбрать курс, который подходит именно вам."
         ),
         reply_markup=ReplyKeyboardMarkup(
-            keyboard, resize_keyboard=True, one_time_keyboard=True
+            keyboard
         ),
         parse_mode=ParseMode.MARKDOWN_V2,
     )
@@ -446,11 +379,13 @@ async def remove_job_if_exists(
     if not current_jobs:
         return False
     for job in current_jobs:
-        print('Я чет щас удалю', job)
+        print("Я чет щас удалю", job)
         job.schedule_removal()
     return True
 
+
 async def remove_all_jobs(chat_id: int, context: ContextTypes.DEFAULT_TYPE):
     for case in range(0, 7):
-        await remove_job_if_exists(name=f"{chat_id}-{CASE_JOB_ID}-{case}", context=context) 
-    
+        await remove_job_if_exists(
+            name=f"{chat_id}-{CASE_JOB_ID}-{case}", context=context
+        )

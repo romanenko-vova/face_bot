@@ -21,7 +21,8 @@ async def init_db():
                 case_num INTEGER default 1,       
                 name TEXT,
                 phone TEXT,
-                subscriptions TEXT default NULL
+                subscriptions TEXT default NULL,
+                email TEXT default NULL
             )
         """)
         await db.commit()
@@ -136,16 +137,24 @@ async def get_subscriptions(user_id):
                 return lst_subs
             return []
 
+async def get_phone_number_by_id(user_id):
+    """Получает телефон пользователя"""
+    async with aiosqlite.connect(DB_PATH) as db:
+        async with db.execute(
+            "SELECT phone FROM users WHERE id_tg = ?", (user_id,)
+        ) as cursor:
+            row = await cursor.fetchone()
+            return row[0]
 
 async def save_subscription(subs, user_id):
     """Сохраняет покупку пользователя"""
     async with aiosqlite.connect(DB_PATH) as db:
         async with db.execute(
-            "SELECT name FROM users WHERE id_tg = ?", (user_id,)
+            "SELECT subscriptions FROM users WHERE id_tg = ?", (user_id,)
         ) as cursor:
             row = await cursor.fetchone()
 
-            new_row_subs = row[0] + "/" + subs if len(row[0]) > 0 else subs
+            new_row_subs = f"{row[0]},{subs}" if row[0] else subs
             await db.execute(
                 """
                         UPDATE users
@@ -198,3 +207,24 @@ async def get_conversions():
         number_users.append(total_users_with_status)
 
     return number_users
+
+async def save_email(user_id, email):
+    async with aiosqlite.connect(DB_PATH) as db:
+        await db.execute(
+            """
+                    UPDATE users
+                    SET email = ?
+                    WHERE id_tg = ?
+                """,
+            (email, user_id),
+        )
+
+        await db.commit()
+        
+async def get_email(user_id):
+    async with aiosqlite.connect(DB_PATH) as db:
+        async with db.execute(
+            "SELECT email FROM users WHERE id_tg = ?", (user_id,)
+        ) as cursor:
+            row = await cursor.fetchone()
+            return row[0]

@@ -74,45 +74,6 @@ async def user_progrev_callback(
         
         return await show_subscriptions(update, context)
 
-    elif int(query.data) == NO_TRY:
-        await context.bot.delete_message(
-            chat_id=chat_id,
-            message_id=update.effective_message.message_id,
-        )
-
-        keyboard = [
-            [
-                InlineKeyboardButton(
-                    "YouTube",
-                    url="https://youtu.be/cOm_aAKFK5Y",
-                ),
-            ],
-            [
-                InlineKeyboardButton(
-                    "Google Disk",
-                    url="https://drive.google.com/file/d/1c7fM94C0jXpd4TBZ4mlYnPSaqxH81V6p/view?usp=drivesdk",
-                ),
-            ],
-        ]
-
-        await context.bot.send_message(
-            chat_id=chat_id,
-            text=escape_text("*Скорее смотри*"),
-            reply_markup=InlineKeyboardMarkup(keyboard),
-            parse_mode=ParseMode.MARKDOWN_V2,
-        )
-
-        # await context.bot.send_message(
-        #     chat_id=chat_id,
-        #     text="отправляется вопрос 'попробовала?' через 15 секунд (15 минут в релизе)",
-        # )
-
-        context.job_queue.run_once(
-            already_try_job,
-            ALREADY_TRY_JOB_TIME,
-            chat_id=user_id,
-            name=f"{user_id}-{ALREADY_TRY_JOB_ID}",
-        )
 
     else:
         await context.bot.delete_message(
