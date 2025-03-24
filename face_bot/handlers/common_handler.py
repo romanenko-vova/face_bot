@@ -46,6 +46,7 @@ from face_bot.jobs.times import (
     GF1,
     GF2,
     GF3,
+    GF4
 )
 
 
@@ -206,12 +207,12 @@ async def get_phone(
     )
 
     # Отправляем Зиту
-    await send_case_job(context, timedelta(seconds=40), user_id, 2)
+    await send_case_job(context, timedelta(seconds=GF2), user_id, 2)
 
     # Отправляем все фигня купи курс
     context.job_queue.run_once(
         young_guide_2_job,
-        timedelta(seconds=GF2),
+        timedelta(seconds=GF3),
         chat_id=user_id,
         name=f"{user_id}-{YOUNG_JOB_ID}",
     )
@@ -219,7 +220,7 @@ async def get_phone(
     # Отправляем кнопку на магаз
     context.job_queue.run_once(
         already_try_job,
-        timedelta(seconds=GF3),
+        timedelta(seconds=GF4),
         chat_id=user_id,
         name=f"{user_id}-{ALREADY_TRY_JOB_ID}",
     )
