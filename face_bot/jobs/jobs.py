@@ -330,7 +330,7 @@ async def pay_confirmation_job(context: ContextTypes.DEFAULT_TYPE) -> None:
 async def show_shop(context: ContextTypes.DEFAULT_TYPE) -> int:
     job = context.job
 
-    await context.job_queue.run_once(
+    context.job_queue.run_once(
         send_feedback_job,
         when=timedelta(seconds=10),
         data={"number": 5},

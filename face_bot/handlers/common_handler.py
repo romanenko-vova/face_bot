@@ -16,12 +16,9 @@ from face_bot.static.callbacks import (
     MAIL,
     LEARN_HOW,
 )
-from face_bot.static.keys import GROUP_MESSAGE, FIRST_MSG, CURRENT_CASE
+from face_bot.static.keys import GROUP_MESSAGE, FIRST_MSG
 from face_bot.static.texts import (
     FIRST_PROGREV_MESSAGE,
-    SEND_CONTACT_GROUP_MSG,
-    VIDEO_CAPTION,
-    GIFT_MESSAGE,
 )
 from face_bot.static.config import ADMINS, GROUP_ID
 
@@ -38,17 +35,17 @@ from face_bot.jobs.jobs import (
     young_guide_job,
     young_guide_2_job,
     already_try_job,
-    remove_job_if_exists,
     send_case_job,
     send_feedback_job,
     send_video_links_job,
     remove_all_jobs,
 )
-from face_bot.jobs.id_jobs import YOUNG_JOB_ID, ALREADY_TRY_JOB_ID, CASE_JOB_ID
+from face_bot.jobs.id_jobs import YOUNG_JOB_ID, ALREADY_TRY_JOB_ID
 from face_bot.jobs.times import (
-    YOUNG_GUIDE_TIME,
-    ALREADY_TRY_JOB_TIME,
     CASES_TIME,
+    GF1,
+    GF2,
+    GF3,
 )
 
 
@@ -122,6 +119,10 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
         await send_case_job(context, CASES_TIME, user_id)
         return PROGREV_MESSAGES
     else:
+        await register(
+            user_id=user_id,
+            name=f"{update.effective_user.full_name}",
+        )
         return await show_subscriptions(update, context)
 
 
@@ -199,7 +200,7 @@ async def get_phone(
     # Отправляем инструкцию к видео
     context.job_queue.run_once(
         young_guide_job,
-        timedelta(seconds=30),
+        timedelta(seconds=GF1),
         chat_id=user_id,
         name=f"{user_id}-{YOUNG_JOB_ID}",
     )
@@ -210,7 +211,7 @@ async def get_phone(
     # Отправляем все фигня купи курс
     context.job_queue.run_once(
         young_guide_2_job,
-        timedelta(seconds=50),
+        timedelta(seconds=GF2),
         chat_id=user_id,
         name=f"{user_id}-{YOUNG_JOB_ID}",
     )
@@ -218,7 +219,7 @@ async def get_phone(
     # Отправляем кнопку на магаз
     context.job_queue.run_once(
         already_try_job,
-        timedelta(seconds=60),
+        timedelta(seconds=GF3),
         chat_id=user_id,
         name=f"{user_id}-{ALREADY_TRY_JOB_ID}",
     )

@@ -5,7 +5,14 @@ import uuid
 
 from telegram.ext import ContextTypes
 from telegram.constants import ParseMode
-from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup, ReplyKeyboardMarkup, KeyboardButton
+from telegram import (
+    Update,
+    InlineKeyboardButton,
+    InlineKeyboardMarkup,
+    ReplyKeyboardMarkup,
+    KeyboardButton,
+    InputMediaPhoto,
+)
 
 from face_bot.static.keys import GROUP_MESSAGE, FIRST_MSG
 
@@ -46,16 +53,30 @@ from face_bot.database.db import (
     get_subscriptions,
     get_phone_number_by_id,
     save_email,
-    get_email
+    get_email,
 )
 
-from face_bot.jobs.jobs import pay_confirmation_job, show_shop, send_case_job, remove_all_jobs
+from face_bot.jobs.jobs import (
+    pay_confirmation_job,
+    show_shop,
+    send_case_job,
+    remove_all_jobs,
+)
 from face_bot.jobs.id_jobs import CONFIRMATION_JOB_ID, SHOW_SHOP
-from face_bot.jobs.times import CONFIRMATION_JOB_TIME, SHOW_SHOP_TIME, CASES_TIME
+from face_bot.jobs.times import (
+    CONFIRMATION_JOB_TIME,
+    SHOW_SHOP_TIME,
+    CASES_TIME,
+)
 
 from yookassa import Configuration, Payment
 
-from face_bot.utils.logger import logger, log_user_action, log_payment, log_error
+from face_bot.utils.logger import (
+    logger,
+    log_user_action,
+    log_payment,
+    log_error,
+)
 from face_bot.utils.error_handler import error_handler
 from face_bot.utils.session_manager import SessionManager
 from face_bot.static.config import NAME_REGEX, ADMINS, GROUP_ID
@@ -71,7 +92,6 @@ async def show_subscriptions(
 
     subs_type = await get_subscriptions(user_id)
     log_user_action(user_id, "get_subscriptions", subs_type=subs_type)
-        
 
     keyboard = []
     msg = SUBSCRIPTION_DESCRIPTION_MSG
@@ -105,7 +125,12 @@ async def show_subscriptions(
     if query:
         await query.answer()
         if query.data == "back":
-            await query.edit_message_text(
+            # Удаляем старое сообщение с фото
+            await query.message.delete()
+            
+            # Отправляем новое сообщение только с текстом
+            await context.bot.send_message(
+                chat_id=user_id,
                 text=escape_text(msg),
                 reply_markup=InlineKeyboardMarkup(keyboard),
                 parse_mode=ParseMode.MARKDOWN_V2,
@@ -117,14 +142,14 @@ async def show_subscriptions(
             [
                 [KeyboardButton("🛒 Магазин")],
             ],
-            resize_keyboard=True
+            resize_keyboard=True,
         )
         message = await context.bot.send_message(
             chat_id=user_id,
             text="Загружаю товары...",
             reply_markup=shop_keyboard,
         )
-       
+
     await context.bot.send_message(
         chat_id=user_id,
         text=escape_text(msg),
@@ -140,13 +165,15 @@ async def subscriptions_callback(
 ) -> int:
     query = update.callback_query
     user_id = update.effective_user.id
-    log_user_action(user_id, "subscriptions_callback", callback_data=query.data)
+    log_user_action(
+        user_id, "subscriptions_callback", callback_data=query.data
+    )
 
     await query.answer()
 
     # Удаляем предыдущие задачи, если они есть
     await remove_all_jobs(user_id, context)
-    
+
     num_massage = int(query.data.split("_")[1])
     text = GOODS_INFO[num_massage]["text"]
     keyboard = [
@@ -158,10 +185,19 @@ async def subscriptions_callback(
         [InlineKeyboardButton("Назад", callback_data="back")],
     ]
 
-    await query.edit_message_text(
-        text=escape_text(text),
-        reply_markup=InlineKeyboardMarkup(keyboard),
+    # await query.edit_message_text(
+    #     text=escape_text(text),
+    #     reply_markup=InlineKeyboardMarkup(keyboard),
+    #     parse_mode=ParseMode.MARKDOWN_V2,
+    # )
+    with open(GOODS_INFO[num_massage]["img"], "rb") as photo:
+        await query.edit_message_media(
+            media=InputMediaPhoto(media=photo),
+        )
+    await query.edit_message_caption(
+        caption=escape_text(text),
         parse_mode=ParseMode.MARKDOWN_V2,
+        reply_markup=InlineKeyboardMarkup(keyboard),
     )
     await send_case_job(context, CASES_TIME, user_id)
     return SUBSCRIPTIONS
@@ -178,7 +214,7 @@ async def pay_massage_callback(
     else:
         query = update.callback_query
         pay_num = int(query.data.split("_")[2])
-        
+
     log_user_action(user_id, "pay_massage_callback", subscription_type=pay_num)
 
     try:
@@ -187,8 +223,10 @@ async def pay_massage_callback(
             description=GOODS_INFO[pay_num]["check_title"],
             context=context,
         )
-        log_payment(user_id, payment_id, GOODS_INFO[pay_num]["price"], "created")
-        
+        log_payment(
+            user_id, payment_id, GOODS_INFO[pay_num]["price"], "created"
+        )
+
         context.user_data["payment_id"] = payment_id
         context.user_data["subscription_bought"] = pay_num
 
@@ -229,12 +267,12 @@ async def pay_massage_callback(
             )
 
             """show shop"""
-            context.job_queue.run_once(
-                show_shop,
-                SHOW_SHOP_TIME,
-                chat_id=user_id,
-                name=f"{user_id}-{SHOW_SHOP}",
-            )
+            # context.job_queue.run_once(
+            #     show_shop,
+            #     SHOW_SHOP_TIME,
+            #     chat_id=user_id,
+            #     name=f"{user_id}-{SHOW_SHOP}",
+            # )
 
         return SUBSCRIPTIONS
 
@@ -318,13 +356,15 @@ async def send_pay_request(
     context: ContextTypes.DEFAULT_TYPE,
 ):
     user_id = context.user_data["user_id"]
-    log_user_action(user_id, "send_pay_request", amount=amount, description=description)
+    log_user_action(
+        user_id, "send_pay_request", amount=amount, description=description
+    )
     if context.user_data.get("email"):
         email = context.user_data["email"]
     else:
         email = await get_email(user_id)
     try:
-        if os.getenv("DEV") == 'True':
+        if os.getenv("DEV") == "True":
             Configuration.account_id = os.getenv("ACCOUNT_ID_DEV")
             Configuration.secret_key = os.getenv("SECRET_KEY_DEV")
         else:
@@ -361,10 +401,16 @@ async def send_pay_request(
             },
             str(uuid.uuid4()),
         )
-        
+
         confirmation_url = payment.confirmation.confirmation_url
 
-        log_payment(user_id, payment.id, amount, "created", payment_url=confirmation_url)
+        log_payment(
+            user_id,
+            payment.id,
+            amount,
+            "created",
+            payment_url=confirmation_url,
+        )
         return confirmation_url, payment.id
 
     except Exception as e:
