@@ -101,8 +101,10 @@ async def admin_callbacks(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
         message = f"{states_list[0]}"
 
         for i in range(len(states_list) - 1):
-            conversion = round(number_users[i + 1] / number_users[i] * 100, 2)
-
+            if number_users[i] != 0:
+                conversion = round(number_users[i + 1] / number_users[i] * 100, 2)
+            else:
+                conversion = 0
             message += f"\n|\n|    {conversion}%\nv\n{states_list[i+1]}"
 
         await context.bot.send_message(

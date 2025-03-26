@@ -217,7 +217,7 @@ async def get_conversions():
 
         total_users_with_status = await total_users_with_status.fetchone()
         total_users_with_status = total_users_with_status[0]
-
+        
         number_users.append(total_users_with_status)
 
     return number_users

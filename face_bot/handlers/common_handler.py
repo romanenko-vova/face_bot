@@ -12,14 +12,18 @@ from face_bot.static.states import PHONE
 from face_bot.static.keys import CURRENT_CASE
 from face_bot.static.callbacks import LEARN_HOW, YES_TRY, NO_TRY
 from face_bot.static.conversions import TRY_GUIDE_CONV
-from face_bot.static.status import LEARN_HOW_ST, PRESSED_YES_ST, START_ST, SENT_PHONE_ST
+from face_bot.static.status import (
+    LEARN_HOW_ST,
+    PRESSED_YES_ST,
+    START_ST,
+    SENT_PHONE_ST,
+)
 
-from face_bot.static.texts import CONTACT_MESSAGE
+from face_bot.static.texts import CONTACT_MESSAGE, FIRST_PROGREV_MESSAGE
 
 from face_bot.utils.escape_text import escape_text
 
 from face_bot.database.db import update_status
-
 
 
 from face_bot.static.config import ADMINS, GROUP_ID
@@ -39,12 +43,10 @@ from face_bot.static.callbacks import (
     CONVERSIONS,
     LEADER_BOARD,
     MAIL,
-    PROGREV_MESSAGES,
-    GROUP_MESSAGE,
-    FIRST_MSG,
-    ADMIN_COMMANDS,
-    FIRST_PROGREV_MESSAGE,
+    
 )
+from face_bot.static.states import PROGREV_MESSAGES, ADMIN_COMMANDS
+from face_bot.static.keys import GROUP_MESSAGE, FIRST_MSG
 from face_bot.jobs.jobs import (
     young_guide_job,
     young_guide_2_job,
@@ -168,7 +170,7 @@ async def get_phone(
 
     logger.info(f"Получен номер телефона от пользователя {user_id}")
     await update_status(user_id, SENT_PHONE_ST)
-    
+
     if update.effective_message.contact:
         phone_number = f"{update.effective_message.contact.phone_number}"
     elif update.effective_message.text:
