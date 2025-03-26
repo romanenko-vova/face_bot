@@ -8,18 +8,20 @@ from telegram import (
     ReplyKeyboardRemove,
 )
 
+from face_bot.static.states import PHONE
+from face_bot.static.keys import CURRENT_CASE
+from face_bot.static.callbacks import LEARN_HOW, YES_TRY, NO_TRY
+from face_bot.static.conversions import TRY_GUIDE_CONV
+from face_bot.static.status import LEARN_HOW_ST, PRESSED_YES_ST, START_ST, SENT_PHONE_ST
 
-from face_bot.static.states import ADMIN_COMMANDS, PROGREV_MESSAGES, PHONE
-from face_bot.static.callbacks import (
-    CONVERSIONS,
-    LEADER_BOARD,
-    MAIL,
-    LEARN_HOW,
-)
-from face_bot.static.keys import GROUP_MESSAGE, FIRST_MSG
-from face_bot.static.texts import (
-    FIRST_PROGREV_MESSAGE,
-)
+from face_bot.static.texts import CONTACT_MESSAGE
+
+from face_bot.utils.escape_text import escape_text
+
+from face_bot.database.db import update_status
+
+
+
 from face_bot.static.config import ADMINS, GROUP_ID
 
 from face_bot.utils.escape_text import escape_text
@@ -29,8 +31,20 @@ from face_bot.utils.session_manager import SessionManager
 
 from face_bot.database.db import register, save_phone, reset_case, get_email
 
-from face_bot.handlers.subscriptions_handler import show_subscriptions, pay_massage_callback
-
+from face_bot.handlers.subscriptions_handler import (
+    show_subscriptions,
+    pay_massage_callback,
+)
+from face_bot.static.callbacks import (
+    CONVERSIONS,
+    LEADER_BOARD,
+    MAIL,
+    PROGREV_MESSAGES,
+    GROUP_MESSAGE,
+    FIRST_MSG,
+    ADMIN_COMMANDS,
+    FIRST_PROGREV_MESSAGE,
+)
 from face_bot.jobs.jobs import (
     young_guide_job,
     young_guide_2_job,
@@ -41,13 +55,7 @@ from face_bot.jobs.jobs import (
     remove_all_jobs,
 )
 from face_bot.jobs.id_jobs import YOUNG_JOB_ID, ALREADY_TRY_JOB_ID
-from face_bot.jobs.times import (
-    CASES_TIME,
-    GF1,
-    GF2,
-    GF3,
-    GF4
-)
+from face_bot.jobs.times import CASES_TIME, GF1, GF2, GF3, GF4
 
 
 @error_handler
@@ -116,7 +124,7 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
             user_id=user_id,
             name=f"{update.effective_user.full_name}",
         )
-
+        await update_status(user_id, START_ST)
         await send_case_job(context, CASES_TIME, user_id)
         return PROGREV_MESSAGES
     else:
@@ -124,6 +132,7 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
             user_id=user_id,
             name=f"{update.effective_user.full_name}",
         )
+        await update_status(user_id, PRESSED_YES_ST)
         return await show_subscriptions(update, context)
 
 
@@ -158,7 +167,8 @@ async def get_phone(
     SessionManager.update_user_activity(context, user_id)
 
     logger.info(f"Получен номер телефона от пользователя {user_id}")
-
+    await update_status(user_id, SENT_PHONE_ST)
+    
     if update.effective_message.contact:
         phone_number = f"{update.effective_message.contact.phone_number}"
     elif update.effective_message.text:
@@ -166,11 +176,11 @@ async def get_phone(
 
     await save_phone(user_id=user_id, phone_number=phone_number)
     context.user_data["phone"] = phone_number
-    
+
     if update.effective_user.username:
-        text = f'Пользователь @{update.effective_user.username} — {phone_number} — отправил номер телефона' 
+        text = f"Пользователь @{update.effective_user.username} — {phone_number} — отправил номер телефона"
     else:
-        text = f'Пользователь {phone_number} — отправил номер телефона'
+        text = f"Пользователь {phone_number} — отправил номер телефона"
     await context.bot.send_message(
         chat_id=GROUP_ID,
         text=text,
@@ -267,7 +277,7 @@ async def ask_email(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     logger.info(f"Пользователь {user_id} запросил email")
     # Удаляем предыдущие задачи, если они есть
     await remove_all_jobs(user_id, context)
-    
+
     query = update.callback_query
     pay_num = int(query.data.split("_")[2])
     if await get_email(user_id) or context.user_data.get("email"):

@@ -16,6 +16,8 @@ from face_bot.static.config import GROUP_ID
 
 from face_bot.utils.escape_text import escape_text
 
+from face_bot.static.status import BOUGHT_ONE_ST, BOUGHT_ALL_ST
+
 from face_bot.static.texts import (
     CASES_MESSAGES,
     EXPRESS_YOUNG_MESSAGE,
@@ -44,6 +46,7 @@ from face_bot.database.db import (
     update_case,
     save_subscription,
     get_current_case,
+    update_status,
 )
 
 from yookassa import Payment
@@ -273,6 +276,7 @@ async def pay_confirmation_job(context: ContextTypes.DEFAULT_TYPE) -> None:
 
         """send video"""
         if int(subs_type) != 4:
+            await update_status(user_id, BOUGHT_ONE_ST)
             keyboard = [
                 [
                     InlineKeyboardButton(
@@ -295,6 +299,7 @@ async def pay_confirmation_job(context: ContextTypes.DEFAULT_TYPE) -> None:
                 parse_mode=ParseMode.MARKDOWN_V2,
             )
         else:
+            await update_status(user_id, BOUGHT_ALL_ST)
             await context.bot.send_message(
                 chat_id=chat_id,
                 text=escape_text(GOODS_INFO[subs_type]["text_after_pay"]),

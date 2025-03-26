@@ -8,6 +8,16 @@ from face_bot.static.conversions import (
     BUY_SUBSCRIPTION_CONV,
 )
 
+from face_bot.static.status import (
+    START_ST,
+    LEARN_HOW_ST,
+    SENT_PHONE_ST,
+    PRESSED_YES_ST,
+    PRESSED_GOOD_ST,
+    BOUGHT_ONE_ST,
+    BOUGHT_ALL_ST,
+)
+
 DB_PATH = "users.db"
 
 
@@ -137,6 +147,7 @@ async def get_subscriptions(user_id):
                 return lst_subs
             return []
 
+
 async def get_phone_number_by_id(user_id):
     """Получает телефон пользователя"""
     async with aiosqlite.connect(DB_PATH) as db:
@@ -145,6 +156,7 @@ async def get_phone_number_by_id(user_id):
         ) as cursor:
             row = await cursor.fetchone()
             return row[0]
+
 
 async def save_subscription(subs, user_id):
     """Сохраняет покупку пользователя"""
@@ -189,11 +201,13 @@ async def get_conversions():
     number_users = []
 
     statuses = [
-        REGISTERED_CONV,
-        CONTACT_CONV,
-        TRY_GUIDE_CONV,
-        ENROLL_CONV,
-        BUY_SUBSCRIPTION_CONV,
+        START_ST,
+        LEARN_HOW_ST,
+        SENT_PHONE_ST,
+        PRESSED_YES_ST,
+        PRESSED_GOOD_ST,
+        BOUGHT_ONE_ST,
+        BOUGHT_ALL_ST,
     ]
 
     for status in statuses:
@@ -208,6 +222,7 @@ async def get_conversions():
 
     return number_users
 
+
 async def save_email(user_id, email):
     async with aiosqlite.connect(DB_PATH) as db:
         await db.execute(
@@ -220,7 +235,8 @@ async def save_email(user_id, email):
         )
 
         await db.commit()
-        
+
+
 async def get_email(user_id):
     async with aiosqlite.connect(DB_PATH) as db:
         async with db.execute(

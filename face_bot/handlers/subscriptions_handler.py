@@ -69,6 +69,10 @@ from face_bot.jobs.times import (
     CASES_TIME,
 )
 
+from face_bot.static.status import PRESSED_GOOD_ST
+
+from face_bot.database.db import update_status
+
 from yookassa import Configuration, Payment
 
 from face_bot.utils.logger import (
@@ -173,7 +177,7 @@ async def subscriptions_callback(
 
     # Удаляем предыдущие задачи, если они есть
     await remove_all_jobs(user_id, context)
-
+    await update_status(user_id, PRESSED_GOOD_ST)
     num_massage = int(query.data.split("_")[1])
     text = GOODS_INFO[num_massage]["text"]
     keyboard = [

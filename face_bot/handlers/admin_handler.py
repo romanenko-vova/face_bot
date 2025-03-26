@@ -88,10 +88,13 @@ async def admin_callbacks(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
     elif int(query.data) == CONVERSIONS:
         states_list = [
             "Зарегистрировались",
-            "Отправили контакт",
-            "Попробовали Экспересс гайд",
-            "Записались на консультацию",
-            "Купили курс",
+            "Нажали Узнать",
+            "Отправили номер телефона",
+            "Нажали Перейти в магазин",
+            "Нажали на товар",
+            "Купили 1 товар",
+            "Купили все товары",
+            
         ]
 
         number_users = await get_conversions()

@@ -12,6 +12,7 @@ from face_bot.static.states import PHONE
 from face_bot.static.keys import CURRENT_CASE
 from face_bot.static.callbacks import LEARN_HOW, YES_TRY, NO_TRY
 from face_bot.static.conversions import TRY_GUIDE_CONV
+from face_bot.static.status import LEARN_HOW_ST, PRESSED_YES_ST
 
 from face_bot.static.texts import CONTACT_MESSAGE
 
@@ -47,7 +48,7 @@ async def user_progrev_callback(
         keyboard = [
             [KeyboardButton("📱 Отправить контакт", request_contact=True)]
         ]
-
+        await update_status(status=LEARN_HOW_ST, user_id=user_id)
         await context.bot.send_message(
             chat_id=chat_id,
             text=escape_text(CONTACT_MESSAGE),
@@ -70,10 +71,9 @@ async def user_progrev_callback(
 
         await remove_all_jobs(chat_id, context)
 
-        await update_status(status=TRY_GUIDE_CONV, user_id=user_id)
-        
-        return await show_subscriptions(update, context)
+        await update_status(status=PRESSED_YES_ST, user_id=user_id)
 
+        return await show_subscriptions(update, context)
 
     else:
         await context.bot.delete_message(

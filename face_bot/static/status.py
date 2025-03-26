@@ -1,0 +1,9 @@
+(
+    START_ST,
+    LEARN_HOW_ST,
+    SENT_PHONE_ST,
+    PRESSED_YES_ST,
+    PRESSED_GOOD_ST,
+    BOUGHT_ONE_ST,
+    BOUGHT_ALL_ST,
+) = range(7)
